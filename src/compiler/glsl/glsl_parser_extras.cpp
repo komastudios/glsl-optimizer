@@ -1996,7 +1996,7 @@ assign_subroutine_indexes(struct _mesa_glsl_parse_state *state)
    }
 }
 
-static void
+void
 add_builtin_defines(struct _mesa_glsl_parse_state *state,
                     void (*add_builtin_define)(struct glcpp_parser *, const char *, int),
                     struct glcpp_parser *data,
