@@ -452,9 +452,9 @@ void ir_print_glsl_visitor::visit(ir_variable *ir)
 	const char *const inv = (ir->data.invariant) ? "invariant " : "";
 	const char *const mode[3][ir_var_mode_count] =
 	{
-		{ "", "uniform ", "in ",        "out ",     "inout ", "in ", "out ", "inout ", "", "", "" },
-		{ "", "uniform ", "attribute ", "varying ", "inout ", "in ", "out ", "inout ", "", "", "" },
-		{ "", "uniform ", "varying ",   "out ",     "inout ", "in ", "out ", "inout ", "", "", "" },
+		{ "", "uniform ", "", "", "in ",        "out ",     "in ", "out ", "inout ", "", "", "" },
+		{ "", "uniform ", "", "", "attribute ", "varying ", "in ", "out ", "inout ", "", "", "" },
+		{ "", "uniform ", "", "", "varying ",   "out ",     "in ", "out ", "inout ", "", "", "" },
 	};
 	
 	const char *const interp[] = { "", "smooth ", "flat ", "noperspective " };
