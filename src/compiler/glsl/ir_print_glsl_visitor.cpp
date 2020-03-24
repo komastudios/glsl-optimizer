@@ -225,14 +225,14 @@ _mesa_print_ir_glsl(exec_list *instructions,
 
 	// print version & extensions
 	if (state) {
+		if (state->had_version_string)
+		{
+			str.asprintf_append ("#version %i", state->language_version);
+			if (state->es_shader && state->language_version >= 300)
+				str.asprintf_append (" es");
+			str.asprintf_append ("\n");
+		}
 		// FIXME
-		// if (state->had_version_string)
-		// {
-		// 	str.asprintf_append ("#version %i", state->language_version);
-		// 	if (state->es_shader && state->language_version >= 300)
-		// 		str.asprintf_append (" es");
-		// 	str.asprintf_append ("\n");
-		// }
 		// if (state->ARB_shader_texture_lod_enable)
 		// 	str.asprintf_append ("#extension GL_ARB_shader_texture_lod : enable\n");
 		// if (state->ARB_draw_instanced_enable)

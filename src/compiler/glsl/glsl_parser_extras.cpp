@@ -86,6 +86,7 @@ _mesa_glsl_parse_state::_mesa_glsl_parse_state(struct gl_context *_ctx,
    this->gl_version = 20;
    this->compat_shader = true;
    this->es_shader = false;
+   this->had_version_string = false;
    this->ARB_texture_rectangle_enable = true;
 
    /* OpenGL ES 2.0 has different defaults from desktop GL. */
@@ -435,6 +436,7 @@ _mesa_glsl_parse_state::process_version_directive(YYLTYPE *locp, int version,
       this->language_version = this->forced_language_version;
    else
       this->language_version = version;
+   this->had_version_string = true;
 
    this->compat_shader = compat_token_present ||
                          (this->ctx->API == API_OPENGL_COMPAT &&
