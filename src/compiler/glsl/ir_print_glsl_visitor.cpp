@@ -25,7 +25,7 @@
 #include "ir_visitor.h"
 #include "glsl_types.h"
 #include "glsl_parser_extras.h"
-// #include "ir_unused_structs.h"
+#include "ir_unused_structs.h"
 #include "loop_analysis.h"
 #include "util/hash_table.h"
 #include <math.h>
@@ -137,8 +137,8 @@ public:
 	virtual void visit(ir_if *);
 	virtual void visit(ir_loop *);
 	virtual void visit(ir_loop_jump *);
-	// virtual void visit(ir_precision_statement *);
-	// virtual void visit(ir_typedecl_statement *);
+	virtual void visit(ir_precision_statement *);
+	virtual void visit(ir_typedecl_statement *);
 	virtual void visit(ir_emit_vertex *);
 	virtual void visit(ir_end_primitive *);
 	virtual void visit(class ir_barrier *);
@@ -263,8 +263,7 @@ _mesa_print_ir_glsl(exec_list *instructions,
 	}
 
 	// remove unused struct declarations
-	// FIXME
-	// do_remove_unused_typedecls(instructions);
+	do_remove_unused_typedecls(instructions);
 
 	global_print_tracker gtracker;
 	int uses_texlod_impl = 0;
@@ -1790,31 +1789,31 @@ ir_print_glsl_visitor::visit(ir_loop_jump *ir)
    buffer.asprintf_append ("%s", ir->is_break() ? "break" : "continue");
 }
 
-// FIXME
-// void
-// ir_print_glsl_visitor::visit(ir_precision_statement *ir)
-// {
-// 	buffer.asprintf_append ("%s", ir->precision_statement);
-// }
+void
+ir_print_glsl_visitor::visit(ir_precision_statement *ir)
+{
+	buffer.asprintf_append ("%s", ir->precision_statement);
+}
 
 // FIXME
-// void
-// ir_print_glsl_visitor::visit(ir_typedecl_statement *ir)
-// {
-// 	const glsl_type *const s = ir->type_decl;
-// 	buffer.asprintf_append ("struct %s {\n", s->name);
+void
+ir_print_glsl_visitor::visit(ir_typedecl_statement *ir)
+{
+	const glsl_type *const s = ir->type_decl;
+	buffer.asprintf_append ("struct %s {\n", s->name);
 
-// 	for (unsigned j = 0; j < s->length; j++) {
-// 		buffer.asprintf_append ("  ");
-// 		if (state->es_shader)
-// 			buffer.asprintf_append ("%s", get_precision_string(s->fields.structure[j].precision));
-// 		print_type(buffer, s->fields.structure[j].type, false);
-// 		buffer.asprintf_append (" %s", s->fields.structure[j].name);
-// 		print_type_post(buffer, s->fields.structure[j].type, false);
-// 		buffer.asprintf_append (";\n");
-// 	}
-// 	buffer.asprintf_append ("}");
-// }
+	for (unsigned j = 0; j < s->length; j++) {
+		buffer.asprintf_append ("  ");
+                // FIXME: precision
+		// if (state->es_shader)
+		// 	buffer.asprintf_append ("%s", get_precision_string(s->fields.structure[j].precision));
+		print_type(buffer, s->fields.structure[j].type, false);
+		buffer.asprintf_append (" %s", s->fields.structure[j].name);
+		print_type_post(buffer, s->fields.structure[j].type, false);
+		buffer.asprintf_append (";\n");
+	}
+	buffer.asprintf_append ("}");
+}
 
 void
 ir_print_glsl_visitor::visit(ir_emit_vertex *ir)

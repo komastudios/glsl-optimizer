@@ -73,6 +73,8 @@ enum ir_node_type {
    ir_type_loop,
    ir_type_loop_jump,
    ir_type_return,
+   ir_type_precision,
+   ir_type_typedecl,
    ir_type_discard,
    ir_type_demote,
    ir_type_emit_vertex,
@@ -2310,6 +2312,51 @@ private:
     * Parameterless constructor only used by the clone method
     */
    ir_constant(void);
+};
+
+class ir_precision_statement : public ir_instruction {
+public:
+   ir_precision_statement(const char *statement_to_store)
+	: ir_instruction(ir_type_precision)
+   {
+	   ir_type = ir_type_precision;
+	   precision_statement = statement_to_store;
+   }
+
+   virtual ir_precision_statement *clone(void *mem_ctx, struct hash_table *) const;
+
+   virtual void accept(ir_visitor *v)
+   {
+      v->visit(this);
+   }
+
+   virtual ir_visitor_status accept(ir_hierarchical_visitor *);
+
+   /**
+    * Precision statement
+    */
+   const char *precision_statement;
+};
+
+class ir_typedecl_statement : public ir_instruction {
+public:
+   ir_typedecl_statement(const glsl_type* type_decl)
+      : ir_instruction(ir_type_typedecl)
+   {
+      this->ir_type = ir_type_typedecl;
+      this->type_decl = type_decl;
+   }
+
+   virtual ir_typedecl_statement *clone(void *mem_ctx, struct hash_table *) const;
+
+   virtual void accept(ir_visitor *v)
+   {
+      v->visit(this);
+   }
+
+   virtual ir_visitor_status accept(ir_hierarchical_visitor *);
+
+   const glsl_type* type_decl;
 };
 
 /**

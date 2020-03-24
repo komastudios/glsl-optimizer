@@ -71,6 +71,24 @@ ir_hierarchical_visitor::visit(ir_loop_jump *ir)
 }
 
 ir_visitor_status
+ir_hierarchical_visitor::visit(ir_precision_statement *ir)
+{
+   if (this->callback_enter != NULL)
+      this->callback_enter(ir, this->data_enter);
+
+   return visit_continue;
+}
+
+ir_visitor_status
+ir_hierarchical_visitor::visit(ir_typedecl_statement *ir)
+{
+   if (this->callback_enter != NULL)
+      this->callback_enter(ir, this->data_enter);
+
+   return visit_continue;
+}
+
+ir_visitor_status
 ir_hierarchical_visitor::visit(ir_dereference_variable *ir)
 {
    if (this->callback_enter != NULL)

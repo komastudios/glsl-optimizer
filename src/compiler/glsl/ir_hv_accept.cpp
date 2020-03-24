@@ -417,6 +417,18 @@ ir_if::accept(ir_hierarchical_visitor *v)
 }
 
 ir_visitor_status
+ir_precision_statement::accept(ir_hierarchical_visitor *v)
+{
+   return v->visit(this);
+}
+
+ir_visitor_status
+ir_typedecl_statement::accept(ir_hierarchical_visitor *v)
+{
+   return v->visit(this);
+}
+
+ir_visitor_status
 ir_emit_vertex::accept(ir_hierarchical_visitor *v)
 {
    ir_visitor_status s = v->visit_enter(this);

@@ -633,6 +633,17 @@ ir_print_visitor::visit(ir_loop_jump *ir)
 }
 
 void
+ir_print_visitor::visit(ir_precision_statement *ir)
+{
+	//printf("%s", ir->precision_statement);
+}
+
+void
+ir_print_visitor::visit(ir_typedecl_statement *)
+{
+}
+
+void
 ir_print_visitor::visit(ir_emit_vertex *ir)
 {
    fprintf(f, "(emit-vertex ");

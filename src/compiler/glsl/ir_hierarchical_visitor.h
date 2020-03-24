@@ -86,6 +86,8 @@ public:
    virtual ir_visitor_status visit(class ir_variable *);
    virtual ir_visitor_status visit(class ir_constant *);
    virtual ir_visitor_status visit(class ir_loop_jump *);
+   virtual ir_visitor_status visit(class ir_precision_statement *);
+   virtual ir_visitor_status visit(class ir_typedecl_statement *);
    virtual ir_visitor_status visit(class ir_barrier *);
 
    /**

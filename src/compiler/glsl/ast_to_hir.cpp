@@ -171,7 +171,17 @@ _mesa_ast_to_hir(exec_list *instructions, struct _mesa_glsl_parse_state *state)
     * locations being assigned in the declared order.  Many (arguably buggy)
     * applications depend on this behavior, and it matches what nearly all
     * other drivers do.
+    * However, do not push the declarations before struct decls or precision
+    * statements.
     */
+   ir_instruction* before_node = (ir_instruction*)instructions->get_head();
+   ir_instruction* after_node = NULL;
+   while (before_node && (before_node->ir_type == ir_type_precision || before_node->ir_type == ir_type_typedecl))
+   {
+      after_node = before_node;
+      before_node = (ir_instruction*)before_node->next;
+   }
+
    foreach_in_list_safe(ir_instruction, node, instructions) {
       ir_variable *const var = node->as_variable();
 
@@ -179,7 +189,10 @@ _mesa_ast_to_hir(exec_list *instructions, struct _mesa_glsl_parse_state *state)
          continue;
 
       var->remove();
-      instructions->push_head(var);
+      if (after_node)
+         after_node->insert_after(var);
+      else
+         instructions->push_head(var);
    }
 
    /* Figure out if gl_FragCoord is actually used in fragment shader */
@@ -5698,8 +5711,16 @@ ast_declarator_list::hir(exec_list *instructions,
           * but otherwise we run into trouble if a function is prototyped, a
           * global var is decled, then the function is defined with usage of
           * the global var.  See glslparsertest's CorrectModule.frag.
+          * However, do not insert declarations before default precision statements
+          * or type declarations.
           */
-         instructions->push_head(var);
+         ir_instruction* before_node = (ir_instruction*)instructions->get_head();
+         while (before_node && (before_node->ir_type == ir_type_precision || before_node->ir_type == ir_type_typedecl))
+            before_node = (ir_instruction*)before_node->next;
+         if (before_node)
+            before_node->insert_before(var);
+         else
+            instructions->push_head(var);
       }
 
       instructions->append_list(&initializer_instructions);
@@ -7148,7 +7169,31 @@ ast_type_specifier::hir(exec_list *instructions,
                                                          this->default_precision);
       }
 
-      /* FINISHME: Translate precision statements into IR. */
+      {
+         void *ctx = state;
+
+         const char* precision_type = NULL;
+         switch (this->default_precision) {
+         case GLSL_PRECISION_HIGH:
+            precision_type = "highp";
+            break;
+         case GLSL_PRECISION_MEDIUM:
+            precision_type = "mediump";
+            break;
+         case GLSL_PRECISION_LOW:
+            precision_type = "lowp";
+            break;
+         case GLSL_PRECISION_NONE:
+            precision_type = "";
+            break;
+         }
+
+         char* precision_statement = ralloc_asprintf(ctx, "precision %s %s", precision_type, this->type_name);
+         ir_precision_statement *const stmt = new(ctx) ir_precision_statement(precision_statement);
+
+         instructions->push_head(stmt);
+      }
+
       return NULL;
    }
 
@@ -7708,6 +7753,21 @@ ast_struct_specifier::hir(exec_list *instructions,
          s[state->num_user_structures] = type;
          state->user_structures = s;
          state->num_user_structures++;
+
+         ir_typedecl_statement* stmt = new(state) ir_typedecl_statement(type);
+         /* Push the struct declarations to the top.
+          * However, do not insert declarations before default precision
+          * statements or other declarations
+          */
+         ir_instruction* before_node = (ir_instruction*)instructions->get_head();
+         while (before_node &&
+                (before_node->ir_type == ir_type_precision ||
+                 before_node->ir_type == ir_type_typedecl))
+            before_node = (ir_instruction*)before_node->next;
+            if (before_node)
+               before_node->insert_before(stmt);
+            else
+               instructions->push_head(stmt);
       }
    }
 
