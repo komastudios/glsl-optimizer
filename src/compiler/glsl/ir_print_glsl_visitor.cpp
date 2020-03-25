@@ -232,34 +232,36 @@ _mesa_print_ir_glsl(exec_list *instructions,
 				str.asprintf_append (" es");
 			str.asprintf_append ("\n");
 		}
+		if (state->ARB_shader_texture_lod_enable)
+			str.asprintf_append ("#extension GL_ARB_shader_texture_lod : enable\n");
+		if (state->ARB_draw_instanced_enable)
+			str.asprintf_append ("#extension GL_ARB_draw_instanced : enable\n");
+		if (state->EXT_gpu_shader4_enable)
+			str.asprintf_append ("#extension GL_EXT_gpu_shader4 : enable\n");
 		// FIXME
-		// if (state->ARB_shader_texture_lod_enable)
-		// 	str.asprintf_append ("#extension GL_ARB_shader_texture_lod : enable\n");
-		// if (state->ARB_draw_instanced_enable)
-		// 	str.asprintf_append ("#extension GL_ARB_draw_instanced : enable\n");
-		// if (state->EXT_gpu_shader4_enable)
-		// 	str.asprintf_append ("#extension GL_EXT_gpu_shader4 : enable\n");
 		// if (state->EXT_shader_texture_lod_enable)
 		// 	str.asprintf_append ("#extension GL_EXT_shader_texture_lod : enable\n");
-		// if (state->OES_standard_derivatives_enable)
-		// 	str.asprintf_append ("#extension GL_OES_standard_derivatives : enable\n");
+		if (state->OES_standard_derivatives_enable)
+			str.asprintf_append ("#extension GL_OES_standard_derivatives : enable\n");
+		// FIXME
 		// if (state->EXT_shadow_samplers_enable)
 		// 	str.asprintf_append ("#extension GL_EXT_shadow_samplers : enable\n");
-		// if (state->EXT_frag_depth_enable)
-		// 	str.asprintf_append ("#extension GL_EXT_frag_depth : enable\n");
-		// if (state->es_shader && state->language_version < 300)
-		// {
-		// 	if (state->EXT_draw_buffers_enable)
-		// 		str.asprintf_append ("#extension GL_EXT_draw_buffers : enable\n");
-		// 	if (state->EXT_draw_instanced_enable)
-		// 		str.asprintf_append ("#extension GL_EXT_draw_instanced : enable\n");
-		// }
-		// if (state->EXT_shader_framebuffer_fetch_enable)
-		// 	str.asprintf_append ("#extension GL_EXT_shader_framebuffer_fetch : enable\n");
-		// if (state->ARB_shader_bit_encoding_enable)
-		// 	str.asprintf_append("#extension GL_ARB_shader_bit_encoding : enable\n");
-		// if (state->EXT_texture_array_enable)
-		// 	str.asprintf_append ("#extension GL_EXT_texture_array : enable\n");
+		if (state->EXT_frag_depth_enable)
+			str.asprintf_append ("#extension GL_EXT_frag_depth : enable\n");
+		if (state->es_shader && state->language_version < 300)
+		{
+			if (state->EXT_draw_buffers_enable)
+				str.asprintf_append ("#extension GL_EXT_draw_buffers : enable\n");
+			// FIXME
+			// if (state->EXT_draw_instanced_enable)
+			// 	str.asprintf_append ("#extension GL_EXT_draw_instanced : enable\n");
+		}
+		if (state->EXT_shader_framebuffer_fetch_enable)
+			str.asprintf_append ("#extension GL_EXT_shader_framebuffer_fetch : enable\n");
+		if (state->ARB_shader_bit_encoding_enable)
+			str.asprintf_append("#extension GL_ARB_shader_bit_encoding : enable\n");
+		if (state->EXT_texture_array_enable)
+			str.asprintf_append ("#extension GL_EXT_texture_array : enable\n");
 	}
 
 	// remove unused struct declarations
