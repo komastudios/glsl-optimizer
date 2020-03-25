@@ -266,6 +266,12 @@ _mesa_print_ir_glsl(exec_list *instructions,
 			str.asprintf_append("#extension GL_ARB_shader_bit_encoding : enable\n");
 		if (state->EXT_texture_array_enable)
 			str.asprintf_append ("#extension GL_EXT_texture_array : enable\n");
+		if (state->KHR_blend_equation_advanced_enable)
+			str.asprintf_append ("#extension GL_KHR_blend_equation_advanced : enable\n");
+
+		// TODO: support other blend specifiers besides "all"
+		if (state->fs_blend_support == BLEND_ALL)
+			str.asprintf_append ("layout(blend_support_all_equations) out;\n");
 	}
 
 	// remove unused struct declarations
