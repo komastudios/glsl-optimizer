@@ -186,6 +186,7 @@ void initialize_context_to_defaults(struct gl_context *ctx, gl_api api)
 
    ctx->Extensions.dummy_false = false;
    ctx->Extensions.dummy_true = true;
+   ctx->Extensions.ARB_blend_func_extended = true;
    ctx->Extensions.ARB_compute_shader = true;
    ctx->Extensions.ARB_compute_variable_group_size = true;
    ctx->Extensions.ARB_conservative_depth = true;
