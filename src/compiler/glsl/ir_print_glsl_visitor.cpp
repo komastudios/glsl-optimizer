@@ -855,6 +855,23 @@ void ir_print_glsl_visitor::visit(ir_expression *ir)
 			ir->operands[1]->accept(this);
 		buffer.asprintf_append ("]");
 	}
+	else if (ir->operation == ir_binop_mod && ir->operands[0]->type->is_integer())
+	{
+		// In GLES, mod() is only a func for floats,
+		// and we must use the % operator for ints.
+		assert(ir->num_operands == 2);
+		assert(ir->operands[1]->type->is_integer());
+
+		buffer.asprintf_append ("(");
+		if (ir->operands[0])
+			ir->operands[0]->accept(this);
+
+		buffer.asprintf_append (" %s ", "%");
+
+		if (ir->operands[1])
+			ir->operands[1]->accept(this);
+		buffer.asprintf_append (")");
+	}
 	else if (is_binop_func_like(ir->operation, ir->type))
 	{
 		if (ir->operation == ir_binop_mod)
