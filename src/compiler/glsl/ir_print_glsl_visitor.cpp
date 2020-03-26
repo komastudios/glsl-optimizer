@@ -35,18 +35,22 @@
 static void print_type(string_buffer& buffer, const glsl_type *t, bool arraySize);
 static void print_type_post(string_buffer& buffer, const glsl_type *t, bool arraySize);
 
-// FIXME
-// static inline const char* get_precision_string (glsl_precision p)
-// {
-// 	switch (p) {
-// 	case glsl_precision_high:		return "highp ";
-// 	case glsl_precision_medium:		return "mediump ";
-// 	case glsl_precision_low:		return "lowp ";
-// 	case glsl_precision_undefined:	return "";
-// 	}
-// 	assert(!"Should not get here.");
-// 	return "";
-// }
+// FIXME: precision
+static inline const char* get_precision_string (unsigned p)
+{
+	switch (p) {
+	case GLSL_PRECISION_HIGH:
+		return "highp ";
+	case GLSL_PRECISION_MEDIUM:
+		return "mediump ";
+	case GLSL_PRECISION_LOW:
+		return "lowp ";
+	case GLSL_PRECISION_NONE:
+		return "";
+	}
+	assert(!"Should not get here.");
+	return "";
+}
 
 static const int tex_sampler_type_count = 7;
 // [glsl_sampler_dim]
@@ -384,6 +388,12 @@ void ir_print_glsl_visitor::print_precision (ir_instruction* ir, const glsl_type
 	{
 		return;
 	}
+
+	ir_variable* var = ir->as_variable();
+	if (var) {
+		buffer.asprintf_append ("%s", get_precision_string(var->data.precision));
+	}
+
 	// FIXME
 	// glsl_precision prec = precision_from_ir(ir);
 
