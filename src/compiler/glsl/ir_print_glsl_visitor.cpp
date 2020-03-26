@@ -240,6 +240,8 @@ _mesa_print_ir_glsl(exec_list *instructions,
 			str.asprintf_append ("#extension GL_ARB_shader_texture_lod : enable\n");
 		if (state->ARB_draw_instanced_enable)
 			str.asprintf_append ("#extension GL_ARB_draw_instanced : enable\n");
+		if (state->ARB_explicit_attrib_location_enable)
+			str.asprintf_append ("#extension GL_ARB_explicit_attrib_location : enable\n");
 		if (state->EXT_gpu_shader4_enable)
 			str.asprintf_append ("#extension GL_EXT_gpu_shader4 : enable\n");
 		// FIXME
@@ -476,10 +478,12 @@ void ir_print_glsl_visitor::visit(ir_variable *ir)
 		{ "", "uniform ", "", "", "attribute ", "varying ", "in ", "out ", "inout ", "", "", "" },
 		{ "", "uniform ", "", "", "varying ",   "out ",     "in ", "out ", "inout ", "", "", "" },
 	};
-	
+
 	const char *const interp[] = { "", "smooth ", "flat ", "noperspective " };
-	
-	if (this->state->language_version >= 300 && ir->data.explicit_location)
+
+	bool supports_explicit_location = this->state->language_version >= 300 ||
+		this->state->ARB_explicit_attrib_location_enable;
+	if (supports_explicit_location && ir->data.explicit_location)
 	{
 		const int binding_base = (this->state->stage == MESA_SHADER_VERTEX ? (int)VERT_ATTRIB_GENERIC0 : (int)FRAG_RESULT_DATA0);
 		const int location = ir->data.location - binding_base;
