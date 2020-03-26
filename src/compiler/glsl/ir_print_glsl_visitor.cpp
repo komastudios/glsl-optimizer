@@ -272,6 +272,8 @@ _mesa_print_ir_glsl(exec_list *instructions,
 			str.asprintf_append ("#extension GL_KHR_blend_equation_advanced : enable\n");
 		if (state->EXT_blend_func_extended_enable)
 			str.asprintf_append ("#extension GL_EXT_blend_func_extended : enable\n");
+		if (state->OES_EGL_image_external_essl3_enable)
+			str.asprintf_append ("#extension GL_OES_EGL_image_external_essl3 : enable\n");
 
 
 		// TODO: support other blend specifiers besides "all"
