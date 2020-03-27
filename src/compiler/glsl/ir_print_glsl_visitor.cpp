@@ -734,8 +734,8 @@ static const char *const operator_glsl_strs[] = {
 	"mod", // ir_binop_mod,
 	"<", // ir_binop_less,
 	">=", // ir_binop_gequal,
-	"equal", // ir_binop_equal,
-	"notEqual", // ir_binop_nequal,
+	"==", // ir_binop_equal,
+	"!=", // ir_binop_nequal,
 	"==", // ir_binop_all_equal,
 	"!=", // ir_binop_any_nequal,
 	"<<", // ir_binop_lshift,
@@ -775,9 +775,7 @@ static const char *const operator_vec_glsl_strs[] = {
 
 static bool is_binop_func_like(ir_expression_operation op, const glsl_type* type)
 {
-	if (op == ir_binop_equal || 
-		op == ir_binop_nequal ||
-		op == ir_binop_mod ||
+	if (op == ir_binop_mod ||
 		(op >= ir_binop_dot && op <= ir_binop_pow))
 		return true;
 	if (type->is_vector() && (op >= ir_binop_less && op <= ir_binop_nequal))
