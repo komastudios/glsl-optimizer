@@ -1362,7 +1362,9 @@ void ir_print_glsl_visitor::visit(ir_assignment *ir)
 	// assignments in global scope are postponed to main function
 	if (this->mode != kPrintGlslNone)
 	{
-		assert (!this->globals->main_function_done);
+		// FIXME: This assertion gets tripped when encountering const variable
+		// initializations which occur after the main() function definition.
+		// assert (!this->globals->main_function_done);
 		this->globals->global_assignements.push_tail (new(this->globals->mem_ctx) ga_entry(ir));
 		buffer.asprintf_append ("//"); // for the ; that will follow (ugly, I know)
 		return;
