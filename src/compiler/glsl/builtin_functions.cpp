@@ -1755,14 +1755,6 @@ builtin_builder::create_builtins()
    F(acos)
 
    add_function("atan",
-                _atan(glsl_type::float_type),
-                _atan(glsl_type::vec2_type),
-                _atan(glsl_type::vec3_type),
-                _atan(glsl_type::vec4_type),
-                _atan2(glsl_type::float_type),
-                _atan2(glsl_type::vec2_type),
-                _atan2(glsl_type::vec3_type),
-                _atan2(glsl_type::vec4_type),
                 _atan_op(glsl_type::float_type),
                 _atan_op(glsl_type::vec2_type),
                 _atan_op(glsl_type::vec3_type),
@@ -5231,7 +5223,7 @@ UNOP(exp,         ir_unop_exp,  always_available)
 UNOP(log,         ir_unop_log,  always_available)
 UNOP(exp2,        ir_unop_exp2, always_available)
 UNOP(log2,        ir_unop_log2, always_available)
-UNOP(atan_op,     ir_unop_atan, is_nir)
+UNOP(atan_op,     ir_unop_atan, always_available)
 UNOPA(sqrt,        ir_unop_sqrt)
 UNOPA(inversesqrt, ir_unop_rsq)
 
@@ -5434,7 +5426,7 @@ builtin_builder::_isinf(builtin_available_predicate avail, const glsl_type *type
 ir_function_signature *
 builtin_builder::_atan2_op(const glsl_type *x_type)
 {
-   return binop(is_nir, ir_binop_atan2, x_type, x_type, x_type);
+   return binop(always_available, ir_binop_atan2, x_type, x_type, x_type);
 }
 
 ir_function_signature *
