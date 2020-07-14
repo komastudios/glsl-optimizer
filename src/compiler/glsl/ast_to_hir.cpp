@@ -8213,6 +8213,21 @@ ast_interface_block::hir(exec_list *instructions,
    }
 
 
+   ir_typedecl_statement* stmt = new(state) ir_typedecl_statement(block_type);
+   /* Push the interface declarations to the top.
+    * However, do not insert declarations before default precision
+    * statements or other declarations
+    */
+   ir_instruction* before_node = (ir_instruction*)instructions->get_head();
+   while (before_node &&
+          (before_node->ir_type == ir_type_precision ||
+           before_node->ir_type == ir_type_typedecl))
+      before_node = (ir_instruction*)before_node->next;
+   if (before_node)
+      before_node->insert_before(stmt);
+   else
+      instructions->push_head(stmt);
+
    /* Page 39 (page 45 of the PDF) of section 4.3.7 in the GLSL ES 3.00 spec
     * says:
     *

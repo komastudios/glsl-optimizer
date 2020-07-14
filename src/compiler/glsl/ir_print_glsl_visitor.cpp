@@ -274,6 +274,8 @@ _mesa_print_ir_glsl(exec_list *instructions,
 			str.asprintf_append ("#extension GL_EXT_blend_func_extended : enable\n");
 		if (state->OES_EGL_image_external_essl3_enable)
 			str.asprintf_append ("#extension GL_OES_EGL_image_external_essl3 : enable\n");
+		if (state->ARB_shader_storage_buffer_object_enable)
+			str.asprintf_append ("#extension GL_ARB_shader_storage_buffer_object : enable\n");
 
 
 		// TODO: support other blend specifiers besides "all"
@@ -464,14 +466,25 @@ static void print_type(string_buffer& buffer, const glsl_type *t, bool arraySize
 static void print_type_post(string_buffer& buffer, const glsl_type *t, bool arraySize)
 {
 	if (t->base_type == GLSL_TYPE_ARRAY) {
-		if (!arraySize)
-			buffer.asprintf_append ("[%u]", t->length);
+		if (!arraySize) {
+			if (t->length) {
+				buffer.asprintf_append ("[%u]", t->length);
+			} else {
+				buffer.asprintf_append ("[]");
+			}
+		}
 	}
 }
 
 
 void ir_print_glsl_visitor::visit(ir_variable *ir)
 {
+	// Variables that are declared as or part of interface blocks will be printed by the block declaration.
+	if (ir->is_in_buffer_block()) {
+		skipped_this_ir = true;
+		return;
+	}
+
 	const char *const cent = (ir->data.centroid) ? "centroid " : "";
 	const char *const inv = (ir->data.invariant) ? "invariant " : "";
 	const char *const mode[3][ir_var_mode_count] =
@@ -1863,12 +1876,68 @@ ir_print_glsl_visitor::visit(ir_precision_statement *ir)
 	buffer.asprintf_append ("%s", ir->precision_statement);
 }
 
-// FIXME
+static const char*
+interface_packing_string(enum glsl_interface_packing packing)
+{
+	switch (packing) {
+	case GLSL_INTERFACE_PACKING_STD140:
+		return "std140";
+	case GLSL_INTERFACE_PACKING_SHARED:
+		return "shared";
+	case GLSL_INTERFACE_PACKING_PACKED:
+		return "packed";
+	case GLSL_INTERFACE_PACKING_STD430:
+		return "std430";
+	default:
+		unreachable("Unexpected interface packing");
+		return "UNKNOWN";
+	}
+}
+
+static const char*
+interface_variable_mode_string(enum ir_variable_mode mode)
+{
+	switch (mode) {
+	case ir_var_uniform:
+		return "uniform";
+	case ir_var_shader_storage:
+		return "buffer";
+	default:
+		unreachable("Unexpected interface variable mode");
+		return "UNKOWN";
+	}
+}
+
 void
 ir_print_glsl_visitor::visit(ir_typedecl_statement *ir)
 {
 	const glsl_type *const s = ir->type_decl;
-	buffer.asprintf_append ("struct %s {\n", s->name);
+
+	ir_variable* interface_var = NULL;
+
+	if (s->is_struct()) {
+		buffer.asprintf_append ("struct %s {\n", s->name);
+	} else if (s->is_interface()) {
+		const char* packing = interface_packing_string(s->get_interface_packing());
+
+		// Find a variable defined by this interface, as it holds some necessary data.
+		exec_node* n = ir;
+		while (n = n->get_next()) {
+			ir_variable* v = ((ir_instruction *)n)->as_variable();
+			if (v != NULL && v->get_interface_type() == ir->type_decl) {
+				interface_var = v;
+				break;
+			}
+		}
+		const char* mode = interface_variable_mode_string((enum ir_variable_mode)interface_var->data.mode);
+		if (interface_var->data.explicit_binding) {
+			uint16_t binding = interface_var->data.binding;
+			buffer.asprintf_append ("layout(%s, binding=%" PRIu16 ") %s %s {\n", packing, binding, mode, s->name);
+		} else {
+			buffer.asprintf_append ("layout(%s) %s %s {\n", packing, mode, s->name);
+		}
+
+	}
 
 	for (unsigned j = 0; j < s->length; j++) {
 		buffer.asprintf_append ("  ");
@@ -1881,6 +1950,11 @@ ir_print_glsl_visitor::visit(ir_typedecl_statement *ir)
 		buffer.asprintf_append (";\n");
 	}
 	buffer.asprintf_append ("}");
+
+	if (interface_var && interface_var->is_interface_instance()) {
+		buffer.asprintf_append(" ");
+		print_var_name(interface_var);
+	}
 }
 
 void
