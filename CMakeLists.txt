@@ -25,17 +25,6 @@ else()
   add_definitions(-DHAVE_TIMESPEC_GET)
 endif()
 
-option (DEBUG "Enable debugging" FALSE)
-
-if(${DEBUG} MATCHES "on")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
-else()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -DNDEBUG")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -DNDEBUG")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -s")
-endif()
-
 add_library(glcpp STATIC "src/compiler/glsl/glcpp/glcpp-lex.c"
                          "src/compiler/glsl/glcpp/glcpp-parse.c"
                          "src/compiler/glsl/glcpp/glcpp.h"
