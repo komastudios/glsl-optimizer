@@ -1922,7 +1922,7 @@ ir_print_glsl_visitor::visit(ir_typedecl_statement *ir)
 
 		// Find a variable defined by this interface, as it holds some necessary data.
 		exec_node* n = ir;
-		while (n = n->get_next()) {
+		while ((n = n->get_next())) {
 			ir_variable* v = ((ir_instruction *)n)->as_variable();
 			if (v != NULL && v->get_interface_type() == ir->type_decl) {
 				interface_var = v;

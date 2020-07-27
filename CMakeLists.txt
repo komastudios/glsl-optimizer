@@ -4,6 +4,8 @@ project(glsl_optimizer VERSION 0.1
                        DESCRIPTION "GLSL Optimizer"
                        LANGUAGES C CXX)
 
+set(CMAKE_CXX_STANDARD 11)
+
 include_directories(include)
 include_directories(src/mesa)
 include_directories(src/mapi)
@@ -16,6 +18,7 @@ include_directories(src/util)
 
 add_definitions(-D__STDC_FORMAT_MACROS)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  add_definitions(-D_GNU_SOURCE)
   add_definitions(-DHAVE_ENDIAN_H)
 endif()
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
