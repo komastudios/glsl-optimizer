@@ -718,8 +718,12 @@ glslopt_shader* glslopt_optimize (glslopt_ctx* ctx, glslopt_shader_type type, co
 	ralloc_free (ir);
 	ralloc_free (state);
 
-	if (linked_shader)
+	if (linked_shader) {
+		if (linked_shader->Program) {
+			ralloc_free(linked_shader->Program);
+		}
 		ralloc_free(linked_shader);
+	}
 
 	return shader;
 }
