@@ -1,7 +1,10 @@
 #include "shader.h"
+#include <nan.h>
 
 using namespace v8;
 using namespace node;
+
+Persistent<Function> Shader::constructor;
 
 //----------------------------------------------------------------------
 
@@ -61,107 +64,119 @@ const char* Shader::getLog() const
 
 //----------------------------------------------------------------------
 
-NAN_METHOD(Shader::New)
+void Shader::Init(Handle<Object> exports)
 {
-	/*
-	//TODO throwing exceptions with Nan
-	// Checking arguments
-	if(info.Length() != 3)
-	{
-		Nan::ThrowTypeError("Need three arguments");
-	  info.GetReturnValue().Set(Nan::Undefined());
-	}
+	NanScope();
 
-	// Checking compiler
-	if(!info[0]->IsObject())
-	{
-		Nan::ThrowTypeError("The compiler is not a valid Object");
-		info.GetReturnValue().Set(Nan::Undefined());
-	}
+	// Prepare constructor template
+	Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(New);
+	tpl->SetClassName(NanNew<String>("Shader"));
+	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-	// Checking shader type
-	if (!info[1]->IsInt32())
-	{
-		Nan::ThrowTypeError("The shader type is not a valid Integer");
-		info.GetReturnValue().Set(Nan::Undefined());
-	}
+	// Prototype
+	NanSetPrototypeTemplate(tpl, "dispose", NanNew<FunctionTemplate>(Dispose));
+	NanSetPrototypeTemplate(tpl, "compiled", NanNew<FunctionTemplate>(Compiled));
+	NanSetPrototypeTemplate(tpl, "output", NanNew<FunctionTemplate>(Output));
+	NanSetPrototypeTemplate(tpl, "rawOutput", NanNew<FunctionTemplate>(RawOutput));
+	NanSetPrototypeTemplate(tpl, "log", NanNew<FunctionTemplate>(Log));
 
-	// Checking the shader source code
-	if (!info[2]->IsString())
-	{
-		Nan::ThrowTypeError("The source code is not a valid String");
-		info.GetReturnValue().Set(Nan::Undefined());
-	}
-	*/
+	// Export the class
+	NanAssignPersistent<Function>(constructor, tpl->GetFunction());
+	exports->Set(NanNew<String>("Shader"), tpl->GetFunction());
+}
 
-	//TODO switch to Nan ASA exceptions get fixed
-	if(info.Length() == 3) {
-		if(info[0]->IsObject() && info[1]->IsInt32() && info[2]->IsString())
+//----------------------------------------------------------------------
+
+Handle<Value> Shader::New(const Arguments& args)
+{
+	NanScope();
+
+	if (args.Length() == 3)
+	{
+		// Check the first parameter (compiler)
+		Local<Value> args0 = args[0];
+
+		if (args0->IsObject())
 		{
-			Compiler* compiler = ObjectWrap::Unwrap<Compiler>(info[0]->ToObject());
-			int type = info[1]->Int32Value();
-			String::Utf8Value sourceCode(info[2]->ToString());
+			// Check the second parameter (shader type)
+			Local<Value> args1 = args[1];
 
-			Shader* obj = new Shader(compiler, type, *sourceCode);
+			if (args1->IsInt32())
+			{
+				// Check the third parameter (source code)
+				Local<Value> args2 = args[2];
 
-			obj->Wrap(info.This());
-			info.GetReturnValue().Set(info.This());
+				if (args2->IsString())
+				{
+					Compiler* compiler = ObjectWrap::Unwrap<Compiler>(args0->ToObject());
+					int type = args1->Int32Value();
+					String::Utf8Value sourceCode(args2->ToString());
+	
+					Shader* obj = new Shader(compiler, type, *sourceCode);
+					obj->Wrap(args.This());
+
+					return args.This();
+				}
+			}
 		}
-		else
-		{
-			std::cerr << "Error: Invalid arguments for Shader" << std::endl;
-			info.GetReturnValue().Set(Nan::Undefined());
-			exit(1);
-		}
-	} else {
-		std::cerr << "Error: Invalid number of arguments for Shader" << std::endl;
-		info.GetReturnValue().Set(Nan::Undefined());
-		exit(1);
 	}
+
+	// Couldn't create the Shader
+	NanThrowError("Invalid arguments");
 }
 
 //----------------------------------------------------------------------
 
 NAN_METHOD(Shader::Dispose)
 {
-	Shader* obj = ObjectWrap::Unwrap<Shader>(info.This());
+	NanScope();
+
+	Shader* obj = ObjectWrap::Unwrap<Shader>(args.This());
 	obj->release();
 
-	info.GetReturnValue().Set(Nan::Undefined());
+	NanReturnUndefined();
 }
 
 //----------------------------------------------------------------------
 
 NAN_METHOD(Shader::Compiled)
 {
-	Shader* obj = ObjectWrap::Unwrap<Shader>(info.This());
+	NanScope();
 
-	info.GetReturnValue().Set(Nan::New<Boolean>(obj->isCompiled()));
+	Shader* obj = ObjectWrap::Unwrap<Shader>(args.This());
+
+	NanReturnValue(NanNew<Boolean>(obj->isCompiled()));
 }
 
 //----------------------------------------------------------------------
 
 NAN_METHOD(Shader::Output)
 {
-	Shader* obj = ObjectWrap::Unwrap<Shader>(info.This());
+	NanScope();
 
-	info.GetReturnValue().Set(Nan::New<String>(obj->getOutput()).ToLocalChecked());
+	Shader* obj = ObjectWrap::Unwrap<Shader>(args.This());
+
+	NanReturnValue(NanNew<String>(obj->getOutput()));
 }
 
 //----------------------------------------------------------------------
 
 NAN_METHOD(Shader::RawOutput)
 {
-	Shader* obj = ObjectWrap::Unwrap<Shader>(info.This());
+	NanScope();
 
-	info.GetReturnValue().Set(Nan::New<String>(obj->getRawOutput()).ToLocalChecked());
+	Shader* obj = ObjectWrap::Unwrap<Shader>(args.This());
+
+	NanReturnValue(NanNew<String>(obj->getRawOutput()));
 }
 
 //----------------------------------------------------------------------
 
 NAN_METHOD(Shader::Log)
 {
-	Shader* obj = ObjectWrap::Unwrap<Shader>(info.This());
+	NanScope();
 
-	info.GetReturnValue().Set(Nan::New<String>(obj->getLog()).ToLocalChecked());
+	Shader* obj = ObjectWrap::Unwrap<Shader>(args.This());
+
+	NanReturnValue(NanNew<String>(obj->getLog()));
 }

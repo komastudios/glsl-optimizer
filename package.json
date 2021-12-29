@@ -24,9 +24,6 @@
   "readmeFilename": "README.md",
   "author": "Aras Pranckevičius",
   "license": "MIT",
-  "engines": {
-    "node": ">= 0.12.0"
-  },
   "gypfile": true,
   "bugs": {
     "url": "https://github.com/aras-p/glsl-optimizer/issues"
@@ -36,6 +33,6 @@
     "test": "tests"
   },
   "dependencies": {
-    "nan": "~2.6.x"
+    "nan": "~1.2.0"
   }
 }

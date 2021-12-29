@@ -32,7 +32,6 @@
 #define STANDALONE_SCAFFOLDING_H
 
 #include <assert.h>
-#include <stdio.h>
 #include "main/mtypes.h"
 
 extern "C" void
