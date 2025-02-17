@@ -4,6 +4,7 @@
 #include <iostream>
 #include <utility>
 #include <stdexcept>
+#include <string_view>
 
 #include "glsl_optimizer.h"
 
@@ -13,11 +14,30 @@
 #define TEST_COMPILE_SHADER(type, src, expected) \
     auto [success, output] = compileShader(type, src); \
     EXPECT_TRUE(success) << "failed to compile shader: " << output; \
-    EXPECT_EQ(expected, output)
+    EXPECT_EQ(TrimStr(expected), TrimStr(output))
 
 using namespace ::testing;
 
 namespace {
+
+constexpr std::string_view kWhitespaceCharacters { " \n\r\t" };
+
+constexpr std::string_view TrimLeft(std::string_view source)
+{
+    const auto idx = source.find_first_not_of(kWhitespaceCharacters);
+    return idx != std::string_view::npos ? source.substr(idx) : std::string_view{};
+}
+
+constexpr std::string_view TrimRight(std::string_view source)
+{
+    const auto idx = source.find_last_not_of(kWhitespaceCharacters);
+    return idx != std::string_view::npos ? source.substr(0, idx+1) : std::string_view{};
+}
+
+constexpr std::string_view TrimStr(std::string_view source)
+{
+    return TrimRight(TrimLeft(source));
+}
 
 class OptimizerTest : public ::testing::Test
 {
@@ -117,11 +137,8 @@ std::pair<bool, std::string> OptimizerTest::compileShader(glslopt_shader_type ty
 
     glslopt_cleanup(ctx);
 
-    if (!outp)
+    if (!outp) {
         throw std::runtime_error { "unexpected null pointer" };
-
-    while (!output.empty() && output.back() == '\n') {
-        output.pop_back();
     }
 
     return std::make_pair(success, output);
