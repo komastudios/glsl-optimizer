@@ -6,7 +6,23 @@ project(glsl_optimizer VERSION 0.1
 
 set(CMAKE_CXX_STANDARD 11)
 
-option(GLSL_OPTIMIZER_TESTS "Build tests" OFF)
+option(GLSL_OPTIMIZER_UNIT_TESTS "Build unit tests" OFF)
+
+if (GLSL_OPTIMIZER_UNIT_TESTS)
+  enable_testing()
+  include(FetchContent)
+
+  if (GLSL_OPTIMIZER_UNIT_TESTS)
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        v1.16.0
+    )
+    FetchContent_MakeAvailable(googletest)
+
+    add_subdirectory(tests)
+  endif()
+endif()
 
 include_directories(include)
 include_directories(src/mesa)
@@ -172,21 +188,3 @@ target_link_libraries(glsl_optimizer glcpp mesa)
 
 add_executable(glslopt "contrib/glslopt/Main.cpp")
 target_link_libraries(glslopt glsl_optimizer)
-
-if (GLSL_OPTIMIZER_TESTS)
-  set(CMAKE_CXX_STANDARD 14)
-  set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-  enable_testing()
-  include(FetchContent)
-
-  FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        v1.16.0
-  )
-
-  FetchContent_MakeAvailable(googletest)
-
-  add_subdirectory(test)
-endif()
