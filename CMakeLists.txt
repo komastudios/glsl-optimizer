@@ -1,51 +1,30 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.14)
 
-include_directories(include)
-include_directories(src/mesa)
-include_directories(src/mapi)
-include_directories(src/glsl)
-include_directories(src)
+project(glsl_optimizer 
+    VERSION 0.1
+    DESCRIPTION "GLSL Optimizer"
+    LANGUAGES C CXX)
 
-option (DEBUG "Enable debugging" FALSE)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-if(${DEBUG} MATCHES "on")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
-else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os -DNDEBUG")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -DNDEBUG")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -s")
+option(GLSL_OPTIMIZER_TOOLS "Build tools" OFF)
+option(GLSL_OPTIMIZER_UNIT_TESTS "Build unit tests" OFF)
+option(GLSL_OPTIMIZER_RUNTIME_TESTS "Build runtime tests" OFF)
+
+if (GLSL_OPTIMIZER_UNIT_TESTS)
+    enable_testing()
+    include(FetchContent)
+
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        v1.16.0
+    )
+    FetchContent_MakeAvailable(googletest)
 endif()
 
-file(GLOB glcpp-library_sources src/glsl/glcpp/*.c src/util/*.c)
-#file(GLOB glcpp-library_sources_remove src/glsl/glcpp/glcpp.c)
-#list(REMOVE_ITEM glcpp-library_sources ${glcpp-library_sources_remove})
-add_library(glcpp-library ${glcpp-library_sources})
+add_subdirectory(src)
+add_subdirectory(contrib)
 
-file(GLOB mesa_sources src/mesa/program/*.c src/mesa/main/*.c)
-add_library(mesa ${mesa_sources})
-
-file(GLOB glsl_sources src/glsl/*.cpp src/glsl/*.c)
-file(GLOB glsl_sources_remove src/glsl/main.cpp src/glsl/builtin_stubs.cpp)
-list(REMOVE_ITEM glsl_sources ${glsl_sources_remove})
-add_library(glsl_optimizer ${glsl_sources})
-target_link_libraries(glsl_optimizer glcpp-library mesa)
-
-add_executable(glsl_compiler src/glsl/main.cpp)
-target_link_libraries(glsl_compiler glsl_optimizer)
-
-file(GLOB glsl_test_sources tests/*.cpp)
-add_executable(glsl_test ${glsl_test_sources})
-target_link_libraries(glsl_test glsl_optimizer)
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    # OSX-specific build requirements
-    find_library(OpenGL_LIBRARY OpenGL )
-    target_link_libraries(glsl_test ${OpenGL_LIBRARY})
-endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-
-file(GLOB glslopt_sources contrib/glslopt/*.cpp)
-add_executable(glslopt ${glslopt_sources})
-target_link_libraries(glslopt glsl_optimizer)
-
-#add_executable(glcpp src/glsl/glcpp/glcpp.c)
-#target_link_libraries(glcpp glsl_optimizer)
+add_subdirectory(tests)

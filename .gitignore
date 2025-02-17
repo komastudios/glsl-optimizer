@@ -76,3 +76,7 @@ glsl_compiler
 
 build
 metalTemp.metal
+
+/.idea/
+/cmake-build-*/
+/build*/
