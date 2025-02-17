@@ -1,10 +1,12 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.14)
 
 project(glsl_optimizer VERSION 0.1
                        DESCRIPTION "GLSL Optimizer"
                        LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 11)
+
+option(GLSL_OPTIMIZER_TESTS "Build tests" OFF)
 
 include_directories(include)
 include_directories(src/mesa)
@@ -165,7 +167,26 @@ add_library(glsl_optimizer STATIC "src/compiler/glsl_types.cpp"
                                   "src/compiler/glsl/string_to_uint_map.cpp"
                                   "src/compiler/shader_enums.c")
 
+target_include_directories(glsl_optimizer PUBLIC include src/compiler/glsl)
 target_link_libraries(glsl_optimizer glcpp mesa)
 
 add_executable(glslopt "contrib/glslopt/Main.cpp")
 target_link_libraries(glslopt glsl_optimizer)
+
+if (GLSL_OPTIMIZER_TESTS)
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+  enable_testing()
+  include(FetchContent)
+
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.16.0
+  )
+
+  FetchContent_MakeAvailable(googletest)
+
+  add_subdirectory(test)
+endif()
