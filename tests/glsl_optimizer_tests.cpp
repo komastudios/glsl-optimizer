@@ -81,6 +81,31 @@ void main ()
 })GLSL");
 }
 
+// NOLINTNEXTLINE
+TEST_F(OptimizerTest, FragmentShaderHighPrecision)
+{
+    TEST_COMPILE_SHADER(FRAGMENT_SHADER, R"GLSL(
+precision mediump float;
+
+uniform sampler2D mainTex;
+
+varying vec4 color;
+varying highp vec2 uv;
+
+void main()
+{
+	gl_FragColor = texture2D(mainTex, uv) * color;
+}
+    )GLSL", R"GLSL(precision mediump float;
+uniform lowp sampler2D mainTex;
+varying mediump vec4 color;
+varying highp vec2 uv;
+void main ()
+{
+  gl_FragColor = (texture2D (mainTex, uv) * color);
+})GLSL");
+}
+
 std::pair<bool, std::string> OptimizerTest::compileShader(glslopt_shader_type type, const std::string& shaderSrc) const
 {
     auto ctx = glslopt_initialize(shaderTargetLang);
