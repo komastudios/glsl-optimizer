@@ -73,7 +73,7 @@ ir_vec_index_to_swizzle_visitor::convert_vector_extract_to_swizzle(ir_rvalue *ir
    if (idx == NULL)
       return ir;
 
-   void *ctx = ralloc_parent(ir);
+   void *ctx = glslopt_ralloc_parent(ir);
    this->progress = true;
 
    /* Page 40 of the GLSL 1.20 spec says:

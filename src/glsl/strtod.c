@@ -42,7 +42,7 @@
  * point is always '.'
  */
 double
-glsl_strtod(const char *s, char **end)
+glslopt_glsl_strtod(const char *s, char **end)
 {
 #if defined(_GNU_SOURCE) && !defined(__CYGWIN__) && !defined(__FreeBSD__) && \
    !defined(__HAIKU__) && !defined(__UCLIBC__)
@@ -62,7 +62,7 @@ glsl_strtod(const char *s, char **end)
  * point is always '.'
  */
 float
-glsl_strtof(const char *s, char **end)
+glslopt_glsl_strtof(const char *s, char **end)
 {
 #if defined(_GNU_SOURCE) && !defined(__CYGWIN__) && !defined(__FreeBSD__) && \
    !defined(__HAIKU__) && !defined(__UCLIBC__)

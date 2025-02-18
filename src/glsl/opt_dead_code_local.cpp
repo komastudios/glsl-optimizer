@@ -220,7 +220,7 @@ process_assignment(void *ctx, ir_assignment *ir, exec_list *assignments)
 		  entry->ir->remove();
 		  entry->remove();
 	       } else {
-		  void *mem_ctx = ralloc_parent(entry->ir);
+		  void *mem_ctx = glslopt_ralloc_parent(entry->ir);
 		  /* Reswizzle the RHS arguments according to the new
 		   * write_mask.
 		   */
@@ -292,7 +292,7 @@ dead_code_local_basic_block(ir_instruction *first,
    bool *out_progress = (bool *)data;
    bool progress = false;
 
-   void *ctx = ralloc_context(NULL);
+   void *ctx = glslopt_ralloc_context(NULL);
    /* Safe looping, since process_assignment */
    for (ir = first, ir_next = (ir_instruction *)first->next;;
 	ir = ir_next, ir_next = (ir_instruction *)ir->next) {
@@ -314,7 +314,7 @@ dead_code_local_basic_block(ir_instruction *first,
 	 break;
    }
    *out_progress = progress;
-   ralloc_free(ctx);
+   glslopt_ralloc_free(ctx);
 }
 
 /**

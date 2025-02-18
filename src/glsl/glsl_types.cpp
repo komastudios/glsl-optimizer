@@ -47,7 +47,7 @@ void
 glsl_type::init_ralloc_type_ctx(void)
 {
    std::call_once(glsl_type_ctx_init_flag, []() {
-      glsl_type::mem_ctx = ralloc_autofree_context();
+      glsl_type::mem_ctx = glslopt_ralloc_autofree_context();
       assert(glsl_type::mem_ctx != NULL);
    });
 }
@@ -64,7 +64,7 @@ glsl_type::glsl_type(GLenum gl_type,
 {
    init_ralloc_type_ctx();
    assert(name != NULL);
-   this->name = ralloc_strdup(this->mem_ctx, name);
+   this->name = glslopt_ralloc_strdup(this->mem_ctx, name);
    /* Neither dimension is zero or both dimensions are zero.
     */
    assert((vector_elements == 0) == (matrix_columns == 0));
@@ -82,7 +82,7 @@ glsl_type::glsl_type(GLenum gl_type, glsl_base_type base_type,
 {
    init_ralloc_type_ctx();
    assert(name != NULL);
-   this->name = ralloc_strdup(this->mem_ctx, name);
+   this->name = glslopt_ralloc_strdup(this->mem_ctx, name);
    memset(& fields, 0, sizeof(fields));
 
    if (base_type == GLSL_TYPE_SAMPLER) {
@@ -106,12 +106,12 @@ glsl_type::glsl_type(const glsl_struct_field *fields, unsigned num_fields,
 
    init_ralloc_type_ctx();
    assert(name != NULL);
-   this->name = ralloc_strdup(this->mem_ctx, name);
+   this->name = glslopt_ralloc_strdup(this->mem_ctx, name);
    this->fields.structure = ralloc_array(this->mem_ctx,
 					 glsl_struct_field, length);
    for (i = 0; i < length; i++) {
       this->fields.structure[i].type = fields[i].type;
-      this->fields.structure[i].name = ralloc_strdup(this->fields.structure,
+      this->fields.structure[i].name = glslopt_ralloc_strdup(this->fields.structure,
 						     fields[i].name);
       this->fields.structure[i].precision = fields[i].precision;
       this->fields.structure[i].location = fields[i].location;
@@ -135,12 +135,12 @@ glsl_type::glsl_type(const glsl_struct_field *fields, unsigned num_fields,
 
    init_ralloc_type_ctx();
    assert(name != NULL);
-   this->name = ralloc_strdup(this->mem_ctx, name);
+   this->name = glslopt_ralloc_strdup(this->mem_ctx, name);
    this->fields.structure = ralloc_array(this->mem_ctx,
 					 glsl_struct_field, length);
    for (i = 0; i < length; i++) {
       this->fields.structure[i].type = fields[i].type;
-      this->fields.structure[i].name = ralloc_strdup(this->fields.structure,
+      this->fields.structure[i].name = glslopt_ralloc_strdup(this->fields.structure,
 						     fields[i].name);
       this->fields.structure[i].precision = fields[i].precision;
       this->fields.structure[i].location = fields[i].location;
@@ -299,24 +299,24 @@ _mesa_glsl_release_types(void)
    glsl_type_lock_scope
 
    if (glsl_type::array_types != NULL) {
-      hash_table_dtor(glsl_type::array_types);
+      glslopt_hash_table_dtor(glsl_type::array_types);
       glsl_type::array_types = NULL;
    }
 
    if (glsl_type::record_types != NULL) {
-      hash_table_dtor(glsl_type::record_types);
+      glslopt_hash_table_dtor(glsl_type::record_types);
       glsl_type::record_types = NULL;
    }
 }
 
-void glsl_type_singleton_init_or_ref(void)
+void glslopt_glsl_type_singleton_init_or_ref(void)
 {
    glsl_type_lock_scope
 
    glsl_type_users++;
 }
 
-void glsl_type_singleton_decref(void)
+void glslopt_glsl_type_singleton_decref(void)
 {
    glsl_type_lock_scope
 
@@ -347,7 +347,7 @@ glsl_type::glsl_type(const glsl_type *array, unsigned length) :
     * NUL.
     */
    const unsigned name_length = (unsigned)strlen(array->name) + 10 + 3;
-   char *const n = (char *) ralloc_size(this->mem_ctx, name_length);
+   char *const n = (char *) glslopt_ralloc_size(this->mem_ctx, name_length);
 
    if (length == 0)
       snprintf(n, name_length, "%s[]", array->name);
@@ -486,7 +486,7 @@ glsl_type::get_array_instance(const glsl_type *base, unsigned array_size)
    glsl_type_lock_scope
 
    if (array_types == NULL) {
-      array_types = hash_table_ctor(64, hash_table_string_hash,
+      array_types = glslopt_hash_table_ctor(64, glslopt_hash_table_string_hash,
 				    hash_table_string_compare);
    }
 
@@ -498,11 +498,11 @@ glsl_type::get_array_instance(const glsl_type *base, unsigned array_size)
    char key[128];
    snprintf(key, sizeof(key), "%p[%u]", (void *) base, array_size);
 
-   const glsl_type *t = (glsl_type *) hash_table_find(array_types, key);
+   const glsl_type *t = (glsl_type *) glslopt_hash_table_find(array_types, key);
    if (t == NULL) {
       t = new glsl_type(base, array_size);
 
-      hash_table_insert(array_types, (void *) t, ralloc_strdup(mem_ctx, key));
+      glslopt_hash_table_insert(array_types, (void *) t, glslopt_ralloc_strdup(mem_ctx, key));
    }
 
    assert(t->base_type == GLSL_TYPE_ARRAY);
@@ -599,7 +599,7 @@ glsl_type::record_key_hash(const void *a)
 		       "%p", (void *) key->fields.structure[i].type);
    }
 
-   return hash_table_string_hash(& hash_key);
+   return glslopt_hash_table_string_hash(& hash_key);
 }
 
 
@@ -613,14 +613,14 @@ glsl_type::get_record_instance(const glsl_struct_field *fields,
    const glsl_type key(fields, num_fields, name);
 
    if (record_types == NULL) {
-      record_types = hash_table_ctor(64, record_key_hash, record_key_compare);
+      record_types = glslopt_hash_table_ctor(64, record_key_hash, record_key_compare);
    }
 
-   const glsl_type *t = (glsl_type *) hash_table_find(record_types, & key);
+   const glsl_type *t = (glsl_type *) glslopt_hash_table_find(record_types, & key);
    if (t == NULL) {
       t = new glsl_type(fields, num_fields, name);
 
-      hash_table_insert(record_types, (void *) t, t);
+      glslopt_hash_table_insert(record_types, (void *) t, t);
    }
 
    assert(t->base_type == GLSL_TYPE_STRUCT);
@@ -642,14 +642,14 @@ glsl_type::get_interface_instance(const glsl_struct_field *fields,
    const glsl_type key(fields, num_fields, packing, block_name);
 
    if (interface_types == NULL) {
-      interface_types = hash_table_ctor(64, record_key_hash, record_key_compare);
+      interface_types = glslopt_hash_table_ctor(64, record_key_hash, record_key_compare);
    }
 
-   const glsl_type *t = (glsl_type *) hash_table_find(interface_types, & key);
+   const glsl_type *t = (glsl_type *) glslopt_hash_table_find(interface_types, & key);
    if (t == NULL) {
       t = new glsl_type(fields, num_fields, packing, block_name);
 
-      hash_table_insert(interface_types, (void *) t, t);
+      glslopt_hash_table_insert(interface_types, (void *) t, t);
    }
 
    assert(t->base_type == GLSL_TYPE_INTERFACE);

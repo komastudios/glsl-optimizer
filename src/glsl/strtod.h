@@ -32,10 +32,10 @@ extern "C" {
 #endif
 
 extern double
-glsl_strtod(const char *s, char **end);
+glslopt_glsl_strtod(const char *s, char **end);
 
 extern float
-glsl_strtof(const char *s, char **end);
+glslopt_glsl_strtof(const char *s, char **end);
 
 
 #ifdef __cplusplus

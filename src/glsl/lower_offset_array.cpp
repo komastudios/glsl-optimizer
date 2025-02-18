@@ -61,7 +61,7 @@ brw_lower_offset_array_visitor::handle_rvalue(ir_rvalue **rv)
    if (ir->op != ir_tg4 || !ir->offset || !ir->offset->type->is_array())
       return;
 
-   void *mem_ctx = ralloc_parent(ir);
+   void *mem_ctx = glslopt_ralloc_parent(ir);
 
    ir_variable *var =
       new (mem_ctx) ir_variable(ir->type, "result", ir_var_temporary, ir->get_precision());

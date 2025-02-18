@@ -102,13 +102,13 @@ add_child(ralloc_header *parent, ralloc_header *info)
 }
 
 void *
-ralloc_context(const void *ctx)
+glslopt_ralloc_context(const void *ctx)
 {
-   return ralloc_size(ctx, 0);
+   return glslopt_ralloc_size(ctx, 0);
 }
 
 void *
-ralloc_size(const void *ctx, size_t size)
+glslopt_ralloc_size(const void *ctx, size_t size)
 {
    void *block = calloc(1, size + sizeof(ralloc_header));
    ralloc_header *info;
@@ -129,9 +129,9 @@ ralloc_size(const void *ctx, size_t size)
 }
 
 void *
-rzalloc_size(const void *ctx, size_t size)
+glslopt_rzalloc_size(const void *ctx, size_t size)
 {
-   void *ptr = ralloc_size(ctx, size);
+   void *ptr = glslopt_ralloc_size(ctx, size);
    if (likely(ptr != NULL))
       memset(ptr, 0, size);
    return ptr;
@@ -169,44 +169,44 @@ resize(void *ptr, size_t size)
 }
 
 void *
-reralloc_size(const void *ctx, void *ptr, size_t size)
+glslopt_reralloc_size(const void *ctx, void *ptr, size_t size)
 {
    if (unlikely(ptr == NULL))
-      return ralloc_size(ctx, size);
+      return glslopt_ralloc_size(ctx, size);
 
-   assert(ralloc_parent(ptr) == ctx);
+   assert(glslopt_ralloc_parent(ptr) == ctx);
    return resize(ptr, size);
 }
 
 void *
-ralloc_array_size(const void *ctx, size_t size, size_t count)
+glslopt_ralloc_array_size(const void *ctx, size_t size, size_t count)
 {
    if (count > SIZE_MAX/size)
       return NULL;
 
-   return ralloc_size(ctx, size * count);
+   return glslopt_ralloc_size(ctx, size * count);
 }
 
 void *
-rzalloc_array_size(const void *ctx, size_t size, size_t count)
+glslopt_rzalloc_array_size(const void *ctx, size_t size, size_t count)
 {
    if (count > SIZE_MAX/size)
       return NULL;
 
-   return rzalloc_size(ctx, size * count);
+   return glslopt_rzalloc_size(ctx, size * count);
 }
 
 void *
-reralloc_array_size(const void *ctx, void *ptr, size_t size, size_t count)
+glslopt_reralloc_array_size(const void *ctx, void *ptr, size_t size, size_t count)
 {
    if (count > SIZE_MAX/size)
       return NULL;
 
-   return reralloc_size(ctx, ptr, size * count);
+   return glslopt_reralloc_size(ctx, ptr, size * count);
 }
 
 void
-ralloc_free(void *ptr)
+glslopt_ralloc_free(void *ptr)
 {
    ralloc_header *info;
 
@@ -256,7 +256,7 @@ unsafe_free(ralloc_header *info)
 }
 
 void
-ralloc_steal(const void *new_ctx, void *ptr)
+glslopt_ralloc_steal(const void *new_ctx, void *ptr)
 {
    ralloc_header *info, *parent;
 
@@ -272,7 +272,7 @@ ralloc_steal(const void *new_ctx, void *ptr)
 }
 
 void *
-ralloc_parent(const void *ptr)
+glslopt_ralloc_parent(const void *ptr)
 {
    ralloc_header *info;
 
@@ -288,28 +288,28 @@ static void *autofree_context = NULL;
 static void
 autofree(void)
 {
-   ralloc_free(autofree_context);
+   glslopt_ralloc_free(autofree_context);
 }
 
 void *
-ralloc_autofree_context(void)
+glslopt_ralloc_autofree_context(void)
 {
    if (unlikely(autofree_context == NULL)) {
-      autofree_context = ralloc_context(NULL);
+      autofree_context = glslopt_ralloc_context(NULL);
       atexit(autofree);
    }
    return autofree_context;
 }
 
 void
-ralloc_set_destructor(const void *ptr, void(*destructor)(void *))
+glslopt_ralloc_set_destructor(const void *ptr, void(*destructor)(void *))
 {
    ralloc_header *info = get_header(ptr);
    info->destructor = destructor;
 }
 
 char *
-ralloc_strdup(const void *ctx, const char *str)
+glslopt_ralloc_strdup(const void *ctx, const char *str)
 {
    size_t n;
    char *ptr;
@@ -325,7 +325,7 @@ ralloc_strdup(const void *ctx, const char *str)
 }
 
 char *
-ralloc_strndup(const void *ctx, const char *str, size_t max)
+glslopt_ralloc_strndup(const void *ctx, const char *str, size_t max)
 {
    size_t n;
    char *ptr;
@@ -365,13 +365,13 @@ cat(char **dest, const char *str, size_t n)
 
 
 bool
-ralloc_strcat(char **dest, const char *str)
+glslopt_ralloc_strcat(char **dest, const char *str)
 {
    return cat(dest, str, strlen(str));
 }
 
 bool
-ralloc_strncat(char **dest, const char *str, size_t n)
+glslopt_ralloc_strncat(char **dest, const char *str, size_t n)
 {
    /* Clamp n to the string length */
    size_t str_length = strlen(str);
@@ -382,12 +382,12 @@ ralloc_strncat(char **dest, const char *str, size_t n)
 }
 
 char *
-ralloc_asprintf(const void *ctx, const char *fmt, ...)
+glslopt_ralloc_asprintf(const void *ctx, const char *fmt, ...)
 {
    char *ptr;
    va_list args;
    va_start(args, fmt);
-   ptr = ralloc_vasprintf(ctx, fmt, args);
+   ptr = glslopt_ralloc_vasprintf(ctx, fmt, args);
    va_end(args);
    return ptr;
 }
@@ -396,7 +396,7 @@ ralloc_asprintf(const void *ctx, const char *fmt, ...)
  * format and argument list, not including the \0 byte.
  */
 size_t
-printf_length(const char *fmt, va_list untouched_args)
+glslopt_printf_length(const char *fmt, va_list untouched_args)
 {
    int size;
    char junk;
@@ -422,11 +422,11 @@ printf_length(const char *fmt, va_list untouched_args)
 }
 
 char *
-ralloc_vasprintf(const void *ctx, const char *fmt, va_list args)
+glslopt_ralloc_vasprintf(const void *ctx, const char *fmt, va_list args)
 {
-   size_t size = printf_length(fmt, args) + 1;
+   size_t size = glslopt_printf_length(fmt, args) + 1;
 
-   char *ptr = ralloc_size(ctx, size);
+   char *ptr = glslopt_ralloc_size(ctx, size);
    if (ptr != NULL)
       vsnprintf(ptr, size, fmt, args);
 
@@ -434,38 +434,38 @@ ralloc_vasprintf(const void *ctx, const char *fmt, va_list args)
 }
 
 bool
-ralloc_asprintf_append(char **str, const char *fmt, ...)
+glslopt_ralloc_asprintf_append(char **str, const char *fmt, ...)
 {
    bool success;
    va_list args;
    va_start(args, fmt);
-   success = ralloc_vasprintf_append(str, fmt, args);
+   success = glslopt_ralloc_vasprintf_append(str, fmt, args);
    va_end(args);
    return success;
 }
 
 bool
-ralloc_vasprintf_append(char **str, const char *fmt, va_list args)
+glslopt_ralloc_vasprintf_append(char **str, const char *fmt, va_list args)
 {
    size_t existing_length;
    assert(str != NULL);
    existing_length = *str ? strlen(*str) : 0;
-   return ralloc_vasprintf_rewrite_tail(str, &existing_length, fmt, args);
+   return glslopt_ralloc_vasprintf_rewrite_tail(str, &existing_length, fmt, args);
 }
 
 bool
-ralloc_asprintf_rewrite_tail(char **str, size_t *start, const char *fmt, ...)
+glslopt_ralloc_asprintf_rewrite_tail(char **str, size_t *start, const char *fmt, ...)
 {
    bool success;
    va_list args;
    va_start(args, fmt);
-   success = ralloc_vasprintf_rewrite_tail(str, start, fmt, args);
+   success = glslopt_ralloc_vasprintf_rewrite_tail(str, start, fmt, args);
    va_end(args);
    return success;
 }
 
 bool
-ralloc_vasprintf_rewrite_tail(char **str, size_t *start, const char *fmt,
+glslopt_ralloc_vasprintf_rewrite_tail(char **str, size_t *start, const char *fmt,
 			      va_list args)
 {
    size_t new_length;
@@ -475,11 +475,11 @@ ralloc_vasprintf_rewrite_tail(char **str, size_t *start, const char *fmt,
 
    if (unlikely(*str == NULL)) {
       // Assuming a NULL context is probably bad, but it's expected behavior.
-      *str = ralloc_vasprintf(NULL, fmt, args);
+      *str = glslopt_ralloc_vasprintf(NULL, fmt, args);
       return true;
    }
 
-   new_length = printf_length(fmt, args);
+   new_length = glslopt_printf_length(fmt, args);
 
    ptr = resize(*str, *start + new_length + 1);
    if (unlikely(ptr == NULL))

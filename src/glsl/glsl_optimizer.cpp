@@ -14,11 +14,11 @@
 
 
 extern "C" struct gl_shader *
-_mesa_new_shader(struct gl_context *ctx, GLuint name, GLenum type);
+glslopt__mesa_new_shader(struct gl_context *ctx, GLuint name, GLenum type);
 
 static void DeleteShader(struct gl_context *ctx, struct gl_shader *shader)
 {
-	ralloc_free(shader);
+	glslopt_ralloc_free(shader);
 }
 
 
@@ -78,7 +78,7 @@ initialize_mesa_context(struct gl_context *ctx, glslopt_target api)
    // For GLES2.0 this would be 1, but we do support GL_EXT_draw_buffers
    ctx->Const.MaxDrawBuffers = 8;
 
-   ctx->Driver.NewShader = _mesa_new_shader;
+   ctx->Driver.NewShader = glslopt__mesa_new_shader;
    ctx->Driver.DeleteShader = DeleteShader;
 }
 
@@ -86,7 +86,7 @@ initialize_mesa_context(struct gl_context *ctx, glslopt_target api)
 struct glslopt_ctx {
 	glslopt_ctx (glslopt_target target) {
 		this->target = target;
-		mem_ctx = ralloc_context (NULL);
+		mem_ctx = glslopt_ralloc_context (NULL);
 		initialize_mesa_context (&mesa_ctx, target);
 
 		_mesa_glsl_builtin_functions_init_or_ref();
@@ -94,7 +94,7 @@ struct glslopt_ctx {
 	~glslopt_ctx() {
 		_mesa_glsl_builtin_functions_decref();
 
-		ralloc_free (mem_ctx);
+		glslopt_ralloc_free (mem_ctx);
 	}
 	struct gl_context mesa_ctx;
 	void* mem_ctx;
@@ -133,13 +133,13 @@ struct glslopt_shader
 	static void* operator new(size_t size, void *ctx)
 	{
 		void *node;
-		node = ralloc_size(ctx, size);
+		node = glslopt_ralloc_size(ctx, size);
 		assert(node != NULL);
 		return node;
 	}
 	static void operator delete(void *node)
 	{
-		ralloc_free(node);
+		glslopt_ralloc_free(node);
 	}
 
 	glslopt_shader ()
@@ -158,7 +158,7 @@ struct glslopt_shader
 		
 		whole_program = rzalloc (NULL, struct gl_shader_program);
 		assert(whole_program != NULL);
-		whole_program->InfoLog = ralloc_strdup(whole_program, "");
+		whole_program->InfoLog = glslopt_ralloc_strdup(whole_program, "");
 		
 		whole_program->Shaders = reralloc(whole_program, whole_program->Shaders, struct gl_shader *, whole_program->NumShaders + 1);
 		assert(whole_program->Shaders != NULL);
@@ -173,14 +173,14 @@ struct glslopt_shader
 	~glslopt_shader()
 	{
 		for (unsigned i = 0; i < MESA_SHADER_STAGES; i++)
-			ralloc_free(whole_program->_LinkedShaders[i]);
+			glslopt_ralloc_free(whole_program->_LinkedShaders[i]);
 		for(GLuint i =0;i< whole_program->NumShaders;i++)
-			ralloc_free(whole_program->Shaders[i]);
-		ralloc_free(whole_program->Shaders);
-		ralloc_free(whole_program->InfoLog);
-		ralloc_free(whole_program);
-		ralloc_free(rawOutput);
-		ralloc_free(optimizedOutput);
+			glslopt_ralloc_free(whole_program->Shaders[i]);
+		glslopt_ralloc_free(whole_program->Shaders);
+		glslopt_ralloc_free(whole_program->InfoLog);
+		glslopt_ralloc_free(whole_program);
+		glslopt_ralloc_free(rawOutput);
+		glslopt_ralloc_free(optimizedOutput);
 	}
 	
 	struct gl_shader_program* whole_program;
@@ -207,8 +207,8 @@ static inline void debug_print_ir (const char* name, exec_list* ir, _mesa_glsl_p
 {
 	#if 0
 	printf("**** %s:\n", name);
-//	_mesa_print_ir (ir, state);
-	char* foobar = _mesa_print_ir_glsl(ir, state, ralloc_strdup(memctx, ""), kPrintGlslFragment);
+//	glslopt__mesa_print_ir (ir, state);
+	char* foobar = _mesa_print_ir_glsl(ir, state, glslopt_ralloc_strdup(memctx, ""), kPrintGlslFragment);
 	printf("%s\n", foobar);
 	validate_ir_tree(ir);
 	#endif
@@ -592,7 +592,7 @@ static void find_shader_variables(glslopt_shader* sh, exec_list* ir)
 				continue;
 
 			glslopt_shader_var& v = sh->inputs[sh->inputCount];
-			v.name = ralloc_strdup(sh, var->name);
+			v.name = glslopt_ralloc_strdup(sh, var->name);
 			glsl_type_to_optimizer_desc(var->type, (glsl_precision)var->data.precision, &v);
 			v.location = var->data.explicit_location ? var->data.location : -1;
 			++sh->inputCount;
@@ -603,7 +603,7 @@ static void find_shader_variables(glslopt_shader* sh, exec_list* ir)
 				continue;
 			
 			glslopt_shader_var& v = sh->uniforms[sh->uniformCount];
-			v.name = ralloc_strdup(sh, var->name);
+			v.name = glslopt_ralloc_strdup(sh, var->name);
 			glsl_type_to_optimizer_desc(var->type, (glsl_precision)var->data.precision, &v);
 			v.location = var->data.explicit_location ? var->data.location : -1;
 			++sh->uniformCount;
@@ -614,7 +614,7 @@ static void find_shader_variables(glslopt_shader* sh, exec_list* ir)
 				continue;
 			
 			glslopt_shader_var& v = sh->textures[sh->textureCount];
-			v.name = ralloc_strdup(sh, var->name);
+			v.name = glslopt_ralloc_strdup(sh, var->name);
 			glsl_type_to_optimizer_desc(var->type, (glsl_precision)var->data.precision, &v);
 			v.location = var->data.explicit_location ? var->data.location : -1;
 			++sh->textureCount;
@@ -648,7 +648,7 @@ glslopt_shader* glslopt_optimize (glslopt_ctx* ctx, glslopt_shader_type type, co
 	}
 	if (!shader->shader->Type)
 	{
-		shader->infoLog = ralloc_asprintf (shader, "Unknown shader type %d", (int)type);
+		shader->infoLog = glslopt_ralloc_asprintf (shader, "Unknown shader type %d", (int)type);
 		shader->status = false;
 		return shader;
 	}
@@ -660,7 +660,7 @@ glslopt_shader* glslopt_optimize (glslopt_ctx* ctx, glslopt_shader_type type, co
 
 	if (!(options & kGlslOptionSkipPreprocessor))
 	{
-		state->error = !!glcpp_preprocess (state, &shaderSource, &state->info_log, state->extensions, &ctx->mesa_ctx);
+		state->error = !!glslopt_glcpp_preprocess (state, &shaderSource, &state->info_log, state->extensions, &ctx->mesa_ctx);
 		if (state->error)
 		{
 			shader->status = !state->error;
@@ -683,9 +683,9 @@ glslopt_shader* glslopt_optimize (glslopt_ctx* ctx, glslopt_shader_type type, co
 	if (!state->error) {
 		validate_ir_tree(ir);
 		if (ctx->target == kGlslTargetMetal)
-			shader->rawOutput = _mesa_print_ir_metal(ir, state, ralloc_strdup(shader, ""), printMode, &shader->uniformsSize);
+			shader->rawOutput = _mesa_print_ir_metal(ir, state, glslopt_ralloc_strdup(shader, ""), printMode, &shader->uniformsSize);
 		else
-			shader->rawOutput = _mesa_print_ir_glsl(ir, state, ralloc_strdup(shader, ""), printMode);
+			shader->rawOutput = _mesa_print_ir_glsl(ir, state, glslopt_ralloc_strdup(shader, ""), printMode);
 	}
 	
 	// Link built-in functions
@@ -724,9 +724,9 @@ glslopt_shader* glslopt_optimize (glslopt_ctx* ctx, glslopt_shader_type type, co
 	if (!state->error)
 	{
 		if (ctx->target == kGlslTargetMetal)
-			shader->optimizedOutput = _mesa_print_ir_metal(ir, state, ralloc_strdup(shader, ""), printMode, &shader->uniformsSize);
+			shader->optimizedOutput = _mesa_print_ir_metal(ir, state, glslopt_ralloc_strdup(shader, ""), printMode, &shader->uniformsSize);
 		else
-			shader->optimizedOutput = _mesa_print_ir_glsl(ir, state, ralloc_strdup(shader, ""), printMode);
+			shader->optimizedOutput = _mesa_print_ir_glsl(ir, state, glslopt_ralloc_strdup(shader, ""), printMode);
 	}
 
 	shader->status = !state->error;
@@ -736,11 +736,11 @@ glslopt_shader* glslopt_optimize (glslopt_ctx* ctx, glslopt_shader_type type, co
 	if (!state->error)
 		calculate_shader_stats (ir, &shader->statsMath, &shader->statsTex, &shader->statsFlow);
 
-	ralloc_free (ir);
-	ralloc_free (state);
+	glslopt_ralloc_free (ir);
+	glslopt_ralloc_free (state);
 
 	if (linked_shader)
-		ralloc_free(linked_shader);
+		glslopt_ralloc_free(linked_shader);
 
 	return shader;
 }

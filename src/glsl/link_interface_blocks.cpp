@@ -196,16 +196,16 @@ class interface_block_definitions
 {
 public:
    interface_block_definitions()
-      : mem_ctx(ralloc_context(NULL)),
-        ht(hash_table_ctor(0, hash_table_string_hash,
+      : mem_ctx(glslopt_ralloc_context(NULL)),
+        ht(glslopt_hash_table_ctor(0, glslopt_hash_table_string_hash,
                            hash_table_string_compare))
    {
    }
 
    ~interface_block_definitions()
    {
-      hash_table_dtor(ht);
-      ralloc_free(mem_ctx);
+      glslopt_hash_table_dtor(ht);
+      glslopt_ralloc_free(mem_ctx);
    }
 
    /**
@@ -214,7 +214,7 @@ public:
     */
    interface_block_definition *lookup(const char *block_name)
    {
-      return (interface_block_definition *) hash_table_find(ht, block_name);
+      return (interface_block_definition *) glslopt_hash_table_find(ht, block_name);
    }
 
    /**
@@ -225,7 +225,7 @@ public:
       interface_block_definition *hash_entry =
          rzalloc(mem_ctx, interface_block_definition);
       *hash_entry = def;
-      hash_table_insert(ht, hash_entry, def.type->name);
+      glslopt_hash_table_insert(ht, hash_entry, def.type->name);
    }
 
 private:

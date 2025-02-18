@@ -48,7 +48,7 @@ ir_factory::make_temp(const glsl_type *type, const char *name, glsl_precision pr
 ir_assignment *
 assign(deref lhs, operand rhs, operand condition, int writemask)
 {
-   void *mem_ctx = ralloc_parent(lhs.val);
+   void *mem_ctx = glslopt_ralloc_parent(lhs.val);
 
    ir_assignment *assign = new(mem_ctx) ir_assignment(lhs.val,
 						      rhs.val,
@@ -79,14 +79,14 @@ assign(deref lhs, operand rhs, operand condition)
 ir_return *
 ret(operand retval)
 {
-   void *mem_ctx = ralloc_parent(retval.val);
+   void *mem_ctx = glslopt_ralloc_parent(retval.val);
    return new(mem_ctx) ir_return(retval.val);
 }
 
 ir_swizzle *
 swizzle(operand a, int swizzle, int components)
 {
-   void *mem_ctx = ralloc_parent(a.val);
+   void *mem_ctx = glslopt_ralloc_parent(a.val);
 
    return new(mem_ctx) ir_swizzle(a.val,
 				  GET_SWZ(swizzle, 0),
@@ -99,7 +99,7 @@ swizzle(operand a, int swizzle, int components)
 ir_swizzle *
 swizzle_for_size(operand a, unsigned components)
 {
-   void *mem_ctx = ralloc_parent(a.val);
+   void *mem_ctx = glslopt_ralloc_parent(a.val);
 
    if ((int)a.val->type->vector_elements < components)
       components = a.val->type->vector_elements;
@@ -180,7 +180,7 @@ swizzle_xyzw(operand a)
 ir_expression *
 expr(ir_expression_operation op, operand a)
 {
-   void *mem_ctx = ralloc_parent(a.val);
+   void *mem_ctx = glslopt_ralloc_parent(a.val);
 
    return new(mem_ctx) ir_expression(op, a.val);
 }
@@ -188,7 +188,7 @@ expr(ir_expression_operation op, operand a)
 ir_expression *
 expr(ir_expression_operation op, operand a, operand b)
 {
-   void *mem_ctx = ralloc_parent(a.val);
+   void *mem_ctx = glslopt_ralloc_parent(a.val);
 
    return new(mem_ctx) ir_expression(op, a.val, b.val);
 }
@@ -196,7 +196,7 @@ expr(ir_expression_operation op, operand a, operand b)
 ir_expression *
 expr(ir_expression_operation op, operand a, operand b, operand c)
 {
-   void *mem_ctx = ralloc_parent(a.val);
+   void *mem_ctx = glslopt_ralloc_parent(a.val);
 
    return new(mem_ctx) ir_expression(op, a.val, b.val, c.val);
 }
@@ -535,7 +535,7 @@ csel(operand a, operand b, operand c)
 ir_expression *
 bitfield_insert(operand a, operand b, operand c, operand d)
 {
-   void *mem_ctx = ralloc_parent(a.val);
+   void *mem_ctx = glslopt_ralloc_parent(a.val);
    return new(mem_ctx) ir_expression(ir_quadop_bitfield_insert,
                                      a.val->type, a.val, b.val, c.val, d.val);
 }
@@ -546,7 +546,7 @@ if_tree(operand condition,
 {
    assert(then_branch != NULL);
 
-   void *mem_ctx = ralloc_parent(condition.val);
+   void *mem_ctx = glslopt_ralloc_parent(condition.val);
 
    ir_if *result = new(mem_ctx) ir_if(condition.val);
    result->then_instructions.push_tail(then_branch);
@@ -561,7 +561,7 @@ if_tree(operand condition,
    assert(then_branch != NULL);
    assert(else_branch != NULL);
 
-   void *mem_ctx = ralloc_parent(condition.val);
+   void *mem_ctx = glslopt_ralloc_parent(condition.val);
 
    ir_if *result = new(mem_ctx) ir_if(condition.val);
    result->then_instructions.push_tail(then_branch);

@@ -93,13 +93,13 @@ public:
    {
       progress = false;
       killed_all = false;
-      mem_ctx = ralloc_context(0);
+      mem_ctx = glslopt_ralloc_context(0);
       this->acp = new(mem_ctx) exec_list;
       this->kills = new(mem_ctx) exec_list;
    }
    ~ir_constant_propagation_visitor()
    {
-      ralloc_free(mem_ctx);
+      glslopt_ralloc_free(mem_ctx);
    }
 
    virtual ir_visitor_status visit_enter(class ir_loop *);
@@ -209,7 +209,7 @@ ir_constant_propagation_visitor::handle_rvalue(ir_rvalue **rvalue)
       }
    }
 
-   *rvalue = new(ralloc_parent(deref)) ir_constant(type, &data);
+   *rvalue = new(glslopt_ralloc_parent(deref)) ir_constant(type, &data);
    this->progress = true;
 }
 

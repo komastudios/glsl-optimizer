@@ -744,7 +744,7 @@ builtin_builder::builtin_builder()
 builtin_builder::~builtin_builder()
 {
    mtx_lock(&builtins_lock);
-   ralloc_free(mem_ctx);
+   glslopt_ralloc_free(mem_ctx);
    mtx_unlock(&builtins_lock);
 }
 
@@ -780,9 +780,9 @@ builtin_builder::initialize()
    if (mem_ctx != NULL)
       return;
 
-   glsl_type_singleton_init_or_ref();
+   glslopt_glsl_type_singleton_init_or_ref();
 
-   mem_ctx = ralloc_context(NULL);
+   mem_ctx = glslopt_ralloc_context(NULL);
    create_shader();
    create_intrinsics();
    create_builtins();
@@ -791,13 +791,13 @@ builtin_builder::initialize()
 void
 builtin_builder::release()
 {
-   ralloc_free(mem_ctx);
+   glslopt_ralloc_free(mem_ctx);
    mem_ctx = NULL;
 
-   ralloc_free(shader);
+   glslopt_ralloc_free(shader);
    shader = NULL;
 
-   glsl_type_singleton_decref();
+   glslopt_glsl_type_singleton_decref();
 }
 
 void
@@ -807,7 +807,7 @@ builtin_builder::create_shader()
     * GLSL utility code that could be linked against any stage, so just
     * arbitrarily pick GL_VERTEX_SHADER.
     */
-   shader = _mesa_new_shader(NULL, 0, GL_VERTEX_SHADER);
+   shader = glslopt__mesa_new_shader(NULL, 0, GL_VERTEX_SHADER);
    shader->symbols = new(mem_ctx) glsl_symbol_table;
 
    gl_ModelViewProjectionMatrix =
@@ -4575,9 +4575,9 @@ builtin_builder::_image_prototype(const glsl_type *image_type,
 
    /* Data arguments. */
    for (unsigned i = 0; i < num_arguments; ++i) {
-      char *arg_name = ralloc_asprintf(NULL, "arg%d", i);
+      char *arg_name = glslopt_ralloc_asprintf(NULL, "arg%d", i);
       sig->parameters.push_tail(in_var(data_type, arg_name));
-      ralloc_free(arg_name);
+      glslopt_ralloc_free(arg_name);
    }
 
    /* Set the maximal set of qualifiers allowed for this image

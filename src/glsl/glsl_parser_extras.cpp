@@ -44,7 +44,7 @@ extern "C" {
 const char *
 glsl_compute_version_string(void *mem_ctx, bool is_es, unsigned version)
 {
-   return ralloc_asprintf(mem_ctx, "GLSL%s %d.%02d", is_es ? " ES" : "",
+   return glslopt_ralloc_asprintf(mem_ctx, "GLSL%s %d.%02d", is_es ? " ES" : "",
                           version / 100, version % 100);
 }
 
@@ -66,7 +66,7 @@ _mesa_glsl_parse_state::_mesa_glsl_parse_state(struct gl_context *_ctx,
    this->translation_unit.make_empty();
    this->symbols = new(mem_ctx) glsl_symbol_table;
 
-   this->info_log = ralloc_strdup(mem_ctx, "");
+   this->info_log = glslopt_ralloc_strdup(mem_ctx, "");
    this->error = false;
    this->loop_nesting_ast = NULL;
 
@@ -177,7 +177,7 @@ _mesa_glsl_parse_state::_mesa_glsl_parse_state(struct gl_context *_ctx,
    /* Create a string for use in error messages to tell the user which GLSL
     * versions are supported.
     */
-   char *supported = ralloc_strdup(this, "");
+   char *supported = glslopt_ralloc_strdup(this, "");
    for (unsigned i = 0; i < this->num_supported_versions; i++) {
       unsigned ver = this->supported_versions[i].ver;
       const char *const prefix = (i == 0)
@@ -185,7 +185,7 @@ _mesa_glsl_parse_state::_mesa_glsl_parse_state(struct gl_context *_ctx,
 	 : ((i == this->num_supported_versions - 1) ? ", and " : ", ");
       const char *const suffix = (this->supported_versions[i].es) ? " ES" : "";
 
-      ralloc_asprintf_append(& supported, "%s%u.%02u%s",
+      glslopt_ralloc_asprintf_append(& supported, "%s%u.%02u%s",
 			     prefix,
 			     ver / 100, ver % 100,
 			     suffix);
@@ -243,7 +243,7 @@ _mesa_glsl_parse_state::check_version(unsigned required_glsl_version,
 
    va_list args;
    va_start(args, fmt);
-   char *problem = ralloc_vasprintf(this, fmt, args);
+   char *problem = glslopt_ralloc_vasprintf(this, fmt, args);
    va_end(args);
    const char *glsl_version_string
       = glsl_compute_version_string(this, false, required_glsl_version);
@@ -251,14 +251,14 @@ _mesa_glsl_parse_state::check_version(unsigned required_glsl_version,
       = glsl_compute_version_string(this, true, required_glsl_es_version);
    const char *requirement_string = "";
    if (required_glsl_version && required_glsl_es_version) {
-      requirement_string = ralloc_asprintf(this, " (%s or %s required)",
+      requirement_string = glslopt_ralloc_asprintf(this, " (%s or %s required)",
                                            glsl_version_string,
                                            glsl_es_version_string);
    } else if (required_glsl_version) {
-      requirement_string = ralloc_asprintf(this, " (%s required)",
+      requirement_string = glslopt_ralloc_asprintf(this, " (%s required)",
                                            glsl_version_string);
    } else if (required_glsl_es_version) {
-      requirement_string = ralloc_asprintf(this, " (%s required)",
+      requirement_string = glslopt_ralloc_asprintf(this, " (%s required)",
                                            glsl_es_version_string);
    }
    _mesa_glsl_error(locp, this, "%s in %s%s",
@@ -337,7 +337,7 @@ _mesa_glsl_parse_state::process_version_directive(YYLTYPE *locp, int version,
                        this->supported_version_string);
 
       /* On exit, the language_version must be set to a valid value.
-       * Later calls to _mesa_glsl_initialize_types will misbehave if
+       * Later calls to glslopt__mesa_glsl_initialize_types will misbehave if
        * the version is invalid.
        */
       switch (this->ctx->API) {
@@ -363,7 +363,7 @@ _mesa_glsl_parse_state::process_version_directive(YYLTYPE *locp, int version,
  * printouts and error messages.
  */
 const char *
-_mesa_shader_stage_to_string(unsigned stage)
+glslopt__mesa_shader_stage_to_string(unsigned stage)
 {
    switch (stage) {
    case MESA_SHADER_VERTEX:   return "vertex";
@@ -393,19 +393,19 @@ _mesa_glsl_msg(const YYLTYPE *locp, _mesa_glsl_parse_state *state,
 
 	// format:
 	// (line,col): type: message
-   ralloc_asprintf_append(&state->info_log, "(%u,%u): %s: ",
+   glslopt_ralloc_asprintf_append(&state->info_log, "(%u,%u): %s: ",
 					    locp->first_line,
 					    locp->first_column,
 					    error ? "error" : "warning");
-   ralloc_vasprintf_append(&state->info_log, fmt, ap);
+   glslopt_ralloc_vasprintf_append(&state->info_log, fmt, ap);
 
    const char *const msg = &state->info_log[msg_offset];
    struct gl_context *ctx = state->ctx;
 
    /* Report the error via GL_ARB_debug_output. */
-   _mesa_shader_debug(ctx, type, &msg_id, msg, strlen(msg));
+   glslopt__mesa_shader_debug(ctx, type, &msg_id, msg, strlen(msg));
 
-   ralloc_strcat(&state->info_log, "\n");
+   glslopt_ralloc_strcat(&state->info_log, "\n");
 }
 
 void
@@ -679,11 +679,11 @@ _mesa_glsl_process_extension(const char *name, YYLTYPE *name_locp,
 
          if (behavior == extension_require) {
             _mesa_glsl_error(name_locp, state, fmt,
-                             name, _mesa_shader_stage_to_string(state->stage));
+                             name, glslopt__mesa_shader_stage_to_string(state->stage));
             return false;
          } else {
             _mesa_glsl_warning(name_locp, state, fmt,
-                               name, _mesa_shader_stage_to_string(state->stage));
+                               name, glslopt__mesa_shader_stage_to_string(state->stage));
          }
       }
    }
@@ -1364,7 +1364,7 @@ ast_struct_specifier::ast_struct_specifier(const char *identifier,
 {
    if (identifier == NULL) {
       static unsigned anon_count = 1;
-      identifier = ralloc_asprintf(this, "#anon_struct_%04x", anon_count);
+      identifier = glslopt_ralloc_asprintf(this, "#anon_struct_%04x", anon_count);
       anon_count++;
    }
    name = identifier;
@@ -1446,7 +1446,7 @@ set_shader_inout_layout(struct gl_shader *shader,
 extern "C" {
 
 void
-_mesa_glsl_compile_shader(struct gl_context *ctx, struct gl_shader *shader,
+glslopt__mesa_glsl_compile_shader(struct gl_context *ctx, struct gl_shader *shader,
                           bool dump_ast, bool dump_hir)
 {
    struct _mesa_glsl_parse_state *state =
@@ -1456,7 +1456,7 @@ _mesa_glsl_compile_shader(struct gl_context *ctx, struct gl_shader *shader,
    if (ctx->Const.GenerateTemporaryNames)
       ir_variable::temporaries_allocate_names = true;
 
-   state->error = !!glcpp_preprocess(state, &source, &state->info_log,
+   state->error = !!glslopt_glcpp_preprocess(state, &source, &state->info_log,
                              &ctx->Extensions, ctx);
 
    if (!state->error) {
@@ -1472,7 +1472,7 @@ _mesa_glsl_compile_shader(struct gl_context *ctx, struct gl_shader *shader,
       printf("\n\n");
    }
 
-   ralloc_free(shader->ir);
+   glslopt_ralloc_free(shader->ir);
    shader->ir = new(shader) exec_list;
    if (!state->error && !state->translation_unit.is_empty())
       _mesa_ast_to_hir(shader->ir, state);
@@ -1482,7 +1482,7 @@ _mesa_glsl_compile_shader(struct gl_context *ctx, struct gl_shader *shader,
 
       /* Print out the unoptimized IR. */
       if (dump_hir) {
-         _mesa_print_ir(stdout, shader->ir, state);
+         glslopt__mesa_print_ir(stdout, shader->ir, state);
       }
    }
 
@@ -1522,7 +1522,7 @@ _mesa_glsl_compile_shader(struct gl_context *ctx, struct gl_shader *shader,
    }
 
    if (shader->InfoLog)
-      ralloc_free(shader->InfoLog);
+      glslopt_ralloc_free(shader->InfoLog);
 
    shader->symbols = new(shader->ir) glsl_symbol_table;
    shader->CompileStatus = !state->error;
@@ -1565,7 +1565,7 @@ _mesa_glsl_compile_shader(struct gl_context *ctx, struct gl_shader *shader,
    }
 
    delete state->symbols;
-   ralloc_free(state);
+   glslopt_ralloc_free(state);
 }
 
 } /* extern "C" */
@@ -1659,9 +1659,9 @@ extern "C" {
  * program exit.
  */
 void
-_mesa_destroy_shader_compiler(void)
+glslopt__mesa_destroy_shader_compiler(void)
 {
-   _mesa_destroy_shader_compiler_caches();
+   glslopt__mesa_destroy_shader_compiler_caches();
 
    // _mesa_glsl_release_types();
 }
@@ -1672,7 +1672,7 @@ _mesa_destroy_shader_compiler(void)
  * Intended to be used with glReleaseShaderCompiler().
  */
 void
-_mesa_destroy_shader_compiler_caches(void)
+glslopt__mesa_destroy_shader_compiler_caches(void)
 {
    _mesa_glsl_builtin_functions_decref();
 }

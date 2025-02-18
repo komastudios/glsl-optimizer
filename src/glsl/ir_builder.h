@@ -52,7 +52,7 @@ public:
 
    operand(ir_variable *var)
    {
-      void *mem_ctx = ralloc_parent(var);
+      void *mem_ctx = glslopt_ralloc_parent(var);
       val = new(mem_ctx) ir_dereference_variable(var);
    }
 
@@ -72,7 +72,7 @@ public:
 
    deref(ir_variable *var)
    {
-      void *mem_ctx = ralloc_parent(var);
+      void *mem_ctx = glslopt_ralloc_parent(var);
       val = new(mem_ctx) ir_dereference_variable(var);
    }
 

@@ -74,13 +74,13 @@ public:
    {
       progress = false;
       killed_all = false;
-      mem_ctx = ralloc_context(0);
+      mem_ctx = glslopt_ralloc_context(0);
       this->acp = new(mem_ctx) exec_list;
       this->kills = new(mem_ctx) exec_list;
    }
    ~ir_copy_propagation_visitor()
    {
-      ralloc_free(mem_ctx);
+      glslopt_ralloc_free(mem_ctx);
    }
 
    virtual ir_visitor_status visit(class ir_dereference_variable *);
@@ -323,7 +323,7 @@ ir_copy_propagation_visitor::add_copy(ir_assignment *ir)
 	  * calling us.  Just flag it to not execute, and someone else
 	  * will clean up the mess.
 	  */
-	 ir->condition = new(ralloc_parent(ir)) ir_constant(false);
+	 ir->condition = new(glslopt_ralloc_parent(ir)) ir_constant(false);
 	 this->progress = true;
       } else {
 		  // Note: do not add to candidate list when RHS has undefined precision:

@@ -31,7 +31,7 @@
  * every allocated object can in turn be used as the parent of a
  * subsequent allocation. This allows for extremely convenient
  * discarding of an entire tree/sub-tree of allocations by calling
- * ralloc_free on any particular object to free it and all of its
+ * glslopt_ralloc_free on any particular object to free it and all of its
  * children.
  *
  * The conceptual working of ralloc was directly inspired by Andrew
@@ -62,10 +62,10 @@ extern "C" {
  *
  * This is equivalent to:
  * \code
- * ((type *) ralloc_size(ctx, sizeof(type))
+ * ((type *) glslopt_ralloc_size(ctx, sizeof(type))
  * \endcode
  */
-#define ralloc(ctx, type)  ((type *) ralloc_size(ctx, sizeof(type)))
+#define ralloc(ctx, type)  ((type *) glslopt_ralloc_size(ctx, sizeof(type)))
 
 /**
  * \def rzalloc(ctx, type)
@@ -73,10 +73,10 @@ extern "C" {
  *
  * This is equivalent to:
  * \code
- * ((type *) rzalloc_size(ctx, sizeof(type))
+ * ((type *) glslopt_rzalloc_size(ctx, sizeof(type))
  * \endcode
  */
-#define rzalloc(ctx, type) ((type *) rzalloc_size(ctx, sizeof(type)))
+#define rzalloc(ctx, type) ((type *) glslopt_rzalloc_size(ctx, sizeof(type)))
 
 /**
  * Allocate a new ralloc context.
@@ -86,10 +86,10 @@ extern "C" {
  *
  * It is equivalent to:
  * \code
- * ((type *) ralloc_size(ctx, 0)
+ * ((type *) glslopt_ralloc_size(ctx, 0)
  * \endcode
  */
-void *ralloc_context(const void *ctx);
+void *glslopt_ralloc_context(const void *ctx);
 
 /**
  * Allocate memory chained off of the given context.
@@ -98,28 +98,28 @@ void *ralloc_context(const void *ctx);
  * simply allocates storage for \p size bytes and returns the pointer,
  * similar to \c malloc.
  */
-void *ralloc_size(const void *ctx, size_t size) MALLOCLIKE;
+void *glslopt_ralloc_size(const void *ctx, size_t size) MALLOCLIKE;
 
 /**
  * Allocate zero-initialized memory chained off of the given context.
  *
  * This is similar to \c calloc with a size of 1.
  */
-void *rzalloc_size(const void *ctx, size_t size) MALLOCLIKE;
+void *glslopt_rzalloc_size(const void *ctx, size_t size) MALLOCLIKE;
 
 /**
  * Resize a piece of ralloc-managed memory, preserving data.
  *
  * Similar to \c realloc.  Unlike C89, passing 0 for \p size does not free the
  * memory.  Instead, it resizes it to a 0-byte ralloc context, just like
- * calling ralloc_size(ctx, 0).  This is different from talloc.
+ * calling glslopt_ralloc_size(ctx, 0).  This is different from talloc.
  *
  * \param ctx  The context to use for new allocation.  If \p ptr != NULL,
- *             it must be the same as ralloc_parent(\p ptr).
+ *             it must be the same as glslopt_ralloc_parent(\p ptr).
  * \param ptr  Pointer to the memory to be resized.  May be NULL.
  * \param size The amount of memory to allocate, in bytes.
  */
-void *reralloc_size(const void *ctx, void *ptr, size_t size);
+void *glslopt_reralloc_size(const void *ctx, void *ptr, size_t size);
 
 /// \defgroup array Array Allocators @{
 
@@ -134,11 +134,11 @@ void *reralloc_size(const void *ctx, void *ptr, size_t size);
  *
  * This is equivalent to:
  * \code
- * ((type *) ralloc_array_size(ctx, sizeof(type), count)
+ * ((type *) glslopt_ralloc_array_size(ctx, sizeof(type), count)
  * \endcode
  */
 #define ralloc_array(ctx, type, count) \
-   ((type *) ralloc_array_size(ctx, sizeof(type), count))
+   ((type *) glslopt_ralloc_array_size(ctx, sizeof(type), count))
 
 /**
  * \def rzalloc_array(ctx, type, count)
@@ -151,11 +151,11 @@ void *reralloc_size(const void *ctx, void *ptr, size_t size);
  *
  * This is equivalent to:
  * \code
- * ((type *) rzalloc_array_size(ctx, sizeof(type), count)
+ * ((type *) glslopt_rzalloc_array_size(ctx, sizeof(type), count)
  * \endcode
  */
 #define rzalloc_array(ctx, type, count) \
-   ((type *) rzalloc_array_size(ctx, sizeof(type), count))
+   ((type *) glslopt_rzalloc_array_size(ctx, sizeof(type), count))
 
 /**
  * \def reralloc(ctx, ptr, type, count)
@@ -163,19 +163,19 @@ void *reralloc_size(const void *ctx, void *ptr, size_t size);
  *
  * Similar to \c realloc.  Unlike C89, passing 0 for \p size does not free the
  * memory.  Instead, it resizes it to a 0-byte ralloc context, just like
- * calling ralloc_size(ctx, 0).  This is different from talloc.
+ * calling glslopt_ralloc_size(ctx, 0).  This is different from talloc.
  *
  * More than a convenience function, this also checks for integer overflow when
  * multiplying \c sizeof(type) and \p count.  This is necessary for security.
  *
  * \param ctx   The context to use for new allocation.  If \p ptr != NULL,
- *              it must be the same as ralloc_parent(\p ptr).
+ *              it must be the same as glslopt_ralloc_parent(\p ptr).
  * \param ptr   Pointer to the array to be resized.  May be NULL.
  * \param type  The element type.
  * \param count The number of elements to allocate.
  */
 #define reralloc(ctx, ptr, type, count) \
-   ((type *) reralloc_array_size(ctx, ptr, sizeof(type), count))
+   ((type *) glslopt_reralloc_array_size(ctx, ptr, sizeof(type), count))
 
 /**
  * Allocate memory for an array chained off the given context.
@@ -185,7 +185,7 @@ void *reralloc_size(const void *ctx, void *ptr, size_t size);
  * More than a convenience function, this also checks for integer overflow when
  * multiplying \p size and \p count.  This is necessary for security.
  */
-void *ralloc_array_size(const void *ctx, size_t size, size_t count) MALLOCLIKE;
+void *glslopt_ralloc_array_size(const void *ctx, size_t size, size_t count) MALLOCLIKE;
 
 /**
  * Allocate a zero-initialized array chained off the given context.
@@ -195,27 +195,27 @@ void *ralloc_array_size(const void *ctx, size_t size, size_t count) MALLOCLIKE;
  * More than a convenience function, this also checks for integer overflow when
  * multiplying \p size and \p count.  This is necessary for security.
  */
-void *rzalloc_array_size(const void *ctx, size_t size, size_t count) MALLOCLIKE;
+void *glslopt_rzalloc_array_size(const void *ctx, size_t size, size_t count) MALLOCLIKE;
 
 /**
  * Resize a ralloc-managed array, preserving data.
  *
  * Similar to \c realloc.  Unlike C89, passing 0 for \p size does not free the
  * memory.  Instead, it resizes it to a 0-byte ralloc context, just like
- * calling ralloc_size(ctx, 0).  This is different from talloc.
+ * calling glslopt_ralloc_size(ctx, 0).  This is different from talloc.
  *
  * More than a convenience function, this also checks for integer overflow when
  * multiplying \c sizeof(type) and \p count.  This is necessary for security.
  *
  * \param ctx   The context to use for new allocation.  If \p ptr != NULL,
- *              it must be the same as ralloc_parent(\p ptr).
+ *              it must be the same as glslopt_ralloc_parent(\p ptr).
  * \param ptr   Pointer to the array to be resized.  May be NULL.
  * \param size  The size of an individual element.
  * \param count The number of elements to allocate.
  *
  * \return True unless allocation failed.
  */
-void *reralloc_array_size(const void *ctx, void *ptr, size_t size,
+void *glslopt_reralloc_array_size(const void *ctx, void *ptr, size_t size,
 			  size_t count);
 /// @}
 
@@ -224,7 +224,7 @@ void *reralloc_array_size(const void *ctx, void *ptr, size_t size,
  *
  * This will also free the memory of any children allocated this context.
  */
-void ralloc_free(void *ptr);
+void glslopt_ralloc_free(void *ptr);
 
 /**
  * "Steal" memory from one context, changing it to another.
@@ -232,12 +232,12 @@ void ralloc_free(void *ptr);
  * This changes \p ptr's context to \p new_ctx.  This is quite useful if
  * memory is allocated out of a temporary context.
  */
-void ralloc_steal(const void *new_ctx, void *ptr);
+void glslopt_ralloc_steal(const void *new_ctx, void *ptr);
 
 /**
  * Return the given pointer's ralloc context.
  */
-void *ralloc_parent(const void *ptr);
+void *glslopt_ralloc_parent(const void *ptr);
 
 /**
  * Return a context whose memory will be automatically freed at program exit.
@@ -246,18 +246,18 @@ void *ralloc_parent(const void *ptr);
  * to free it using \c atexit.  This may cause trouble if used in a library
  * loaded with \c dlopen.
  */
-void *ralloc_autofree_context(void);
+void *glslopt_ralloc_autofree_context(void);
 
 /**
  * Set a callback to occur just before an object is freed.
  */
-void ralloc_set_destructor(const void *ptr, void(*destructor)(void *));
+void glslopt_ralloc_set_destructor(const void *ptr, void(*destructor)(void *));
 
 /// \defgroup array String Functions @{
 /**
  * Duplicate a string, allocating the memory from the given context.
  */
-char *ralloc_strdup(const void *ctx, const char *str) MALLOCLIKE;
+char *glslopt_ralloc_strdup(const void *ctx, const char *str) MALLOCLIKE;
 
 /**
  * Duplicate a string, allocating the memory from the given context.
@@ -265,7 +265,7 @@ char *ralloc_strdup(const void *ctx, const char *str) MALLOCLIKE;
  * Like \c strndup, at most \p n characters are copied.  If \p str is longer
  * than \p n characters, \p n are copied, and a termining \c '\0' byte is added.
  */
-char *ralloc_strndup(const void *ctx, const char *str, size_t n) MALLOCLIKE;
+char *glslopt_ralloc_strndup(const void *ctx, const char *str, size_t n) MALLOCLIKE;
 
 /**
  * Concatenate two strings, allocating the necessary space.
@@ -278,7 +278,7 @@ char *ralloc_strndup(const void *ctx, const char *str, size_t n) MALLOCLIKE;
  *
  * \return True unless allocation failed.
  */
-bool ralloc_strcat(char **dest, const char *str);
+bool glslopt_ralloc_strcat(char **dest, const char *str);
 
 /**
  * Concatenate two strings, allocating the necessary space.
@@ -292,7 +292,7 @@ bool ralloc_strcat(char **dest, const char *str);
  *
  * \return True unless allocation failed.
  */
-bool ralloc_strncat(char **dest, const char *str, size_t n);
+bool glslopt_ralloc_strncat(char **dest, const char *str, size_t n);
 
 /**
  * Print to a string.
@@ -302,7 +302,7 @@ bool ralloc_strncat(char **dest, const char *str, size_t n);
  *
  * \return The newly allocated string.
  */
-char *ralloc_asprintf (const void *ctx, const char *fmt, ...) PRINTFLIKE(2, 3) MALLOCLIKE;
+char *glslopt_ralloc_asprintf (const void *ctx, const char *fmt, ...) PRINTFLIKE(2, 3) MALLOCLIKE;
 
 /**
  * Print to a string, given a va_list.
@@ -312,7 +312,7 @@ char *ralloc_asprintf (const void *ctx, const char *fmt, ...) PRINTFLIKE(2, 3) M
  *
  * \return The newly allocated string.
  */
-char *ralloc_vasprintf(const void *ctx, const char *fmt, va_list args) MALLOCLIKE;
+char *glslopt_ralloc_vasprintf(const void *ctx, const char *fmt, va_list args) MALLOCLIKE;
 
 /**
  * Rewrite the tail of an existing string, starting at a given index.
@@ -323,7 +323,7 @@ char *ralloc_vasprintf(const void *ctx, const char *fmt, va_list args) MALLOCLIK
  * This can be used to append formatted text when the length of the existing
  * string is already known, saving a strlen() call.
  *
- * \sa ralloc_asprintf_append
+ * \sa glslopt_ralloc_asprintf_append
  *
  * \param str   The string to be updated.
  * \param start The index to start appending new data at.
@@ -334,7 +334,7 @@ char *ralloc_vasprintf(const void *ctx, const char *fmt, va_list args) MALLOCLIK
  *
  * \return True unless allocation failed.
  */
-bool ralloc_asprintf_rewrite_tail(char **str, size_t *start,
+bool glslopt_ralloc_asprintf_rewrite_tail(char **str, size_t *start,
 				  const char *fmt, ...)
 				  PRINTFLIKE(3, 4);
 
@@ -347,7 +347,7 @@ bool ralloc_asprintf_rewrite_tail(char **str, size_t *start,
  * This can be used to append formatted text when the length of the existing
  * string is already known, saving a strlen() call.
  *
- * \sa ralloc_vasprintf_append
+ * \sa glslopt_ralloc_vasprintf_append
  *
  * \param str   The string to be updated.
  * \param start The index to start appending new data at.
@@ -359,7 +359,7 @@ bool ralloc_asprintf_rewrite_tail(char **str, size_t *start,
  *
  * \return True unless allocation failed.
  */
-bool ralloc_vasprintf_rewrite_tail(char **str, size_t *start, const char *fmt,
+bool glslopt_ralloc_vasprintf_rewrite_tail(char **str, size_t *start, const char *fmt,
 				   va_list args);
 
 /**
@@ -367,18 +367,18 @@ bool ralloc_vasprintf_rewrite_tail(char **str, size_t *start, const char *fmt,
  *
  * This is equivalent to
  * \code
- * ralloc_asprintf_rewrite_tail(str, strlen(*str), fmt, ...)
+ * glslopt_ralloc_asprintf_rewrite_tail(str, strlen(*str), fmt, ...)
  * \endcode
  *
- * \sa ralloc_asprintf
- * \sa ralloc_asprintf_rewrite_tail
- * \sa ralloc_strcat
+ * \sa glslopt_ralloc_asprintf
+ * \sa glslopt_ralloc_asprintf_rewrite_tail
+ * \sa glslopt_ralloc_strcat
  *
  * \p str will be updated to the new pointer unless allocation fails.
  *
  * \return True unless allocation failed.
  */
-bool ralloc_asprintf_append (char **str, const char *fmt, ...)
+bool glslopt_ralloc_asprintf_append (char **str, const char *fmt, ...)
 			     PRINTFLIKE(2, 3);
 
 /**
@@ -386,22 +386,22 @@ bool ralloc_asprintf_append (char **str, const char *fmt, ...)
  *
  * This is equivalent to
  * \code
- * ralloc_vasprintf_rewrite_tail(str, strlen(*str), fmt, args)
+ * glslopt_ralloc_vasprintf_rewrite_tail(str, strlen(*str), fmt, args)
  * \endcode
  *
- * \sa ralloc_vasprintf
- * \sa ralloc_vasprintf_rewrite_tail
- * \sa ralloc_strcat
+ * \sa glslopt_ralloc_vasprintf
+ * \sa glslopt_ralloc_vasprintf_rewrite_tail
+ * \sa glslopt_ralloc_strcat
  *
  * \p str will be updated to the new pointer unless allocation fails.
  *
  * \return True unless allocation failed.
  */
-bool ralloc_vasprintf_append(char **str, const char *fmt, va_list args);
+bool glslopt_ralloc_vasprintf_append(char **str, const char *fmt, va_list args);
 /// @}
 
 
-size_t printf_length(const char *fmt, va_list untouched_args);
+size_t glslopt_printf_length(const char *fmt, va_list untouched_args);
 
 
 #ifdef __cplusplus
@@ -427,10 +427,10 @@ private:                                                                 \
 public:                                                                  \
    static void* operator new(size_t size, void *mem_ctx)                 \
    {                                                                     \
-      void *p = ralloc_size(mem_ctx, size);                              \
+      void *p = glslopt_ralloc_size(mem_ctx, size);                              \
       assert(p != NULL);                                                 \
       if (!HAS_TRIVIAL_DESTRUCTOR(TYPE))                                 \
-         ralloc_set_destructor(p, _ralloc_destructor);                   \
+         glslopt_ralloc_set_destructor(p, _ralloc_destructor);                   \
       return p;                                                          \
    }                                                                     \
                                                                          \
@@ -441,8 +441,8 @@ public:                                                                  \
        * not called again.                                               \
        */                                                                \
       if (!HAS_TRIVIAL_DESTRUCTOR(TYPE))                                 \
-         ralloc_set_destructor(p, NULL);                                 \
-      ralloc_free(p);                                                    \
+         glslopt_ralloc_set_destructor(p, NULL);                                 \
+      glslopt_ralloc_free(p);                                                    \
    }
 
 

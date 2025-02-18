@@ -99,7 +99,7 @@ calculate_iterations(ir_rvalue *from, ir_rvalue *to, ir_rvalue *increment,
    if (from == NULL || to == NULL || increment == NULL)
       return -1;
 
-   void *mem_ctx = ralloc_context(NULL);
+   void *mem_ctx = glslopt_ralloc_context(NULL);
 
    ir_expression *const sub =
       new(mem_ctx) ir_expression(ir_binop_sub, from->type, to, from);
@@ -169,7 +169,7 @@ calculate_iterations(ir_rvalue *from, ir_rvalue *to, ir_rvalue *increment,
       }
    }
 
-   ralloc_free(mem_ctx);
+   glslopt_ralloc_free(mem_ctx);
    return (valid_loop) ? iter_value : -1;
 }
 

@@ -159,7 +159,7 @@ compare_components(ir_constant *a, ir_constant *b)
 static ir_constant *
 combine_constant(bool ismin, ir_constant *a, ir_constant *b)
 {
-   void *mem_ctx = ralloc_parent(a);
+   void *mem_ctx = glslopt_ralloc_parent(a);
    ir_constant *c = a->clone(mem_ctx, NULL);
    for (unsigned i = 0; i < c->type->components(); i++) {
       switch (c->type->base_type) {

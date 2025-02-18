@@ -60,7 +60,7 @@ typedef int (*hash_compare_func_t)(const void *key1, const void *key2);
  * \param hash         Function used to compute hash value of input keys.
  * \param compare      Function used to compare keys.
  */
-extern struct hash_table *hash_table_ctor(unsigned num_buckets,
+extern struct hash_table *glslopt_hash_table_ctor(unsigned num_buckets,
     hash_func_t hash, hash_compare_func_t compare);
 
 
@@ -70,7 +70,7 @@ extern struct hash_table *hash_table_ctor(unsigned num_buckets,
  * \warning
  * This function cannot release memory occupied either by keys or data.
  */
-extern void hash_table_dtor(struct hash_table *ht);
+extern void glslopt_hash_table_dtor(struct hash_table *ht);
 
 
 /**
@@ -78,7 +78,7 @@ extern void hash_table_dtor(struct hash_table *ht);
  *
  * \param ht  Table to be cleared of its entries.
  */
-extern void hash_table_clear(struct hash_table *ht);
+extern void glslopt_hash_table_clear(struct hash_table *ht);
 
 
 /**
@@ -88,11 +88,11 @@ extern void hash_table_clear(struct hash_table *ht);
  * \param key  Key of the desired element
  *
  * \return
- * The \c data value supplied to \c hash_table_insert when the element with
+ * The \c data value supplied to \c glslopt_hash_table_insert when the element with
  * the matching key was added.  If no matching key exists in the table,
  * \c NULL is returned.
  */
-extern void *hash_table_find(struct hash_table *ht, const void *key);
+extern void *glslopt_hash_table_find(struct hash_table *ht, const void *key);
 
 
 /**
@@ -100,16 +100,16 @@ extern void *hash_table_find(struct hash_table *ht, const void *key);
  *
  * \warning
  * If \c key is already in the hash table, it will be added again.  Future
- * calls to \c hash_table_find and \c hash_table_remove will return or remove,
+ * calls to \c glslopt_hash_table_find and \c glslopt_hash_table_remove will return or remove,
  * repsectively, the most recently added instance of \c key.
  *
  * \warning
  * The value passed by \c key is kept in the hash table and is used by later
- * calls to \c hash_table_find.
+ * calls to \c glslopt_hash_table_find.
  *
- * \sa hash_table_replace
+ * \sa glslopt_hash_table_replace
  */
-extern void hash_table_insert(struct hash_table *ht, void *data,
+extern void glslopt_hash_table_insert(struct hash_table *ht, void *data,
     const void *key);
 
 /**
@@ -121,18 +121,18 @@ extern void hash_table_insert(struct hash_table *ht, void *data,
  *
  * \warning
  * If \c key is already in the hash table, \c data will \b replace the most
- * recently inserted \c data (see the warning in \c hash_table_insert) for
+ * recently inserted \c data (see the warning in \c glslopt_hash_table_insert) for
  * that key.
  *
- * \sa hash_table_insert
+ * \sa glslopt_hash_table_insert
  */
-extern bool hash_table_replace(struct hash_table *ht, void *data,
+extern bool glslopt_hash_table_replace(struct hash_table *ht, void *data,
     const void *key);
 
 /**
  * Remove a specific element from a hash table.
  */
-extern void hash_table_remove(struct hash_table *ht, const void *key);
+extern void glslopt_hash_table_remove(struct hash_table *ht, const void *key);
 
 /**
  * Compute hash value of a string
@@ -145,7 +145,7 @@ extern void hash_table_remove(struct hash_table *ht, const void *key);
  *
  * \sa hash_table_string_compare
  */
-extern unsigned hash_table_string_hash(const void *key);
+extern unsigned glslopt_hash_table_string_hash(const void *key);
 
 
 /**
@@ -153,7 +153,7 @@ extern unsigned hash_table_string_hash(const void *key);
  *
  * This is just a macro wrapper around \c strcmp.
  *
- * \sa hash_table_string_hash
+ * \sa glslopt_hash_table_string_hash
  */
 #define hash_table_string_compare ((hash_compare_func_t) strcmp)
 
@@ -167,22 +167,22 @@ extern unsigned hash_table_string_hash(const void *key);
  * The memory pointed to by \c key is \b never accessed.  The value of \c key
  * itself is used as the hash key
  *
- * \sa hash_table_pointer_compare
+ * \sa glslopt_hash_table_pointer_compare
  */
 unsigned
-hash_table_pointer_hash(const void *key);
+glslopt_hash_table_pointer_hash(const void *key);
 
 
 /**
  * Compare two pointers used as keys
  *
- * \sa hash_table_pointer_hash
+ * \sa glslopt_hash_table_pointer_hash
  */
 int
-hash_table_pointer_compare(const void *key1, const void *key2);
+glslopt_hash_table_pointer_compare(const void *key1, const void *key2);
 
 void
-hash_table_call_foreach(struct hash_table *ht,
+glslopt_hash_table_call_foreach(struct hash_table *ht,
 			void (*callback)(const void *key,
 					 void *data,
 					 void *closure),
@@ -209,14 +209,14 @@ struct string_to_uint_map {
 public:
    string_to_uint_map()
    {
-      this->ht = hash_table_ctor(0, hash_table_string_hash,
+      this->ht = glslopt_hash_table_ctor(0, glslopt_hash_table_string_hash,
 				 hash_table_string_compare);
    }
 
    ~string_to_uint_map()
    {
-      hash_table_call_foreach(this->ht, delete_key, NULL);
-      hash_table_dtor(this->ht);
+      glslopt_hash_table_call_foreach(this->ht, delete_key, NULL);
+      glslopt_hash_table_dtor(this->ht);
    }
 
    /**
@@ -224,8 +224,8 @@ public:
     */
    void clear()
    {
-      hash_table_call_foreach(this->ht, delete_key, NULL);
-      hash_table_clear(this->ht);
+      glslopt_hash_table_call_foreach(this->ht, delete_key, NULL);
+      glslopt_hash_table_clear(this->ht);
    }
 
    /**
@@ -241,7 +241,7 @@ public:
    bool get(unsigned &value, const char *key)
    {
       const intptr_t v =
-	 (intptr_t) hash_table_find(this->ht, (const void *) key);
+	 (intptr_t) glslopt_hash_table_find(this->ht, (const void *) key);
 
       if (v == 0)
 	 return false;
@@ -257,15 +257,15 @@ public:
        * valid value in the table.  Bias the value by +1 so that a
        * user-specified zero is stored as 1.  This enables ::get to tell the
        * difference between a user-specified zero (returned as 1 by
-       * hash_table_find) and the key not in the table (returned as 0 by
-       * hash_table_find).
+       * glslopt_hash_table_find) and the key not in the table (returned as 0 by
+       * glslopt_hash_table_find).
        *
        * The net effect is that we can't store UINT_MAX in the table.  This is
        * because UINT_MAX+1 = 0.
        */
       assert(value != UINT_MAX);
       char *dup_key = strdup(key);
-      bool result = hash_table_replace(this->ht,
+      bool result = glslopt_hash_table_replace(this->ht,
 				       (void *) (intptr_t) (value + 1),
 				       dup_key);
       if (result)

@@ -72,7 +72,7 @@ ir_expression_flattening_visitor::handle_rvalue(ir_rvalue **rvalue)
    if (!ir || !this->predicate(ir))
       return;
 
-   void *ctx = ralloc_parent(ir);
+   void *ctx = glslopt_ralloc_parent(ir);
 
    var = new(ctx) ir_variable(ir->type, "flattening_tmp", ir_var_temporary, precision_from_ir(ir));
    base_ir->insert_before(var);

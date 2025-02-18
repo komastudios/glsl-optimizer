@@ -3182,7 +3182,7 @@ yyreduce:
         case 2:
 #line 303 "src/glsl/glsl_parser.yy" /* yacc.c:1646  */
     {
-      _mesa_glsl_initialize_types(state);
+      glslopt__mesa_glsl_initialize_types(state);
    }
 #line 3188 "src/glsl/glsl_parser.cpp" /* yacc.c:1646  */
     break;
@@ -3191,8 +3191,8 @@ yyreduce:
 #line 307 "src/glsl/glsl_parser.yy" /* yacc.c:1646  */
     {
       delete state->symbols;
-      state->symbols = new(ralloc_parent(state)) glsl_symbol_table;
-      _mesa_glsl_initialize_types(state);
+      state->symbols = new(glslopt_ralloc_parent(state)) glsl_symbol_table;
+      glslopt__mesa_glsl_initialize_types(state);
    }
 #line 3198 "src/glsl/glsl_parser.cpp" /* yacc.c:1646  */
     break;

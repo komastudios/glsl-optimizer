@@ -585,13 +585,13 @@ extern "C" {
  * gl_shader_stage).
  */
 extern const char *
-_mesa_shader_stage_to_string(unsigned stage);
+glslopt__mesa_shader_stage_to_string(unsigned stage);
 
-extern int glcpp_preprocess(void *ctx, const char **shader, char **info_log,
+extern int glslopt_glcpp_preprocess(void *ctx, const char **shader, char **info_log,
                       const struct gl_extensions *extensions, struct gl_context *gl_ctx);
 
-extern void _mesa_destroy_shader_compiler(void);
-extern void _mesa_destroy_shader_compiler_caches(void);
+extern void glslopt__mesa_destroy_shader_compiler(void);
+extern void glslopt__mesa_destroy_shader_compiler_caches(void);
 
 #ifdef __cplusplus
 }

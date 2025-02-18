@@ -1290,7 +1290,7 @@ ir_dereference_array::ir_dereference_array(ir_variable *var,
 					   ir_rvalue *array_index)
    : ir_dereference(ir_type_dereference_array, precision_from_ir(var))
 {
-   void *ctx = ralloc_parent(var);
+   void *ctx = glslopt_ralloc_parent(var);
 
    this->array_index = array_index;
    this->set_array(new(ctx) ir_dereference_variable(var));
@@ -1323,7 +1323,7 @@ ir_dereference_record::ir_dereference_record(ir_rvalue *value,
    assert(value != NULL);
 
    this->record = value;
-   this->field = ralloc_strdup(this, field);
+   this->field = glslopt_ralloc_strdup(this, field);
    this->type = this->record->type->field_type(field);
    if (this->record)
       this->precision = this->record->type->field_precision(field);
@@ -1334,10 +1334,10 @@ ir_dereference_record::ir_dereference_record(ir_variable *var,
 					     const char *field)
    : ir_dereference(ir_type_dereference_record, precision_from_ir(var))
 {
-   void *ctx = ralloc_parent(var);
+   void *ctx = glslopt_ralloc_parent(var);
 
    this->record = new(ctx) ir_dereference_variable(var);
-   this->field = ralloc_strdup(this, field);
+   this->field = glslopt_ralloc_strdup(this, field);
    this->type = this->record->type->field_type(field);
    if (this->record)
       this->precision = this->record->type->field_precision(field);
@@ -1500,7 +1500,7 @@ ir_swizzle::ir_swizzle(ir_rvalue *val, ir_swizzle_mask mask)
 ir_swizzle *
 ir_swizzle::create(ir_rvalue *val, const char *str, unsigned vector_length)
 {
-   void *ctx = ralloc_parent(val);
+   void *ctx = glslopt_ralloc_parent(val);
 
    /* For each possible swizzle character, this table encodes the value in
     * \c idx_map that represents the 0th element of the vector.  For invalid
@@ -1609,7 +1609,7 @@ ir_variable::ir_variable(const struct glsl_type *type, const char *name,
        && (name == NULL || name == ir_variable::tmp_name)) {
       this->name = ir_variable::tmp_name;
    } else {
-      this->name = ralloc_strdup(this, name);
+      this->name = glslopt_ralloc_strdup(this, name);
    }
 
    this->u.max_ifc_array_access = NULL;
@@ -1801,7 +1801,7 @@ ir_function_signature::replace_parameters(exec_list *new_params)
 ir_function::ir_function(const char *name)
    : ir_instruction(ir_type_function)
 {
-   this->name = ralloc_strdup(this, name);
+   this->name = glslopt_ralloc_strdup(this, name);
 }
 
 
@@ -1861,7 +1861,7 @@ steal_memory(ir_instruction *ir, void *new_ctx)
       }
    }
 
-   ralloc_steal(new_ctx, ir);
+   glslopt_ralloc_steal(new_ctx, ir);
 }
 
 

@@ -72,20 +72,20 @@ static unsigned
 hash_table_var_hash(const void *key)
 {
    const ir_variable * var = static_cast<const ir_variable *>(key);
-   return hash_table_string_hash(var->name);
+   return glslopt_hash_table_string_hash(var->name);
 }
 
 output_read_remover::output_read_remover()
 {
-   mem_ctx = ralloc_context(NULL);
+   mem_ctx = glslopt_ralloc_context(NULL);
    replacements =
-      hash_table_ctor(0, hash_table_var_hash, hash_table_pointer_compare);
+      glslopt_hash_table_ctor(0, hash_table_var_hash, glslopt_hash_table_pointer_compare);
 }
 
 output_read_remover::~output_read_remover()
 {
-   hash_table_dtor(replacements);
-   ralloc_free(mem_ctx);
+   glslopt_hash_table_dtor(replacements);
+   glslopt_ralloc_free(mem_ctx);
 }
 
 ir_visitor_status
@@ -94,14 +94,14 @@ output_read_remover::visit(ir_dereference_variable *ir)
    if (ir->var->data.mode != ir_var_shader_out)
       return visit_continue;
 
-   ir_variable *temp = (ir_variable *) hash_table_find(replacements, ir->var);
+   ir_variable *temp = (ir_variable *) glslopt_hash_table_find(replacements, ir->var);
 
    /* If we don't have an existing temporary, create one. */
    if (temp == NULL) {
-      void *var_ctx = ralloc_parent(ir->var);
+      void *var_ctx = glslopt_ralloc_parent(ir->var);
       temp = new(var_ctx) ir_variable(ir->var->type, ir->var->name,
                                       ir_var_temporary, (glsl_precision)ir->var->data.precision);
-      hash_table_insert(replacements, temp, ir->var);
+      glslopt_hash_table_insert(replacements, temp, ir->var);
       ir->var->insert_after(temp);
    }
 
@@ -143,15 +143,15 @@ emit_main_copy(const void *key, void *data, void *closure)
 ir_visitor_status
 output_read_remover::visit_leave(ir_return *ir)
 {
-   hash_table_call_foreach(replacements, emit_return_copy, ir);
+   glslopt_hash_table_call_foreach(replacements, emit_return_copy, ir);
    return visit_continue;
 }
 
 ir_visitor_status
 output_read_remover::visit_leave(ir_emit_vertex *ir)
 {
-   hash_table_call_foreach(replacements, emit_return_copy, ir);
-   hash_table_clear(replacements);
+   glslopt_hash_table_call_foreach(replacements, emit_return_copy, ir);
+   glslopt_hash_table_clear(replacements);
    return visit_continue;
 }
 
@@ -161,7 +161,7 @@ output_read_remover::visit_leave(ir_function_signature *sig)
    if (strcmp(sig->function_name(), "main") != 0)
       return visit_continue;
 
-   hash_table_call_foreach(replacements, emit_main_copy, sig);
+   glslopt_hash_table_call_foreach(replacements, emit_main_copy, sig);
    return visit_continue;
 }
 

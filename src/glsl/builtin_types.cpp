@@ -29,7 +29,7 @@
  * accessors (such as glsl_type::float_type).  Those global variables are
  * declared and initialized in this file.
  *
- * This also contains _mesa_glsl_initialize_types(), a function which populates
+ * This also contains glslopt__mesa_glsl_initialize_types(), a function which populates
  * a symbol table with the available built-in types for a particular language
  * version and set of enabled extensions.
  */
@@ -262,7 +262,7 @@ add_type(glsl_symbol_table *symbols, const glsl_type *const type)
  * Populate the symbol table with available built-in types.
  */
 void
-_mesa_glsl_initialize_types(struct _mesa_glsl_parse_state *state)
+glslopt__mesa_glsl_initialize_types(struct _mesa_glsl_parse_state *state)
 {
    struct glsl_symbol_table *symbols = state->symbols;
 

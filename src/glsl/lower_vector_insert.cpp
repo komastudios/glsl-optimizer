@@ -63,7 +63,7 @@ vector_insert_visitor::handle_rvalue(ir_rvalue **rv)
    if (likely(expr->operation != ir_triop_vector_insert))
       return;
 
-   factory.mem_ctx = ralloc_parent(expr);
+   factory.mem_ctx = glslopt_ralloc_parent(expr);
 
    ir_constant *const idx = expr->operands[2]->constant_expression_value();
    if (idx != NULL) {

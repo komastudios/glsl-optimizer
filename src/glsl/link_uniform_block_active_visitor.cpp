@@ -27,9 +27,9 @@
 link_uniform_block_active *
 process_block(void *mem_ctx, struct hash_table *ht, ir_variable *var)
 {
-   const uint32_t h = _mesa_hash_string(var->get_interface_type()->name);
+   const uint32_t h = glslopt__mesa_hash_string(var->get_interface_type()->name);
    const hash_entry *const existing_block =
-      _mesa_hash_table_search(ht, h, var->get_interface_type()->name);
+      glslopt__mesa_hash_table_search(ht, h, var->get_interface_type()->name);
 
    const glsl_type *const block_type = var->is_interface_instance()
       ? var->type : var->get_interface_type();
@@ -54,7 +54,7 @@ process_block(void *mem_ctx, struct hash_table *ht, ir_variable *var)
          b->binding = 0;
       }
 
-      _mesa_hash_table_insert(ht, h, var->get_interface_type()->name,
+      glslopt__mesa_hash_table_insert(ht, h, var->get_interface_type()->name,
 			      (void *) b);
       return b;
    } else {

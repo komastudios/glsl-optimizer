@@ -46,7 +46,7 @@ ir_instruction::fprint(FILE *f) const
 
 extern "C" {
 void
-_mesa_print_ir(FILE *f, exec_list *instructions,
+glslopt__mesa_print_ir(FILE *f, exec_list *instructions,
 	       struct _mesa_glsl_parse_state *state)
 {
    if (state) {
@@ -76,7 +76,7 @@ _mesa_print_ir(FILE *f, exec_list *instructions,
 }
 
 void
-fprint_ir(FILE *f, const void *instruction)
+glslopt_fprint_ir(FILE *f, const void *instruction)
 {
    const ir_instruction *ir = (const ir_instruction *)instruction;
    ir->fprint(f);
@@ -89,16 +89,16 @@ ir_print_visitor::ir_print_visitor(FILE *f)
 {
    indentation = 0;
    printable_names =
-      hash_table_ctor(32, hash_table_pointer_hash, hash_table_pointer_compare);
-   symbols = _mesa_symbol_table_ctor();
-   mem_ctx = ralloc_context(NULL);
+      glslopt_hash_table_ctor(32, glslopt_hash_table_pointer_hash, glslopt_hash_table_pointer_compare);
+   symbols = glslopt__mesa_symbol_table_ctor();
+   mem_ctx = glslopt_ralloc_context(NULL);
 }
 
 ir_print_visitor::~ir_print_visitor()
 {
-   hash_table_dtor(printable_names);
-   _mesa_symbol_table_dtor(symbols);
-   ralloc_free(mem_ctx);
+   glslopt_hash_table_dtor(printable_names);
+   glslopt__mesa_symbol_table_dtor(symbols);
+   glslopt_ralloc_free(mem_ctx);
 }
 
 void ir_print_visitor::indent(void)
@@ -117,23 +117,23 @@ ir_print_visitor::unique_name(ir_variable *var)
     */
    if (var->name == NULL) {
       static unsigned arg = 1;
-      return ralloc_asprintf(this->mem_ctx, "parameter@%u", arg++);
+      return glslopt_ralloc_asprintf(this->mem_ctx, "parameter@%u", arg++);
    }
 
    /* Do we already have a name for this variable? */
-   const char *name = (const char *) hash_table_find(this->printable_names, var);
+   const char *name = (const char *) glslopt_hash_table_find(this->printable_names, var);
    if (name != NULL)
       return name;
 
    /* If there's no conflict, just use the original name */
-   if (_mesa_symbol_table_find_symbol(this->symbols, -1, var->name) == NULL) {
+   if (glslopt__mesa_symbol_table_find_symbol(this->symbols, -1, var->name) == NULL) {
       name = var->name;
    } else {
       static unsigned i = 1;
-      name = ralloc_asprintf(this->mem_ctx, "%s@%u", var->name, ++i);
+      name = glslopt_ralloc_asprintf(this->mem_ctx, "%s@%u", var->name, ++i);
    }
-   hash_table_insert(this->printable_names, (void *) name, var);
-   _mesa_symbol_table_add_symbol(this->symbols, -1, name, var);
+   glslopt_hash_table_insert(this->printable_names, (void *) name, var);
+   glslopt__mesa_symbol_table_add_symbol(this->symbols, -1, name, var);
    return name;
 }
 
@@ -184,7 +184,7 @@ void ir_print_visitor::visit(ir_variable *ir)
 
 void ir_print_visitor::visit(ir_function_signature *ir)
 {
-   _mesa_symbol_table_push_scope(symbols);
+   glslopt__mesa_symbol_table_push_scope(symbols);
    fprintf(f, "(signature ");
    indentation++;
 
@@ -219,7 +219,7 @@ void ir_print_visitor::visit(ir_function_signature *ir)
    indent();
    fprintf(f, "))\n");
    indentation--;
-   _mesa_symbol_table_pop_scope(symbols);
+   glslopt__mesa_symbol_table_pop_scope(symbols);
 }
 
 

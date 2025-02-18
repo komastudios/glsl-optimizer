@@ -148,7 +148,7 @@ ir_constant_folding_visitor::visit_enter(ir_call *ir)
 
    if (const_val != NULL) {
       ir_assignment *assignment =
-	 new(ralloc_parent(ir)) ir_assignment(ir->return_deref, const_val);
+	 new(glslopt_ralloc_parent(ir)) ir_assignment(ir->return_deref, const_val);
       ir->replace_with(assignment);
    }
 

@@ -932,7 +932,7 @@ do_assignment(exec_list *instructions, struct _mesa_glsl_parse_state *state,
 static ir_rvalue *
 get_lvalue_copy(exec_list *instructions, ir_rvalue *lvalue)
 {
-   void *ctx = ralloc_parent(lvalue);
+   void *ctx = glslopt_ralloc_parent(lvalue);
    ir_variable *var;
 
    var = new(ctx) ir_variable(lvalue->type, "_post_incdec_tmp",
@@ -2323,7 +2323,7 @@ validate_explicit_location(const struct ast_type_qualifier *qual,
       _mesa_glsl_error(loc, state,
                        "%s cannot be given an explicit location in %s shader",
                        mode_string(var),
-      _mesa_shader_stage_to_string(state->stage));
+      glslopt__mesa_shader_stage_to_string(state->stage));
    } else {
       var->data.explicit_location = true;
 
@@ -2508,7 +2508,7 @@ apply_type_qualifier_to_variable(const struct ast_type_qualifier *qual,
       _mesa_glsl_error(loc, state,
                        "`attribute' variables may not be declared in the "
                        "%s shader",
-                       _mesa_shader_stage_to_string(state->stage));
+                       glslopt__mesa_shader_stage_to_string(state->stage));
    }
 
    /* Disallow layout qualifiers which may only appear on layout declarations. */
@@ -3027,7 +3027,7 @@ process_initializer(ir_variable *var, ast_declaration *decl,
    if ((var->data.mode == ir_var_shader_in) && (state->current_function == NULL)) {
       _mesa_glsl_error(& initializer_loc, state,
 		       "cannot initialize %s shader input / %s",
-		       _mesa_shader_stage_to_string(state->stage),
+		       glslopt__mesa_shader_stage_to_string(state->stage),
 		       (state->stage == MESA_SHADER_VERTEX)
 		       ? "attribute" : "varying");
    }
@@ -4570,8 +4570,8 @@ ast_switch_statement::hir(exec_list *instructions,
 
    state->switch_state.is_switch_innermost = true;
    state->switch_state.switch_nesting_ast = this;
-   state->switch_state.labels_ht = hash_table_ctor(0, hash_table_pointer_hash,
-						   hash_table_pointer_compare);
+   state->switch_state.labels_ht = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+						   glslopt_hash_table_pointer_compare);
    state->switch_state.previous_default = NULL;
 
    /* Initalize is_fallthru state to false.
@@ -4616,7 +4616,7 @@ ast_switch_statement::hir(exec_list *instructions,
     */
    body->hir(instructions, state);
 
-   hash_table_dtor(state->switch_state.labels_ht);
+   glslopt_hash_table_dtor(state->switch_state.labels_ht);
 
    state->switch_state = saved;
 
@@ -4806,7 +4806,7 @@ ast_case_label::hir(exec_list *instructions,
          label_const = new(ctx) ir_constant(0);
       } else {
          ast_expression *previous_label = (ast_expression *)
-         hash_table_find(state->switch_state.labels_ht,
+         glslopt_hash_table_find(state->switch_state.labels_ht,
                          (void *)(uintptr_t)label_const->value.u[0]);
 
          if (previous_label) {
@@ -4816,7 +4816,7 @@ ast_case_label::hir(exec_list *instructions,
             loc = previous_label->get_location();
             _mesa_glsl_error(& loc, state, "this is the previous case label");
          } else {
-            hash_table_insert(state->switch_state.labels_ht,
+            glslopt_hash_table_insert(state->switch_state.labels_ht,
                               this->test_value,
                               (void *)(uintptr_t)label_const->value.u[0]);
          }
@@ -5087,7 +5087,7 @@ ast_type_specifier::hir(exec_list *instructions,
          case glsl_precision_low:		precision_type = "lowp"; break;
          case glsl_precision_undefined:	precision_type = ""; break;
          }
-         char* precision_statement = ralloc_asprintf(ctx, "precision %s %s", precision_type, this->type_name);
+         char* precision_statement = glslopt_ralloc_asprintf(ctx, "precision %s %s", precision_type, this->type_name);
 
          ir_precision_statement *const stmt = new(ctx) ir_precision_statement(precision_statement);
 		  
@@ -5554,7 +5554,7 @@ ast_interface_block::hir(exec_list *instructions,
             _mesa_glsl_error(&loc, state,
                              "redeclaration of gl_PerVertex input not allowed "
                              "in the %s shader",
-                             _mesa_shader_stage_to_string(state->stage));
+                             glslopt__mesa_shader_stage_to_string(state->stage));
          }
          if (this->instance_name == NULL ||
              strcmp(this->instance_name, "gl_in") != 0 || this->array_specifier == NULL) {
@@ -5571,7 +5571,7 @@ ast_interface_block::hir(exec_list *instructions,
             _mesa_glsl_error(&loc, state,
                              "redeclaration of gl_PerVertex output not "
                              "allowed in the %s shader",
-                             _mesa_shader_stage_to_string(state->stage));
+                             glslopt__mesa_shader_stage_to_string(state->stage));
          }
          if (this->instance_name != NULL) {
             _mesa_glsl_error(&loc, state,
@@ -5769,7 +5769,7 @@ ast_interface_block::hir(exec_list *instructions,
       for (unsigned i = 0; i < num_variables; i++) {
          ir_variable *var =
             new(state) ir_variable(fields[i].type,
-                                   ralloc_strdup(state, fields[i].name),
+                                   glslopt_ralloc_strdup(state, fields[i].name),
                                    var_mode, fields[i].precision);
          var->data.interpolation = fields[i].interpolation;
          var->data.centroid = fields[i].centroid;

@@ -85,7 +85,7 @@ matrix_flipper::visit_enter(ir_expression *ir)
       assert(deref && deref->var == mat_var);
 #endif
 
-      void *mem_ctx = ralloc_parent(ir);
+      void *mem_ctx = glslopt_ralloc_parent(ir);
 
       ir->operands[0] = ir->operands[1];
       ir->operands[1] = new(mem_ctx) ir_dereference_variable(mvp_transpose);

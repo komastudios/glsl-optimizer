@@ -116,7 +116,7 @@ ir_if_simplification_visitor::visit_leave(ir_if *ir)
     * folded into the generation of "cond" anyway.
     */
    if (ir->then_instructions.is_empty()) {
-      ir->condition = new(ralloc_parent(ir->condition))
+      ir->condition = new(glslopt_ralloc_parent(ir->condition))
 	 ir_expression(ir_unop_logic_not, ir->condition);
       ir->else_instructions.move_nodes_to(&ir->then_instructions);
       this->made_progress = true;

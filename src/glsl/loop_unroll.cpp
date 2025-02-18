@@ -159,7 +159,7 @@ private:
 void
 loop_unroll_visitor::simple_unroll(ir_loop *ir, int iterations)
 {
-   void *const mem_ctx = ralloc_parent(ir);
+   void *const mem_ctx = glslopt_ralloc_parent(ir);
 
    for (int i = 0; i < iterations; i++) {
       exec_list copy_list;
@@ -213,7 +213,7 @@ void
 loop_unroll_visitor::complex_unroll(ir_loop *ir, int iterations,
                                     bool continue_from_then_branch)
 {
-   void *const mem_ctx = ralloc_parent(ir);
+   void *const mem_ctx = glslopt_ralloc_parent(ir);
    ir_instruction *ir_to_replace = ir;
 
    for (int i = 0; i < iterations; i++) {

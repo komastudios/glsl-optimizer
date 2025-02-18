@@ -116,7 +116,7 @@ static void visit_variable (ir_instruction* ir, void* data)
 
 ir_struct_usage_visitor::ir_struct_usage_visitor()
 {
-	this->mem_ctx = ralloc_context(NULL);
+	this->mem_ctx = glslopt_ralloc_context(NULL);
 	this->struct_list.make_empty();
 	this->callback_enter = visit_variable;
 	this->data_enter = this;
@@ -124,7 +124,7 @@ ir_struct_usage_visitor::ir_struct_usage_visitor()
 
 ir_struct_usage_visitor::~ir_struct_usage_visitor(void)
 {
-	ralloc_free(mem_ctx);
+	glslopt_ralloc_free(mem_ctx);
 }
 
 

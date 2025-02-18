@@ -90,7 +90,7 @@ public:
 void
 flatten_named_interface_blocks_declarations::run(exec_list *instructions)
 {
-   interface_namespace = hash_table_ctor(0, hash_table_string_hash,
+   interface_namespace = glslopt_hash_table_ctor(0, glslopt_hash_table_string_hash,
                                          hash_table_string_compare);
 
    /* First pass: adjust instance block variables with an instance name
@@ -125,16 +125,16 @@ flatten_named_interface_blocks_declarations::run(exec_list *instructions)
       for (unsigned i = 0; i < iface_t->length; i++) {
          const char * field_name = iface_t->fields.structure[i].name;
          char *iface_field_name =
-            ralloc_asprintf(mem_ctx, "%s.%s.%s",
+            glslopt_ralloc_asprintf(mem_ctx, "%s.%s.%s",
                             iface_t->name, var->name, field_name);
 
          ir_variable *found_var =
-            (ir_variable *) hash_table_find(interface_namespace,
+            (ir_variable *) glslopt_hash_table_find(interface_namespace,
                                             iface_field_name);
          if (!found_var) {
             ir_variable *new_var;
             char *var_name =
-               ralloc_strdup(mem_ctx, iface_t->fields.structure[i].name);
+               glslopt_ralloc_strdup(mem_ctx, iface_t->fields.structure[i].name);
             if (array_t == NULL) {
                new_var =
                   new(mem_ctx) ir_variable(iface_t->fields.structure[i].type,
@@ -162,7 +162,7 @@ flatten_named_interface_blocks_declarations::run(exec_list *instructions)
             new_var->data.sample = iface_t->fields.structure[i].sample;
 
             new_var->init_interface_type(iface_t);
-            hash_table_insert(interface_namespace, new_var,
+            glslopt_hash_table_insert(interface_namespace, new_var,
                               iface_field_name);
             insert_pos->insert_after(new_var);
             insert_pos = new_var;
@@ -175,7 +175,7 @@ flatten_named_interface_blocks_declarations::run(exec_list *instructions)
     * reference an interface block, then flatten the refererence out.
     */
    visit_list_elements(this, instructions);
-   hash_table_dtor(interface_namespace);
+   glslopt_hash_table_dtor(interface_namespace);
    interface_namespace = NULL;
 }
 
@@ -219,11 +219,11 @@ flatten_named_interface_blocks_declarations::handle_rvalue(ir_rvalue **rvalue)
 
    if (var->get_interface_type() != NULL) {
       char *iface_field_name =
-         ralloc_asprintf(mem_ctx, "%s.%s.%s", var->get_interface_type()->name,
+         glslopt_ralloc_asprintf(mem_ctx, "%s.%s.%s", var->get_interface_type()->name,
                          var->name, ir->field);
       /* Find the variable in the set of flattened interface blocks */
       ir_variable *found_var =
-         (ir_variable *) hash_table_find(interface_namespace,
+         (ir_variable *) glslopt_hash_table_find(interface_namespace,
                                          iface_field_name);
       assert(found_var);
 

@@ -166,7 +166,7 @@ set_uniform_initializer(void *mem_ctx, gl_shader_program *prog,
 
       for (unsigned int i = 0; i < type->length; i++) {
 	 const glsl_type *field_type = type->fields.structure[i].type;
-	 const char *field_name = ralloc_asprintf(mem_ctx, "%s.%s", name,
+	 const char *field_name = glslopt_ralloc_asprintf(mem_ctx, "%s.%s", name,
 					    type->fields.structure[i].name);
 	 set_uniform_initializer(mem_ctx, prog, field_name,
                                  field_type, field_constant, boolean_true);
@@ -177,7 +177,7 @@ set_uniform_initializer(void *mem_ctx, gl_shader_program *prog,
       const glsl_type *const element_type = type->fields.array;
 
       for (unsigned int i = 0; i < type->length; i++) {
-	 const char *element_name = ralloc_asprintf(mem_ctx, "%s[%d]", name, i);
+	 const char *element_name = glslopt_ralloc_asprintf(mem_ctx, "%s[%d]", name, i);
 
 	 set_uniform_initializer(mem_ctx, prog, element_name,
                                  element_type, val->array_elements[i],
@@ -254,7 +254,7 @@ link_set_uniform_initializers(struct gl_shader_program *prog,
 	    continue;
 
 	 if (!mem_ctx)
-	    mem_ctx = ralloc_context(NULL);
+	    mem_ctx = glslopt_ralloc_context(NULL);
 
          if (var->data.explicit_binding) {
             const glsl_type *const type = var->type;
@@ -280,7 +280,7 @@ link_set_uniform_initializers(struct gl_shader_program *prog,
                if (var->is_interface_instance() && var->type->is_array()) {
                   for (unsigned i = 0; i < var->type->length; i++) {
                      const char *name =
-                        ralloc_asprintf(mem_ctx, "%s[%u]", iface_type->name, i);
+                        glslopt_ralloc_asprintf(mem_ctx, "%s[%u]", iface_type->name, i);
 
                      /* Section 4.4.3 (Uniform Block Layout Qualifiers) of the
                       * GLSL 4.20 spec says:
@@ -311,5 +311,5 @@ link_set_uniform_initializers(struct gl_shader_program *prog,
       }
    }
 
-   ralloc_free(mem_ctx);
+   glslopt_ralloc_free(mem_ctx);
 }

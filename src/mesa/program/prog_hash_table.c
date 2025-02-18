@@ -54,7 +54,7 @@ struct hash_node {
 
 
 struct hash_table *
-hash_table_ctor(unsigned num_buckets, hash_func_t hash,
+glslopt_hash_table_ctor(unsigned num_buckets, hash_func_t hash,
                 hash_compare_func_t compare)
 {
     struct hash_table *ht;
@@ -82,17 +82,17 @@ hash_table_ctor(unsigned num_buckets, hash_func_t hash,
 
 
 void
-hash_table_dtor(struct hash_table *ht)
+glslopt_hash_table_dtor(struct hash_table *ht)
 {
    if (!ht)
       return;
-   hash_table_clear(ht);
+   glslopt_hash_table_clear(ht);
    free(ht);
 }
 
 
 void
-hash_table_clear(struct hash_table *ht)
+glslopt_hash_table_clear(struct hash_table *ht)
 {
    struct node *node;
    struct node *temp;
@@ -129,7 +129,7 @@ get_node(struct hash_table *ht, const void *key)
 }
 
 void *
-hash_table_find(struct hash_table *ht, const void *key)
+glslopt_hash_table_find(struct hash_table *ht, const void *key)
 {
    struct hash_node *hn = get_node(ht, key);
 
@@ -137,7 +137,7 @@ hash_table_find(struct hash_table *ht, const void *key)
 }
 
 void
-hash_table_insert(struct hash_table *ht, void *data, const void *key)
+glslopt_hash_table_insert(struct hash_table *ht, void *data, const void *key)
 {
     const unsigned hash_value = (*ht->hash)(key);
     const unsigned bucket = hash_value % ht->num_buckets;
@@ -145,7 +145,7 @@ hash_table_insert(struct hash_table *ht, void *data, const void *key)
 
     node = calloc(1, sizeof(*node));
     if (node == NULL) {
-       _mesa_error_no_memory(__func__);
+       glslopt__mesa_error_no_memory(__func__);
        return;
     }
 
@@ -156,7 +156,7 @@ hash_table_insert(struct hash_table *ht, void *data, const void *key)
 }
 
 bool
-hash_table_replace(struct hash_table *ht, void *data, const void *key)
+glslopt_hash_table_replace(struct hash_table *ht, void *data, const void *key)
 {
     const unsigned hash_value = (*ht->hash)(key);
     const unsigned bucket = hash_value % ht->num_buckets;
@@ -174,7 +174,7 @@ hash_table_replace(struct hash_table *ht, void *data, const void *key)
 
     hn = calloc(1, sizeof(*hn));
     if (hn == NULL) {
-       _mesa_error_no_memory(__func__);
+       glslopt__mesa_error_no_memory(__func__);
        return false;
     }
 
@@ -186,7 +186,7 @@ hash_table_replace(struct hash_table *ht, void *data, const void *key)
 }
 
 void
-hash_table_remove(struct hash_table *ht, const void *key)
+glslopt_hash_table_remove(struct hash_table *ht, const void *key)
 {
    struct node *node = (struct node *) get_node(ht, key);
    if (node != NULL) {
@@ -197,7 +197,7 @@ hash_table_remove(struct hash_table *ht, const void *key)
 }
 
 void
-hash_table_call_foreach(struct hash_table *ht,
+glslopt_hash_table_call_foreach(struct hash_table *ht,
 			void (*callback)(const void *key,
 					 void *data,
 					 void *closure),
@@ -216,7 +216,7 @@ hash_table_call_foreach(struct hash_table *ht,
 }
 
 unsigned
-hash_table_string_hash(const void *key)
+glslopt_hash_table_string_hash(const void *key)
 {
     const char *str = (const char *) key;
     unsigned hash = 5381;
@@ -232,14 +232,14 @@ hash_table_string_hash(const void *key)
 
 
 unsigned
-hash_table_pointer_hash(const void *key)
+glslopt_hash_table_pointer_hash(const void *key)
 {
    return (unsigned)((uintptr_t) key / sizeof(void *));
 }
 
 
 int
-hash_table_pointer_compare(const void *key1, const void *key2)
+glslopt_hash_table_pointer_compare(const void *key1, const void *key2)
 {
    return key1 == key2 ? 0 : 1;
 }

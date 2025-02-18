@@ -405,7 +405,7 @@ public:
       if (!*rvalue)
          return;
 
-      void *ctx = ralloc_parent(*rvalue);
+      void *ctx = glslopt_ralloc_parent(*rvalue);
 
       /* Replace an array dereference gl_TexCoord[i] with a single
        * variable dereference representing gl_TexCoord[i].

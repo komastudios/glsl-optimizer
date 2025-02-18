@@ -76,17 +76,17 @@ prototype_string(const glsl_type *return_type, const char *name,
    char *str = NULL;
 
    if (return_type != NULL)
-      str = ralloc_asprintf(NULL, "%s ", return_type->name);
+      str = glslopt_ralloc_asprintf(NULL, "%s ", return_type->name);
 
-   ralloc_asprintf_append(&str, "%s(", name);
+   glslopt_ralloc_asprintf_append(&str, "%s(", name);
 
    const char *comma = "";
    foreach_in_list(const ir_variable, param, parameters) {
-      ralloc_asprintf_append(&str, "%s%s", comma, param->type->name);
+      glslopt_ralloc_asprintf_append(&str, "%s%s", comma, param->type->name);
       comma = ", ";
    }
 
-   ralloc_strcat(&str, ")");
+   glslopt_ralloc_strcat(&str, ")");
    return str;
 }
 
@@ -463,7 +463,7 @@ generate_call(exec_list *instructions, ir_function_signature *sig,
    if (!sig->return_type->is_void()) {
       /* Create a new temporary to hold the return value. */
       char *const name = ir_variable::temporaries_allocate_names
-         ? ralloc_asprintf(ctx, "%s_retval", sig->function_name())
+         ? glslopt_ralloc_asprintf(ctx, "%s_retval", sig->function_name())
          : NULL;
 
       ir_variable *var;
@@ -471,7 +471,7 @@ generate_call(exec_list *instructions, ir_function_signature *sig,
       var = new(ctx) ir_variable(sig->return_type, name, ir_var_temporary, precision_for_call(sig,actual_parameters));
       instructions->push_tail(var);
 
-      ralloc_free(name);
+      glslopt_ralloc_free(name);
 
       deref = new(ctx) ir_dereference_variable(var);
    }
@@ -556,7 +556,7 @@ print_function_prototypes(_mesa_glsl_parse_state *state, YYLTYPE *loc,
 
       char *str = prototype_string(sig->return_type, f->name, &sig->parameters);
       _mesa_glsl_error(loc, state, "   %s", str);
-      ralloc_free(str);
+      glslopt_ralloc_free(str);
    }
 }
 
@@ -581,7 +581,7 @@ no_matching_function_error(const char *name,
       _mesa_glsl_error(loc, state,
                        "no matching function for call to `%s'; candidates are:",
                        str);
-      ralloc_free(str);
+      glslopt_ralloc_free(str);
 
       print_function_prototypes(state, loc, state->symbols->get_function(name));
 
@@ -600,7 +600,7 @@ no_matching_function_error(const char *name,
 static ir_rvalue *
 convert_component(ir_rvalue *src, const glsl_type *desired_type)
 {
-   void *ctx = ralloc_parent(src);
+   void *ctx = glslopt_ralloc_parent(src);
    const unsigned a = desired_type->base_type;
    const unsigned b = src->type->base_type;
    ir_expression *result = NULL;
@@ -685,7 +685,7 @@ convert_component(ir_rvalue *src, const glsl_type *desired_type)
 static ir_rvalue *
 dereference_component(ir_rvalue *src, unsigned component)
 {
-   void *ctx = ralloc_parent(src);
+   void *ctx = glslopt_ralloc_parent(src);
    assert(component < src->type->components());
 
    /* If the source is a constant, just create a new constant instead of a

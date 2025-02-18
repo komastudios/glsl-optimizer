@@ -28,12 +28,12 @@
 #include "main/core.h" /* for isblank() on MSVC */
 
 void
-glcpp_error (YYLTYPE *locp, glcpp_parser_t *parser, const char *fmt, ...)
+glslopt_glcpp_error (YYLTYPE *locp, glcpp_parser_t *parser, const char *fmt, ...)
 {
 	va_list ap;
 
 	parser->error = 1;
-	ralloc_asprintf_rewrite_tail(&parser->info_log,
+	glslopt_ralloc_asprintf_rewrite_tail(&parser->info_log,
 				     &parser->info_log_length,
 				     "%u:%u(%u): "
 				     "preprocessor error: ",
@@ -41,20 +41,20 @@ glcpp_error (YYLTYPE *locp, glcpp_parser_t *parser, const char *fmt, ...)
 				     locp->first_line,
 				     locp->first_column);
 	va_start(ap, fmt);
-	ralloc_vasprintf_rewrite_tail(&parser->info_log,
+	glslopt_ralloc_vasprintf_rewrite_tail(&parser->info_log,
 				      &parser->info_log_length,
 				      fmt, ap);
 	va_end(ap);
-	ralloc_asprintf_rewrite_tail(&parser->info_log,
+	glslopt_ralloc_asprintf_rewrite_tail(&parser->info_log,
 				     &parser->info_log_length, "\n");
 }
 
 void
-glcpp_warning (YYLTYPE *locp, glcpp_parser_t *parser, const char *fmt, ...)
+glslopt_glcpp_warning (YYLTYPE *locp, glcpp_parser_t *parser, const char *fmt, ...)
 {
 	va_list ap;
 
-	ralloc_asprintf_rewrite_tail(&parser->info_log,
+	glslopt_ralloc_asprintf_rewrite_tail(&parser->info_log,
 				     &parser->info_log_length,
 				     "%u:%u(%u): "
 				     "preprocessor warning: ",
@@ -62,11 +62,11 @@ glcpp_warning (YYLTYPE *locp, glcpp_parser_t *parser, const char *fmt, ...)
 				     locp->first_line,
 				     locp->first_column);
 	va_start(ap, fmt);
-	ralloc_vasprintf_rewrite_tail(&parser->info_log,
+	glslopt_ralloc_vasprintf_rewrite_tail(&parser->info_log,
 				      &parser->info_log_length,
 				      fmt, ap);
 	va_end(ap);
-	ralloc_asprintf_rewrite_tail(&parser->info_log,
+	glslopt_ralloc_asprintf_rewrite_tail(&parser->info_log,
 				     &parser->info_log_length, "\n");
 }
 
@@ -112,7 +112,7 @@ skip_newline (const char *str)
 static char *
 remove_line_continuations(glcpp_parser_t *ctx, const char *shader)
 {
-	char *clean = ralloc_strdup(ctx, "");
+	char *clean = glslopt_ralloc_strdup(ctx, "");
 	const char *backslash, *newline, *search_start;
         const char *cr, *lf;
         char newline_separator[3];
@@ -177,10 +177,10 @@ remove_line_continuations(glcpp_parser_t *ctx, const char *shader)
 			if (newline &&
 			    (backslash == NULL || newline < backslash))
 			{
-				ralloc_strncat(&clean, shader,
+				glslopt_ralloc_strncat(&clean, shader,
 					       newline - shader + 1);
 				while (collapsed_newlines) {
-					ralloc_strcat(&clean, newline_separator);
+					glslopt_ralloc_strcat(&clean, newline_separator);
 					collapsed_newlines--;
 				}
 				shader = skip_newline (newline);
@@ -201,42 +201,42 @@ remove_line_continuations(glcpp_parser_t *ctx, const char *shader)
 		if (backslash[1] == '\r' || backslash[1] == '\n')
 		{
 			collapsed_newlines++;
-			ralloc_strncat(&clean, shader, backslash - shader);
+			glslopt_ralloc_strncat(&clean, shader, backslash - shader);
 			shader = skip_newline (backslash + 1);
 			search_start = shader;
 		}
 	}
 
-	ralloc_strcat(&clean, shader);
+	glslopt_ralloc_strcat(&clean, shader);
 
 	return clean;
 }
 
 int
-glcpp_preprocess(void *ralloc_ctx, const char **shader, char **info_log,
+glslopt_glcpp_preprocess(void *ralloc_ctx, const char **shader, char **info_log,
 	   const struct gl_extensions *extensions, struct gl_context *gl_ctx)
 {
 	int errors;
-	glcpp_parser_t *parser = glcpp_parser_create (extensions, gl_ctx->API);
+	glcpp_parser_t *parser = glslopt_glcpp_parser_create (extensions, gl_ctx->API);
 
 	if (! gl_ctx->Const.DisableGLSLLineContinuations)
 		*shader = remove_line_continuations(parser, *shader);
 
-	glcpp_lex_set_source_string (parser, *shader);
+	glslopt_glcpp_lex_set_source_string (parser, *shader);
 
-	glcpp_parser_parse (parser);
+	glslopt_glcpp_parser_parse (parser);
 
 	if (parser->skip_stack)
-		glcpp_error (&parser->skip_stack->loc, parser, "Unterminated #if\n");
+		glslopt_glcpp_error (&parser->skip_stack->loc, parser, "Unterminated #if\n");
 
-	glcpp_parser_resolve_implicit_version(parser);
+	glslopt_glcpp_parser_resolve_implicit_version(parser);
 
-	ralloc_strcat(info_log, parser->info_log);
+	glslopt_ralloc_strcat(info_log, parser->info_log);
 
-	ralloc_steal(ralloc_ctx, parser->output);
+	glslopt_ralloc_steal(ralloc_ctx, parser->output);
 	*shader = parser->output;
 
 	errors = parser->error;
-	glcpp_parser_destroy (parser);
+	glslopt_glcpp_parser_destroy (parser);
 	return errors;
 }

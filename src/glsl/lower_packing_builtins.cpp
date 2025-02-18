@@ -75,10 +75,10 @@ public:
       if (lowering_op == LOWER_PACK_UNPACK_NONE)
          return;
 
-      setup_factory(ralloc_parent(expr));
+      setup_factory(glslopt_ralloc_parent(expr));
 
       ir_rvalue *op0 = expr->operands[0];
-      ralloc_steal(factory.mem_ctx, op0);
+      glslopt_ralloc_steal(factory.mem_ctx, op0);
 
       switch (lowering_op) {
       case LOWER_PACK_SNORM_2x16:

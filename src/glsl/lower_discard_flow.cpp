@@ -55,7 +55,7 @@ public:
    lower_discard_flow_visitor(ir_variable *discarded)
    : discarded(discarded)
    {
-      mem_ctx = ralloc_parent(discarded);
+      mem_ctx = glslopt_ralloc_parent(discarded);
    }
 
    ~lower_discard_flow_visitor()

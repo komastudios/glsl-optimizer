@@ -37,8 +37,8 @@
 
 ir_variable_refcount_visitor::ir_variable_refcount_visitor()
 {
-   this->mem_ctx = ralloc_context(NULL);
-   this->ht = _mesa_hash_table_create(NULL, _mesa_key_pointer_equal);
+   this->mem_ctx = glslopt_ralloc_context(NULL);
+   this->ht = glslopt__mesa_hash_table_create(NULL, glslopt__mesa_key_pointer_equal);
    this->current_lhs = NULL;
 }
 
@@ -51,8 +51,8 @@ free_entry(struct hash_entry *entry)
 
 ir_variable_refcount_visitor::~ir_variable_refcount_visitor()
 {
-   ralloc_free(this->mem_ctx);
-   _mesa_hash_table_destroy(this->ht, free_entry);
+   glslopt_ralloc_free(this->mem_ctx);
+   glslopt__mesa_hash_table_destroy(this->ht, free_entry);
 }
 
 // constructor
@@ -72,7 +72,7 @@ ir_variable_refcount_visitor::get_variable_entry(ir_variable *var)
 {
    assert(var);
 
-   struct hash_entry *e = _mesa_hash_table_search(this->ht,
+   struct hash_entry *e = glslopt__mesa_hash_table_search(this->ht,
 						    _mesa_hash_pointer(var),
 						    var);
    if (e)
@@ -80,7 +80,7 @@ ir_variable_refcount_visitor::get_variable_entry(ir_variable *var)
 
    ir_variable_refcount_entry *entry = new ir_variable_refcount_entry(var);
    assert(entry->referenced_count == 0);
-   _mesa_hash_table_insert(this->ht, _mesa_hash_pointer(var), var, entry);
+   glslopt__mesa_hash_table_insert(this->ht, _mesa_hash_pointer(var), var, entry);
 
    return entry;
 }
@@ -89,7 +89,7 @@ ir_variable_refcount_entry *
 ir_variable_refcount_visitor::find_variable_entry(ir_variable *var)
 {
 	assert(var);
-	struct hash_entry *e = _mesa_hash_table_search(this->ht,
+	struct hash_entry *e = glslopt__mesa_hash_table_search(this->ht,
 												   _mesa_hash_pointer(var),
 												   var);
 	if (e)

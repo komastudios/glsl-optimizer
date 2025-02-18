@@ -145,7 +145,7 @@ public:
 
       if ((dv != NULL) && (dv->var == this->variable_to_replace)) {
 	 this->progress = true;
-	 *rvalue = this->value->clone(ralloc_parent(*rvalue), NULL);
+	 *rvalue = this->value->clone(glslopt_ralloc_parent(*rvalue), NULL);
       }
    }
 
@@ -206,7 +206,7 @@ struct assignment_generator
       /* Just clone the rest of the deref chain when trying to get at the
        * underlying variable.
        */
-      void *mem_ctx = ralloc_parent(base_ir);
+      void *mem_ctx = glslopt_ralloc_parent(base_ir);
 
       /* Clone the old r-value in its entirety.  Then replace any occurances of
        * the old variable index with the new constant index.
@@ -248,7 +248,7 @@ struct switch_generator
 	linear_sequence_max_length(linear_sequence_max_length),
 	condition_components(condition_components)
    {
-      this->mem_ctx = ralloc_parent(index);
+      this->mem_ctx = glslopt_ralloc_parent(index);
    }
 
    void linear_sequence(unsigned begin, unsigned end, exec_list *list)
@@ -408,7 +408,7 @@ public:
          ? orig_deref->array->type->length
          : orig_deref->array->type->matrix_columns;
 
-      void *const mem_ctx = ralloc_parent(base_ir);
+      void *const mem_ctx = glslopt_ralloc_parent(base_ir);
 
       /* Temporary storage for either the result of the dereference of
        * the array, or the RHS that's being assigned into the
@@ -497,7 +497,7 @@ public:
          ir_variable *var =
 	    convert_dereference_array(orig_deref, NULL, orig_deref);
          assert(var);
-         *pir = new(ralloc_parent(base_ir)) ir_dereference_variable(var);
+         *pir = new(glslopt_ralloc_parent(base_ir)) ir_dereference_variable(var);
          this->progress = true;
       }
    }

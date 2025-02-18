@@ -205,7 +205,7 @@ initialize_context(struct gl_context *ctx, gl_api api)
    }
 
    ctx->Const.GenerateTemporaryNames = true;
-   ctx->Driver.NewShader = _mesa_new_shader;
+   ctx->Driver.NewShader = glslopt__mesa_new_shader;
 }
 
 /* Returned string will have 'ctx' as its ralloc owner. */
@@ -225,7 +225,7 @@ load_text_file(void *ctx, const char *file_name)
 	size = ftell(fp);
 	fseek(fp, 0L, SEEK_SET);
 
-	text = (char *) ralloc_size(ctx, size + 1);
+	text = (char *) glslopt_ralloc_size(ctx, size + 1);
 	if (text != NULL) {
 		do {
 			size_t bytes = fread(text + total_read,
@@ -291,11 +291,11 @@ compile_shader(struct gl_context *ctx, struct gl_shader *shader)
    struct _mesa_glsl_parse_state *state =
       new(shader) _mesa_glsl_parse_state(ctx, shader->Stage, shader);
 
-   _mesa_glsl_compile_shader(ctx, shader, dump_ast, dump_hir);
+   glslopt__mesa_glsl_compile_shader(ctx, shader, dump_ast, dump_hir);
 
    /* Print out the resulting IR */
    if (!state->error && dump_lir) {
-      _mesa_print_ir(stdout, shader->ir, state);
+      glslopt__mesa_print_ir(stdout, shader->ir, state);
    }
 
    return;
@@ -349,7 +349,7 @@ main(int argc, char **argv)
 
    whole_program = rzalloc (NULL, struct gl_shader_program);
    assert(whole_program != NULL);
-   whole_program->InfoLog = ralloc_strdup(whole_program, "");
+   whole_program->InfoLog = glslopt_ralloc_strdup(whole_program, "");
 
    for (/* empty */; argc > optind; optind++) {
       whole_program->Shaders =
@@ -405,9 +405,9 @@ main(int argc, char **argv)
    }
 
    for (unsigned i = 0; i < MESA_SHADER_STAGES; i++)
-      ralloc_free(whole_program->_LinkedShaders[i]);
+      glslopt_ralloc_free(whole_program->_LinkedShaders[i]);
 
-   ralloc_free(whole_program);
+   glslopt_ralloc_free(whole_program);
 //   _mesa_glsl_release_types();
    _mesa_glsl_release_builtin_functions();
 

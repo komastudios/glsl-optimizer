@@ -82,7 +82,7 @@ lower_vertex_id_visitor::visit(ir_dereference_variable *ir)
 
    if (VertexID == NULL) {
       const glsl_type *const int_t = glsl_type::int_type;
-      void *const mem_ctx = ralloc_parent(ir);
+      void *const mem_ctx = glslopt_ralloc_parent(ir);
 
       VertexID = new(mem_ctx) ir_variable(int_t, "__VertexID",
                                           ir_var_temporary, glsl_precision_high);

@@ -176,9 +176,9 @@ interface_field_name(void *mem_ctx, char *base_name, ir_dereference *d,
             ir_constant *const_index = previous_index->as_constant();
             if (!const_index) {
                *nonconst_block_index = previous_index;
-               return ralloc_asprintf(mem_ctx, "%s[0]", base_name);
+               return glslopt_ralloc_asprintf(mem_ctx, "%s[0]", base_name);
             } else {
-               return ralloc_asprintf(mem_ctx,
+               return glslopt_ralloc_asprintf(mem_ctx,
                                       "%s[%d]",
                                       base_name,
                                       const_index->get_uint_component(0));
@@ -230,7 +230,7 @@ lower_ubo_reference_visitor::handle_rvalue(ir_rvalue **rvalue)
    if (!var || !var->is_in_uniform_block())
       return;
 
-   mem_ctx = ralloc_parent(*rvalue);
+   mem_ctx = glslopt_ralloc_parent(*rvalue);
 
    ir_rvalue *nonconst_block_index;
    const char *const field_name =
@@ -352,7 +352,7 @@ lower_ubo_reference_visitor::handle_rvalue(ir_rvalue **rvalue)
             const bool field_row_major =
                is_dereferenced_thing_row_major(field_deref);
 
-            ralloc_free(field_deref);
+            glslopt_ralloc_free(field_deref);
 
             unsigned field_align = type->std140_base_alignment(field_row_major);
 

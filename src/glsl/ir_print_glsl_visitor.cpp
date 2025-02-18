@@ -69,15 +69,15 @@ struct ga_entry : public exec_node
 
 struct global_print_tracker {
 	global_print_tracker () {
-		mem_ctx = ralloc_context(0);
+		mem_ctx = glslopt_ralloc_context(0);
 		var_counter = 0;
-		var_hash = hash_table_ctor(0, hash_table_pointer_hash, hash_table_pointer_compare);
+		var_hash = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash, glslopt_hash_table_pointer_compare);
 		main_function_done = false;
 	}
 	
 	~global_print_tracker() {
-		hash_table_dtor (var_hash);
-		ralloc_free(mem_ctx);
+		glslopt_hash_table_dtor (var_hash);
+		glslopt_ralloc_free(mem_ctx);
 	}
 	
 	unsigned	var_counter;
@@ -298,7 +298,7 @@ _mesa_print_ir_glsl(exec_list *instructions,
 	// Add the optimized glsl code
 	str.asprintf_append("%s", body.c_str());
 
-	return ralloc_strdup(buffer, str.c_str());
+	return glslopt_ralloc_strdup(buffer, str.c_str());
 }
 
 
@@ -341,11 +341,11 @@ void ir_print_glsl_visitor::newline_deindent()
 
 void ir_print_glsl_visitor::print_var_name (ir_variable* v)
 {
-    uintptr_t id = (uintptr_t)hash_table_find (globals->var_hash, v);
+    uintptr_t id = (uintptr_t)glslopt_hash_table_find (globals->var_hash, v);
 	if (!id && v->data.mode == ir_var_temporary)
 	{
         id = ++globals->var_counter;
-        hash_table_insert (globals->var_hash, (void*)id, v);
+        glslopt_hash_table_insert (globals->var_hash, (void*)id, v);
 	}
     if (id)
     {
@@ -466,11 +466,11 @@ void ir_print_glsl_visitor::visit(ir_variable *ir)
 	// give an id to any variable defined in a function that is not an uniform
 	if ((this->mode == kPrintGlslNone && ir->data.mode != ir_var_uniform))
 	{
-		uintptr_t id = (uintptr_t)hash_table_find (globals->var_hash, ir);
+		uintptr_t id = (uintptr_t)glslopt_hash_table_find (globals->var_hash, ir);
 		if (id == 0)
 		{
 			id = ++globals->var_counter;
-			hash_table_insert (globals->var_hash, (void*)id, ir);
+			glslopt_hash_table_insert (globals->var_hash, (void*)id, ir);
 		}
 	}
 	
@@ -1593,8 +1593,8 @@ bool ir_print_glsl_visitor::emit_canonical_for (ir_loop* ir)
     if (!can_emit_canonical_for(ls))
         return false;
 	
-	hash_table* terminator_hash = hash_table_ctor(0, hash_table_pointer_hash, hash_table_pointer_compare);
-	hash_table* induction_hash = hash_table_ctor(0, hash_table_pointer_hash, hash_table_pointer_compare);
+	hash_table* terminator_hash = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash, glslopt_hash_table_pointer_compare);
+	hash_table* induction_hash = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash, glslopt_hash_table_pointer_compare);
 	
 	buffer.asprintf_append("for (");
 	inside_loop_body = true;
@@ -1636,7 +1636,7 @@ bool ir_print_glsl_visitor::emit_canonical_for (ir_loop* ir)
 	// emit loop terminating conditions
 	foreach_in_list(loop_terminator, term, &ls->terminators)
 	{
-		hash_table_insert(terminator_hash, term, term->ir);
+		glslopt_hash_table_insert(terminator_hash, term, term->ir);
 		
 		// IR has conditions in the form of "if (x) break",
 		// whereas for loop needs them negated, in the form
@@ -1688,7 +1688,7 @@ bool ir_print_glsl_visitor::emit_canonical_for (ir_loop* ir)
 	bool first = true;
 	foreach_in_list(loop_variable, indvar, &ls->induction_variables)
 	{
-		hash_table_insert(induction_hash, indvar, indvar->first_assignment);
+		glslopt_hash_table_insert(induction_hash, indvar, indvar->first_assignment);
 		if (!first)
 			buffer.asprintf_append(", ");
 		visit(indvar->first_assignment);
@@ -1704,9 +1704,9 @@ bool ir_print_glsl_visitor::emit_canonical_for (ir_loop* ir)
 
 		// skip termination & induction statements,
 		// they are part of "for" clause
-		if (hash_table_find(terminator_hash, inst))
+		if (glslopt_hash_table_find(terminator_hash, inst))
 			continue;
-		if (hash_table_find(induction_hash, inst))
+		if (glslopt_hash_table_find(induction_hash, inst))
 			continue;
 		
 		indent();
@@ -1718,8 +1718,8 @@ bool ir_print_glsl_visitor::emit_canonical_for (ir_loop* ir)
 	indent();
 	buffer.asprintf_append("}");
 	
-	hash_table_dtor (terminator_hash);
-	hash_table_dtor (induction_hash);
+	glslopt_hash_table_dtor (terminator_hash);
+	glslopt_hash_table_dtor (induction_hash);
 	
 	return true;
 }

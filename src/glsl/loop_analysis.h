@@ -132,14 +132,14 @@ public:
    {
       this->num_loop_jumps = 0;
       this->contains_calls = false;
-      this->var_hash = hash_table_ctor(0, hash_table_pointer_hash,
-				       hash_table_pointer_compare);
+      this->var_hash = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+				       glslopt_hash_table_pointer_compare);
       this->limiting_terminator = NULL;
    }
 
    ~loop_variable_state()
    {
-      hash_table_dtor(this->var_hash);
+      glslopt_hash_table_dtor(this->var_hash);
    }
 
    DECLARE_RALLOC_CXX_OPERATORS(loop_variable_state)

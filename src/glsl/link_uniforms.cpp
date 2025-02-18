@@ -62,9 +62,9 @@ program_resource_visitor::process(const glsl_type *type, const char *name)
    assert(type->without_array()->is_record()
           || type->without_array()->is_interface());
 
-   char *name_copy = ralloc_strdup(NULL, name);
+   char *name_copy = glslopt_ralloc_strdup(NULL, name);
    recursion(type, &name_copy, strlen(name), false, NULL, false);
-   ralloc_free(name_copy);
+   glslopt_ralloc_free(name_copy);
 }
 
 void
@@ -100,11 +100,11 @@ program_resource_visitor::process(ir_variable *var)
        */
       assert(t->is_array());
       const glsl_type *ifc_type = var->get_interface_type();
-      char *name = ralloc_strdup(NULL, ifc_type->name);
+      char *name = glslopt_ralloc_strdup(NULL, ifc_type->name);
       size_t name_length = strlen(name);
       for (unsigned i = 0; i < t->length; i++) {
          size_t new_length = name_length;
-         ralloc_asprintf_rewrite_tail(&name, &new_length, "[%u].%s", i,
+         glslopt_ralloc_asprintf_rewrite_tail(&name, &new_length, "[%u].%s", i,
                                       var->name);
          /* Note: row_major is only meaningful for uniform blocks, and
           * lowering is only applied to non-uniform interface blocks, so we
@@ -112,7 +112,7 @@ program_resource_visitor::process(ir_variable *var)
           */
          recursion(var->type, &name, new_length, row_major, NULL, false);
       }
-      ralloc_free(name);
+      glslopt_ralloc_free(name);
    } else if (var->data.from_named_ifc_block_nonarray) {
       /* lower_named_interface_blocks created this variable by lowering a
        * named interface block (non-array) to an ordinary variable.  For
@@ -129,25 +129,25 @@ program_resource_visitor::process(ir_variable *var)
        *     Blk.bar
        */
       const glsl_type *ifc_type = var->get_interface_type();
-      char *name = ralloc_asprintf(NULL, "%s.%s", ifc_type->name, var->name);
+      char *name = glslopt_ralloc_asprintf(NULL, "%s.%s", ifc_type->name, var->name);
       /* Note: row_major is only meaningful for uniform blocks, and lowering
        * is only applied to non-uniform interface blocks, so we can safely
        * pass false for row_major.
        */
       recursion(var->type, &name, strlen(name), row_major, NULL, false);
-      ralloc_free(name);
+      glslopt_ralloc_free(name);
    } else if (t->without_array()->is_record()) {
-      char *name = ralloc_strdup(NULL, var->name);
+      char *name = glslopt_ralloc_strdup(NULL, var->name);
       recursion(var->type, &name, strlen(name), row_major, NULL, false);
-      ralloc_free(name);
+      glslopt_ralloc_free(name);
    } else if (t->is_interface()) {
-      char *name = ralloc_strdup(NULL, var->type->name);
+      char *name = glslopt_ralloc_strdup(NULL, var->type->name);
       recursion(var->type, &name, strlen(name), row_major, NULL, false);
-      ralloc_free(name);
+      glslopt_ralloc_free(name);
    } else if (t->is_array() && t->fields.array->is_interface()) {
-      char *name = ralloc_strdup(NULL, var->type->fields.array->name);
+      char *name = glslopt_ralloc_strdup(NULL, var->type->fields.array->name);
       recursion(var->type, &name, strlen(name), row_major, NULL, false);
-      ralloc_free(name);
+      glslopt_ralloc_free(name);
    } else {
       this->visit_field(t, var->name, row_major, NULL, false);
    }
@@ -178,9 +178,9 @@ program_resource_visitor::recursion(const glsl_type *t, char **name,
 
          /* Append '.field' to the current variable name. */
          if (name_length == 0) {
-            ralloc_asprintf_rewrite_tail(name, &new_length, "%s", field);
+            glslopt_ralloc_asprintf_rewrite_tail(name, &new_length, "%s", field);
          } else {
-            ralloc_asprintf_rewrite_tail(name, &new_length, ".%s", field);
+            glslopt_ralloc_asprintf_rewrite_tail(name, &new_length, ".%s", field);
          }
 
          /* The layout of structures at the top level of the block is set
@@ -217,7 +217,7 @@ program_resource_visitor::recursion(const glsl_type *t, char **name,
 	 size_t new_length = name_length;
 
 	 /* Append the subscript to the current variable name */
-	 ralloc_asprintf_rewrite_tail(name, &new_length, "[%u]", i);
+	 glslopt_ralloc_asprintf_rewrite_tail(name, &new_length, "[%u]", i);
 
          recursion(t->fields.array, name, new_length, row_major,
                    record_type,
@@ -578,7 +578,7 @@ private:
          this->uniforms[id].remap_location = UNMAPPED_UNIFORM_LOC;
       }
 
-      this->uniforms[id].name = ralloc_strdup(this->uniforms, name);
+      this->uniforms[id].name = glslopt_ralloc_strdup(this->uniforms, name);
       this->uniforms[id].type = base_type;
       this->uniforms[id].initialized = 0;
       this->uniforms[id].num_driver_storage = 0;
@@ -696,11 +696,11 @@ link_cross_validate_uniform_block(void *mem_ctx,
 	 &linked_block->Uniforms[i];
 
       if (ubo_var->Name == ubo_var->IndexName) {
-         ubo_var->Name = ralloc_strdup(*linked_blocks, ubo_var->Name);
+         ubo_var->Name = glslopt_ralloc_strdup(*linked_blocks, ubo_var->Name);
          ubo_var->IndexName = ubo_var->Name;
       } else {
-         ubo_var->Name = ralloc_strdup(*linked_blocks, ubo_var->Name);
-         ubo_var->IndexName = ralloc_strdup(*linked_blocks, ubo_var->IndexName);
+         ubo_var->Name = glslopt_ralloc_strdup(*linked_blocks, ubo_var->Name);
+         ubo_var->IndexName = glslopt_ralloc_strdup(*linked_blocks, ubo_var->IndexName);
       }
    }
 
@@ -811,7 +811,7 @@ void
 link_assign_uniform_locations(struct gl_shader_program *prog,
                               unsigned int boolean_true)
 {
-   ralloc_free(prog->UniformStorage);
+   glslopt_ralloc_free(prog->UniformStorage);
    prog->UniformStorage = NULL;
    prog->NumUserUniformStorage = 0;
 

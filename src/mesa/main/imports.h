@@ -441,16 +441,16 @@ _mesa_little_endian(void)
  */
 
 extern void *
-_mesa_align_malloc( size_t bytes, unsigned long alignment );
+glslopt__mesa_align_malloc( size_t bytes, unsigned long alignment );
 
 extern void *
-_mesa_align_calloc( size_t bytes, unsigned long alignment );
+glslopt__mesa_align_calloc( size_t bytes, unsigned long alignment );
 
 extern void
-_mesa_align_free( void *ptr );
+glslopt__mesa_align_free( void *ptr );
 
 extern void *
-_mesa_align_realloc(void *oldBuffer, size_t oldSize, size_t newSize,
+glslopt__mesa_align_realloc(void *oldBuffer, size_t oldSize, size_t newSize,
                     unsigned long alignment);
 
 extern void *
@@ -463,37 +463,37 @@ _mesa_exec_free( void *addr );
 #ifndef FFS_DEFINED
 #define FFS_DEFINED 1
 #ifdef HAVE___BUILTIN_FFS
-#define ffs __builtin_ffs
+#define glslopt_ffs __builtin_ffs
 #else
-extern int ffs(int i);
+extern int glslopt_ffs(int i);
 #endif
 
 #ifdef HAVE___BUILTIN_FFSLL
-#define ffsll __builtin_ffsll
+#define glslopt_ffsll __builtin_ffsll
 #else
-extern int ffsll(long long int i);
+extern int glslopt_ffsll(long long int i);
 #endif
 #endif /* FFS_DEFINED */
 
 
 #ifdef HAVE___BUILTIN_POPCOUNT
-#define _mesa_bitcount(i) __builtin_popcount(i)
+#define glslopt__mesa_bitcount(i) __builtin_popcount(i)
 #else
 extern unsigned int
-_mesa_bitcount(unsigned int n);
+glslopt__mesa_bitcount(unsigned int n);
 #endif
 
 #ifdef HAVE___BUILTIN_POPCOUNTLL
-#define _mesa_bitcount_64(i) __builtin_popcountll(i)
+#define glslopt__mesa_bitcount_64(i) __builtin_popcountll(i)
 #else
 extern unsigned int
-_mesa_bitcount_64(uint64_t n);
+glslopt__mesa_bitcount_64(uint64_t n);
 #endif
 
 /**
  * Find the last (most significant) bit set in a word.
  *
- * Essentially ffs() in the reverse direction.
+ * Essentially glslopt_ffs() in the reverse direction.
  */
 static inline unsigned int
 _mesa_fls(unsigned int n)
@@ -514,28 +514,28 @@ _mesa_fls(unsigned int n)
 }
 
 extern int
-_mesa_round_to_even(float val);
+glslopt__mesa_round_to_even(float val);
 
 extern GLhalfARB
-_mesa_float_to_half(float f);
+glslopt__mesa_float_to_half(float f);
 
 extern float
-_mesa_half_to_float(GLhalfARB h);
+glslopt__mesa_half_to_float(GLhalfARB h);
 
 extern char *
-_mesa_strdup( const char *s );
+glslopt__mesa_strdup( const char *s );
 
 extern float
-_mesa_strtof( const char *s, char **end );
+glslopt__mesa_strtof( const char *s, char **end );
 
 extern unsigned int
-_mesa_str_checksum(const char *str);
+glslopt__mesa_str_checksum(const char *str);
 
 extern int
-_mesa_snprintf( char *str, size_t size, const char *fmt, ... ) PRINTFLIKE(3, 4);
+glslopt__mesa_snprintf( char *str, size_t size, const char *fmt, ... ) PRINTFLIKE(3, 4);
 
 extern int
-_mesa_vsnprintf(char *str, size_t size, const char *fmt, va_list arg);
+glslopt__mesa_vsnprintf(char *str, size_t size, const char *fmt, va_list arg);
 
 
 #if defined(_MSC_VER) && !defined(snprintf)

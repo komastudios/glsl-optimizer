@@ -109,7 +109,7 @@ entry_is_present(const struct hash_table *ht, struct hash_entry *entry)
 }
 
 struct hash_table *
-_mesa_hash_table_create(void *mem_ctx,
+glslopt__mesa_hash_table_create(void *mem_ctx,
                         bool (*key_equals_function)(const void *a,
                                                     const void *b))
 {
@@ -130,7 +130,7 @@ _mesa_hash_table_create(void *mem_ctx,
    ht->deleted_key = &deleted_key_value;
 
    if (ht->table == NULL) {
-      ralloc_free(ht);
+      glslopt_ralloc_free(ht);
       return NULL;
    }
 
@@ -144,7 +144,7 @@ _mesa_hash_table_create(void *mem_ctx,
  * freeing.
  */
 void
-_mesa_hash_table_destroy(struct hash_table *ht,
+glslopt__mesa_hash_table_destroy(struct hash_table *ht,
                          void (*delete_function)(struct hash_entry *entry))
 {
    if (!ht)
@@ -157,7 +157,7 @@ _mesa_hash_table_destroy(struct hash_table *ht,
          delete_function(entry);
       }
    }
-   ralloc_free(ht);
+   glslopt_ralloc_free(ht);
 }
 
 /** Sets the value of the key pointer used for deleted entries in the table.
@@ -171,7 +171,7 @@ _mesa_hash_table_destroy(struct hash_table *ht,
  * This must be called before any keys are actually deleted from the table.
  */
 void
-_mesa_hash_table_set_deleted_key(struct hash_table *ht, const void *deleted_key)
+glslopt__mesa_hash_table_set_deleted_key(struct hash_table *ht, const void *deleted_key)
 {
    ht->deleted_key = deleted_key;
 }
@@ -183,7 +183,7 @@ _mesa_hash_table_set_deleted_key(struct hash_table *ht, const void *deleted_key)
  * modified by the user.
  */
 struct hash_entry *
-_mesa_hash_table_search(struct hash_table *ht, uint32_t hash,
+glslopt__mesa_hash_table_search(struct hash_table *ht, uint32_t hash,
                         const void *key)
 {
    uint32_t start_hash_address = hash % ht->size;
@@ -235,11 +235,11 @@ _mesa_hash_table_rehash(struct hash_table *ht, int new_size_index)
    ht->deleted_entries = 0;
 
    hash_table_foreach(&old_ht, entry) {
-      _mesa_hash_table_insert(ht, entry->hash,
+      glslopt__mesa_hash_table_insert(ht, entry->hash,
                               entry->key, entry->data);
    }
 
-   ralloc_free(old_ht.table);
+   glslopt_ralloc_free(old_ht.table);
 }
 
 /**
@@ -249,7 +249,7 @@ _mesa_hash_table_rehash(struct hash_table *ht, int new_size_index)
  * so previously found hash_entries are no longer valid after this function.
  */
 struct hash_entry *
-_mesa_hash_table_insert(struct hash_table *ht, uint32_t hash,
+glslopt__mesa_hash_table_insert(struct hash_table *ht, uint32_t hash,
                         const void *key, void *data)
 {
    uint32_t start_hash_address, hash_address;
@@ -313,7 +313,7 @@ _mesa_hash_table_insert(struct hash_table *ht, uint32_t hash,
  * the table deleting entries is safe.
  */
 void
-_mesa_hash_table_remove(struct hash_table *ht,
+glslopt__mesa_hash_table_remove(struct hash_table *ht,
                         struct hash_entry *entry)
 {
    if (!entry)
@@ -331,7 +331,7 @@ _mesa_hash_table_remove(struct hash_table *ht,
  * an iteration over the table is O(table_size) not O(entries).
  */
 struct hash_entry *
-_mesa_hash_table_next_entry(struct hash_table *ht,
+glslopt__mesa_hash_table_next_entry(struct hash_table *ht,
                             struct hash_entry *entry)
 {
    if (entry == NULL)
@@ -357,7 +357,7 @@ _mesa_hash_table_next_entry(struct hash_table *ht,
  * be set to NULL for no filtering.
  */
 struct hash_entry *
-_mesa_hash_table_random_entry(struct hash_table *ht,
+glslopt__mesa_hash_table_random_entry(struct hash_table *ht,
                               bool (*predicate)(struct hash_entry *entry))
 {
    struct hash_entry *entry;
@@ -394,7 +394,7 @@ _mesa_hash_table_random_entry(struct hash_table *ht,
  * Hsieh's http://www.azillionmonkeys.com/qed/hash.html
  */
 uint32_t
-_mesa_hash_data(const void *data, size_t size)
+glslopt__mesa_hash_data(const void *data, size_t size)
 {
    uint32_t hash = 2166136261ul;
    const uint8_t *bytes = data;
@@ -410,7 +410,7 @@ _mesa_hash_data(const void *data, size_t size)
 
 /** FNV-1 string hash implementation */
 uint32_t
-_mesa_hash_string(const char *key)
+glslopt__mesa_hash_string(const char *key)
 {
    uint32_t hash = 2166136261ul;
 
@@ -425,16 +425,16 @@ _mesa_hash_string(const char *key)
 
 /**
  * String compare function for use as the comparison callback in
- * _mesa_hash_table_create().
+ * glslopt__mesa_hash_table_create().
  */
 bool
-_mesa_key_string_equal(const void *a, const void *b)
+glslopt__mesa_key_string_equal(const void *a, const void *b)
 {
    return strcmp(a, b) == 0;
 }
 
 bool
-_mesa_key_pointer_equal(const void *a, const void *b)
+glslopt__mesa_key_pointer_equal(const void *a, const void *b)
 {
    return a == b;
 }

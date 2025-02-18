@@ -29,7 +29,7 @@ extern "C" {
 #endif
 
 extern void
-_mesa_glsl_compile_shader(struct gl_context *ctx, struct gl_shader *shader,
+glslopt__mesa_glsl_compile_shader(struct gl_context *ctx, struct gl_shader *shader,
 			  bool dump_ast, bool dump_hir);
 
 #ifdef __cplusplus

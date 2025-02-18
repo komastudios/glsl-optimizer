@@ -44,8 +44,8 @@ class ir_validate : public ir_hierarchical_visitor {
 public:
    ir_validate()
    {
-      this->ht = hash_table_ctor(0, hash_table_pointer_hash,
-				 hash_table_pointer_compare);
+      this->ht = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+				 glslopt_hash_table_pointer_compare);
 
       this->current_function = NULL;
 
@@ -55,7 +55,7 @@ public:
 
    ~ir_validate()
    {
-      hash_table_dtor(this->ht);
+      glslopt_hash_table_dtor(this->ht);
    }
 
    virtual ir_visitor_status visit(ir_variable *v);
@@ -93,7 +93,7 @@ ir_validate::visit(ir_dereference_variable *ir)
       abort();
    }
 
-   if (hash_table_find(ht, ir->var) == NULL) {
+   if (glslopt_hash_table_find(ht, ir->var) == NULL) {
       printf("ir_dereference_variable @ %p specifies undeclared variable "
 	     "`%s' @ %p\n",
 	     (void *) ir, ir->var->name, (void *) ir->var);
@@ -186,7 +186,7 @@ ir_validate::visit_enter(ir_function *ir)
 ir_visitor_status
 ir_validate::visit_leave(ir_function *ir)
 {
-   assert(ralloc_parent(ir->name) == ir);
+   assert(glslopt_ralloc_parent(ir->name) == ir);
 
    this->current_function = NULL;
    return visit_continue;
@@ -658,9 +658,9 @@ ir_validate::visit(ir_variable *ir)
     * declared before it is dereferenced.
     */
    if (ir->name && ir->is_name_ralloced())
-      assert(ralloc_parent(ir->name) == ir);
+      assert(glslopt_ralloc_parent(ir->name) == ir);
 
-   hash_table_insert(ht, ir, ir);
+   glslopt_hash_table_insert(ht, ir, ir);
 
 
    /* If a variable is an array, verify that the maximum array index is in
@@ -817,13 +817,13 @@ ir_validate::validate_ir(ir_instruction *ir, void *data)
 {
    struct hash_table *ht = (struct hash_table *) data;
 
-   if (hash_table_find(ht, ir)) {
+   if (glslopt_hash_table_find(ht, ir)) {
       printf("Instruction node present twice in ir tree:\n");
       ir->print();
       printf("\n");
       abort();
    }
-   hash_table_insert(ht, ir, ir);
+   glslopt_hash_table_insert(ht, ir, ir);
 }
 
 void

@@ -231,7 +231,7 @@ lower_packed_varyings_visitor::lower_packed_varyings_visitor(
    : mem_ctx(mem_ctx),
      locations_used(locations_used),
      packed_varyings((ir_variable **)
-                     rzalloc_array_size(mem_ctx, sizeof(*packed_varyings),
+                     glslopt_rzalloc_array_size(mem_ctx, sizeof(*packed_varyings),
                                         locations_used)),
      mode(mode),
      gs_input_vertices(gs_input_vertices),
@@ -385,7 +385,7 @@ lower_packed_varyings_visitor::lower_rvalue(ir_rvalue *rvalue,
          ir_dereference_record *dereference_record = new(this->mem_ctx)
             ir_dereference_record(rvalue, field_name);
          char *deref_name
-            = ralloc_asprintf(this->mem_ctx, "%s.%s", name, field_name);
+            = glslopt_ralloc_asprintf(this->mem_ctx, "%s.%s", name, field_name);
          fine_location = this->lower_rvalue(dereference_record, fine_location,
                                             unpacked_var, deref_name, false,
                                             vertex_index);
@@ -430,9 +430,9 @@ lower_packed_varyings_visitor::lower_rvalue(ir_rvalue *rvalue,
          ir_swizzle(rvalue->clone(this->mem_ctx, NULL), right_swizzle_values,
                     right_components);
       char *left_name
-         = ralloc_asprintf(this->mem_ctx, "%s.%s", name, left_swizzle_name);
+         = glslopt_ralloc_asprintf(this->mem_ctx, "%s.%s", name, left_swizzle_name);
       char *right_name
-         = ralloc_asprintf(this->mem_ctx, "%s.%s", name, right_swizzle_name);
+         = glslopt_ralloc_asprintf(this->mem_ctx, "%s.%s", name, right_swizzle_name);
       fine_location = this->lower_rvalue(left_swizzle, fine_location,
                                          unpacked_var, left_name, false,
                                          vertex_index);
@@ -505,7 +505,7 @@ lower_packed_varyings_visitor::lower_arraylike(ir_rvalue *rvalue,
                                    unpacked_var, name, false, i);
       } else {
          char *subscripted_name
-            = ralloc_asprintf(this->mem_ctx, "%s[%d]", name, i);
+            = glslopt_ralloc_asprintf(this->mem_ctx, "%s[%d]", name, i);
          fine_location =
             this->lower_rvalue(dereference_array, fine_location,
                                unpacked_var, subscripted_name,
@@ -535,7 +535,7 @@ lower_packed_varyings_visitor::get_packed_varying_deref(
    unsigned slot = location - VARYING_SLOT_VAR0;
    assert(slot < locations_used);
    if (this->packed_varyings[slot] == NULL) {
-      char *packed_name = ralloc_asprintf(this->mem_ctx, "packed:%s", name);
+      char *packed_name = glslopt_ralloc_asprintf(this->mem_ctx, "packed:%s", name);
       const glsl_type *packed_type;
       if (unpacked_var->data.interpolation == INTERP_QUALIFIER_FLAT)
          packed_type = glsl_type::ivec4_type;
@@ -565,7 +565,7 @@ lower_packed_varyings_visitor::get_packed_varying_deref(
        * first time we visit each component.
        */
       if (this->gs_input_vertices == 0 || vertex_index == 0) {
-         ralloc_asprintf_append((char **) &this->packed_varyings[slot]->name,
+         glslopt_ralloc_asprintf_append((char **) &this->packed_varyings[slot]->name,
                                 ",%s", name);
       }
    }

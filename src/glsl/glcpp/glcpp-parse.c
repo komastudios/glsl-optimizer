@@ -60,7 +60,7 @@
 
 
 /* Substitute the variable and function names.  */
-#define yyparse         glcpp_parser_parse
+#define yyparse         glslopt_glcpp_parser_parse
 #define yylex           glcpp_parser_lex
 #define yyerror         glcpp_parser_error
 #define yydebug         glcpp_parser_debug
@@ -149,7 +149,7 @@ _argument_list_length (argument_list_t *list);
 static token_list_t *
 _argument_list_member_at (argument_list_t *list, int index);
 
-/* Note: This function ralloc_steal()s the str pointer. */
+/* Note: This function glslopt_ralloc_steal()s the str pointer. */
 static token_t *
 _token_create_str (void *ctx, int type, char *str);
 
@@ -323,7 +323,7 @@ struct YYLTYPE
 
 
 
-int glcpp_parser_parse (glcpp_parser_t *parser);
+int glslopt_glcpp_parser_parse (glcpp_parser_t *parser);
 
 #endif /* !YY_GLCPP_PARSER_SRC_GLSL_GLCPP_GLCPP_PARSE_H_INCLUDED  */
 
@@ -1754,8 +1754,8 @@ yyreduce:
 #line 213 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
 		_glcpp_parser_print_expanded_token_list (parser, (yyvsp[0].token_list));
-		ralloc_asprintf_rewrite_tail (&parser->output, &parser->output_length, "\n");
-		ralloc_free ((yyvsp[0].token_list));
+		glslopt_ralloc_asprintf_rewrite_tail (&parser->output, &parser->output_length, "\n");
+		glslopt_ralloc_free ((yyvsp[0].token_list));
 	}
 #line 1761 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -1764,7 +1764,7 @@ yyreduce:
 #line 222 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
 		if (parser->is_gles && (yyvsp[-1].expression_value).undefined_macro)
-			glcpp_error(& (yylsp[-2]), parser, "undefined macro %s in expression (illegal in GLES)", (yyvsp[-1].expression_value).undefined_macro);
+			glslopt_glcpp_error(& (yylsp[-2]), parser, "undefined macro %s in expression (illegal in GLES)", (yyvsp[-1].expression_value).undefined_macro);
 		_glcpp_parser_skip_stack_push_if (parser, & (yylsp[-2]), (yyvsp[-1].expression_value).value);
 	}
 #line 1771 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
@@ -1774,7 +1774,7 @@ yyreduce:
 #line 227 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
 		if (parser->is_gles && (yyvsp[-1].expression_value).undefined_macro)
-			glcpp_error(& (yylsp[-2]), parser, "undefined macro %s in expression (illegal in GLES)", (yyvsp[-1].expression_value).undefined_macro);
+			glslopt_glcpp_error(& (yylsp[-2]), parser, "undefined macro %s in expression (illegal in GLES)", (yyvsp[-1].expression_value).undefined_macro);
 		_glcpp_parser_skip_stack_change_if (parser, & (yylsp[-2]), "elif", (yyvsp[-1].expression_value).value);
 	}
 #line 1781 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
@@ -1785,7 +1785,7 @@ yyreduce:
     {
 		parser->has_new_line_number = 1;
 		parser->new_line_number = (yyvsp[-1].ival);
-		ralloc_asprintf_rewrite_tail (&parser->output,
+		glslopt_ralloc_asprintf_rewrite_tail (&parser->output,
 					      &parser->output_length,
 					      "#line %" PRIiMAX "\n",
 					      (yyvsp[-1].ival));
@@ -1800,7 +1800,7 @@ yyreduce:
 		parser->new_line_number = (yyvsp[-2].ival);
 		parser->has_new_source_number = 1;
 		parser->new_source_number = (yyvsp[-1].ival);
-		ralloc_asprintf_rewrite_tail (&parser->output,
+		glslopt_ralloc_asprintf_rewrite_tail (&parser->output,
 					      &parser->output_length,
 					      "#line %" PRIiMAX " %" PRIiMAX "\n",
 					      (yyvsp[-2].ival), (yyvsp[-1].ival));
@@ -1835,7 +1835,7 @@ yyreduce:
   case 15:
 #line 265 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		ralloc_asprintf_rewrite_tail (&parser->output, &parser->output_length, "\n");
+		glslopt_ralloc_asprintf_rewrite_tail (&parser->output, &parser->output_length, "\n");
 	}
 #line 1841 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -1843,7 +1843,7 @@ yyreduce:
   case 17:
 #line 269 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_parser_resolve_implicit_version(parser);
+		glslopt_glcpp_parser_resolve_implicit_version(parser);
 	}
 #line 1849 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -1866,7 +1866,7 @@ yyreduce:
   case 19:
 #line 284 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_parser_resolve_implicit_version(parser);
+		glslopt_glcpp_parser_resolve_implicit_version(parser);
 	}
 #line 1872 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -1874,7 +1874,7 @@ yyreduce:
   case 21:
 #line 287 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_parser_resolve_implicit_version(parser);
+		glslopt_glcpp_parser_resolve_implicit_version(parser);
 	}
 #line 1880 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -1886,15 +1886,15 @@ yyreduce:
 		if (strcmp("__LINE__", (yyvsp[-1].str)) == 0
 		    || strcmp("__FILE__", (yyvsp[-1].str)) == 0
 		    || strcmp("__VERSION__", (yyvsp[-1].str)) == 0)
-			glcpp_error(& (yylsp[-4]), parser, "Built-in (pre-defined)"
+			glslopt_glcpp_error(& (yylsp[-4]), parser, "Built-in (pre-defined)"
 				    " macro names can not be undefined.");
 
-		macro = hash_table_find (parser->defines, (yyvsp[-1].str));
+		macro = glslopt_hash_table_find (parser->defines, (yyvsp[-1].str));
 		if (macro) {
-			hash_table_remove (parser->defines, (yyvsp[-1].str));
-			ralloc_free (macro);
+			glslopt_hash_table_remove (parser->defines, (yyvsp[-1].str));
+			glslopt_ralloc_free (macro);
 		}
-		ralloc_free ((yyvsp[-1].str));
+		glslopt_ralloc_free ((yyvsp[-1].str));
 	}
 #line 1900 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -1902,7 +1902,7 @@ yyreduce:
   case 23:
 #line 304 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_parser_resolve_implicit_version(parser);
+		glslopt_glcpp_parser_resolve_implicit_version(parser);
 	}
 #line 1908 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -1941,7 +1941,7 @@ yyreduce:
 		if (parser->skip_stack == NULL ||
 		    parser->skip_stack->type == SKIP_NO_SKIP)
 		{
-			glcpp_error(& (yylsp[-2]), parser, "#if with no expression");
+			glslopt_glcpp_error(& (yylsp[-2]), parser, "#if with no expression");
 		}	
 		_glcpp_parser_skip_stack_push_if (parser, & (yylsp[-2]), 0);
 	}
@@ -1951,7 +1951,7 @@ yyreduce:
   case 26:
 #line 337 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_parser_resolve_implicit_version(parser);
+		glslopt_glcpp_parser_resolve_implicit_version(parser);
 	}
 #line 1957 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -1959,8 +1959,8 @@ yyreduce:
   case 27:
 #line 339 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		macro_t *macro = hash_table_find (parser->defines, (yyvsp[-2].str));
-		ralloc_free ((yyvsp[-2].str));
+		macro_t *macro = glslopt_hash_table_find (parser->defines, (yyvsp[-2].str));
+		glslopt_ralloc_free ((yyvsp[-2].str));
 		_glcpp_parser_skip_stack_push_if (parser, & (yylsp[-5]), macro != NULL);
 	}
 #line 1967 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
@@ -1969,7 +1969,7 @@ yyreduce:
   case 28:
 #line 344 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_parser_resolve_implicit_version(parser);
+		glslopt_glcpp_parser_resolve_implicit_version(parser);
 	}
 #line 1975 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -1977,8 +1977,8 @@ yyreduce:
   case 29:
 #line 346 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		macro_t *macro = hash_table_find (parser->defines, (yyvsp[-2].str));
-		ralloc_free ((yyvsp[-2].str));
+		macro_t *macro = glslopt_hash_table_find (parser->defines, (yyvsp[-2].str));
+		glslopt_ralloc_free ((yyvsp[-2].str));
 		_glcpp_parser_skip_stack_push_if (parser, & (yylsp[-3]), macro == NULL);
 	}
 #line 1985 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
@@ -2004,7 +2004,7 @@ yyreduce:
 		else if (parser->skip_stack &&
 		    parser->skip_stack->has_else)
 		{
-			glcpp_error(& (yylsp[-3]), parser, "#elif after #else");
+			glslopt_glcpp_error(& (yylsp[-3]), parser, "#elif after #else");
 		}
 		else
 		{
@@ -2023,18 +2023,18 @@ yyreduce:
 		if (parser->skip_stack &&
 		    parser->skip_stack->type == SKIP_TO_ELSE)
 		{
-			glcpp_error(& (yylsp[-2]), parser, "#elif with no expression");
+			glslopt_glcpp_error(& (yylsp[-2]), parser, "#elif with no expression");
 		}
 		else if (parser->skip_stack &&
 		    parser->skip_stack->has_else)
 		{
-			glcpp_error(& (yylsp[-2]), parser, "#elif after #else");
+			glslopt_glcpp_error(& (yylsp[-2]), parser, "#elif after #else");
 		}
 		else
 		{
 			_glcpp_parser_skip_stack_change_if (parser, & (yylsp[-2]),
 							    "elif", 0);
-			glcpp_warning(& (yylsp[-2]), parser, "ignoring illegal #elif without expression");
+			glslopt_glcpp_warning(& (yylsp[-2]), parser, "ignoring illegal #elif without expression");
 		}
 	}
 #line 2041 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
@@ -2052,7 +2052,7 @@ yyreduce:
 		if (parser->skip_stack &&
 		    parser->skip_stack->has_else)
 		{
-			glcpp_error(& (yylsp[-3]), parser, "multiple #else");
+			glslopt_glcpp_error(& (yylsp[-3]), parser, "multiple #else");
 		}
 		else
 		{
@@ -2076,7 +2076,7 @@ yyreduce:
 #line 413 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
 		if (parser->version_resolved) {
-			glcpp_error(& (yylsp[-3]), parser, "#version must appear on the first line");
+			glslopt_glcpp_error(& (yylsp[-3]), parser, "#version must appear on the first line");
 		}
 		_glcpp_parser_handle_version_declaration(parser, (yyvsp[-1].ival), NULL, true);
 	}
@@ -2087,7 +2087,7 @@ yyreduce:
 #line 419 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
 		if (parser->version_resolved) {
-			glcpp_error(& (yylsp[-4]), parser, "#version must appear on the first line");
+			glslopt_glcpp_error(& (yylsp[-4]), parser, "#version must appear on the first line");
 		}
 		_glcpp_parser_handle_version_declaration(parser, (yyvsp[-2].ival), (yyvsp[-1].str), true);
 	}
@@ -2097,7 +2097,7 @@ yyreduce:
   case 38:
 #line 425 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_parser_resolve_implicit_version(parser);
+		glslopt_glcpp_parser_resolve_implicit_version(parser);
 	}
 #line 2103 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -2105,7 +2105,7 @@ yyreduce:
   case 39:
 #line 428 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		ralloc_asprintf_rewrite_tail (&parser->output, &parser->output_length, "#%s", (yyvsp[-1].str));
+		glslopt_ralloc_asprintf_rewrite_tail (&parser->output, &parser->output_length, "#%s", (yyvsp[-1].str));
 	}
 #line 2111 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -2113,7 +2113,7 @@ yyreduce:
   case 40:
 #line 434 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_error(& (yylsp[-2]), parser, "#%s", (yyvsp[-1].str));
+		glslopt_glcpp_error(& (yylsp[-2]), parser, "#%s", (yyvsp[-1].str));
 	}
 #line 2119 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -2121,7 +2121,7 @@ yyreduce:
   case 41:
 #line 437 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_error (& (yylsp[-2]), parser, "#define without macro name");
+		glslopt_glcpp_error (& (yylsp[-2]), parser, "#define without macro name");
 	}
 #line 2127 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -2129,7 +2129,7 @@ yyreduce:
   case 42:
 #line 440 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_error (& (yylsp[-3]), parser, "Illegal non-directive after #");
+		glslopt_glcpp_error (& (yylsp[-3]), parser, "Illegal non-directive after #");
 	}
 #line 2135 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -2170,7 +2170,7 @@ yyreduce:
     {
 		(yyval.expression_value).value = 0;
 		if (parser->is_gles)
-			(yyval.expression_value).undefined_macro = ralloc_strdup (parser, (yyvsp[0].str));
+			(yyval.expression_value).undefined_macro = glslopt_ralloc_strdup (parser, (yyvsp[0].str));
 		else
 			(yyval.expression_value).undefined_macro = NULL;
 	}
@@ -2460,7 +2460,7 @@ yyreduce:
     {
 		(yyval.string_list) = _string_list_create (parser);
 		_string_list_append_item ((yyval.string_list), (yyvsp[0].str));
-		ralloc_steal ((yyval.string_list), (yyvsp[0].str));
+		glslopt_ralloc_steal ((yyval.string_list), (yyvsp[0].str));
 	}
 #line 2466 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -2470,7 +2470,7 @@ yyreduce:
     {
 		(yyval.string_list) = (yyvsp[-2].string_list);	
 		_string_list_append_item ((yyval.string_list), (yyvsp[0].str));
-		ralloc_steal ((yyval.string_list), (yyvsp[0].str));
+		glslopt_ralloc_steal ((yyval.string_list), (yyvsp[0].str));
 	}
 #line 2476 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -2490,7 +2490,7 @@ yyreduce:
   case 77:
 #line 661 "src/glsl/glcpp/glcpp-parse.y" /* yacc.c:1646  */
     {
-		glcpp_error(&(yylsp[0]), parser, "extra tokens at end of directive");
+		glslopt_glcpp_error(&(yylsp[0]), parser, "extra tokens at end of directive");
 	}
 #line 2496 "src/glsl/glcpp/glcpp-parse.c" /* yacc.c:1646  */
     break;
@@ -3023,7 +3023,7 @@ _string_list_append_item (string_list_t *list, const char *str)
 	string_node_t *node;
 
 	node = ralloc (list, string_node_t);
-	node->str = ralloc_strdup (node, str);
+	node->str = glslopt_ralloc_strdup (node, str);
 
 	node->next = NULL;
 
@@ -3183,7 +3183,7 @@ _argument_list_member_at (argument_list_t *list, int index)
 	return NULL;
 }
 
-/* Note: This function ralloc_steal()s the str pointer. */
+/* Note: This function glslopt_ralloc_steal()s the str pointer. */
 token_t *
 _token_create_str (void *ctx, int type, char *str)
 {
@@ -3193,7 +3193,7 @@ _token_create_str (void *ctx, int type, char *str)
 	token->type = type;
 	token->value.str = str;
 
-	ralloc_steal (token, str);
+	glslopt_ralloc_steal (token, str);
 
 	return token;
 }
@@ -3290,7 +3290,7 @@ _token_list_trim_trailing_space (token_list_t *list)
 
 		while (tail) {
 			next = tail->next;
-			ralloc_free (tail);
+			glslopt_ralloc_free (tail);
 			tail = next;
 		}
 	}
@@ -3378,57 +3378,57 @@ static void
 _token_print (char **out, size_t *len, token_t *token)
 {
 	if (token->type < 256) {
-		ralloc_asprintf_rewrite_tail (out, len, "%c", token->type);
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "%c", token->type);
 		return;
 	}
 
 	switch (token->type) {
 	case INTEGER:
-		ralloc_asprintf_rewrite_tail (out, len, "%" PRIiMAX, token->value.ival);
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "%" PRIiMAX, token->value.ival);
 		break;
 	case IDENTIFIER:
 	case INTEGER_STRING:
 	case OTHER:
-		ralloc_asprintf_rewrite_tail (out, len, "%s", token->value.str);
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "%s", token->value.str);
 		break;
 	case SPACE:
-		ralloc_asprintf_rewrite_tail (out, len, " ");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, " ");
 		break;
 	case LEFT_SHIFT:
-		ralloc_asprintf_rewrite_tail (out, len, "<<");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "<<");
 		break;
 	case RIGHT_SHIFT:
-		ralloc_asprintf_rewrite_tail (out, len, ">>");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, ">>");
 		break;
 	case LESS_OR_EQUAL:
-		ralloc_asprintf_rewrite_tail (out, len, "<=");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "<=");
 		break;
 	case GREATER_OR_EQUAL:
-		ralloc_asprintf_rewrite_tail (out, len, ">=");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, ">=");
 		break;
 	case EQUAL:
-		ralloc_asprintf_rewrite_tail (out, len, "==");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "==");
 		break;
 	case NOT_EQUAL:
-		ralloc_asprintf_rewrite_tail (out, len, "!=");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "!=");
 		break;
 	case AND:
-		ralloc_asprintf_rewrite_tail (out, len, "&&");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "&&");
 		break;
 	case OR:
-		ralloc_asprintf_rewrite_tail (out, len, "||");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "||");
 		break;
 	case PASTE:
-		ralloc_asprintf_rewrite_tail (out, len, "##");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "##");
 		break;
         case PLUS_PLUS:
-		ralloc_asprintf_rewrite_tail (out, len, "++");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "++");
 		break;
         case MINUS_MINUS:
-		ralloc_asprintf_rewrite_tail (out, len, "--");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "--");
 		break;
 	case DEFINED:
-		ralloc_asprintf_rewrite_tail (out, len, "defined");
+		glslopt_ralloc_asprintf_rewrite_tail (out, len, "defined");
 		break;
 	case PLACEHOLDER:
 		/* Nothing to print. */
@@ -3534,17 +3534,17 @@ _token_paste (glcpp_parser_t *parser, token_t *token, token_t *other)
 		}
 
 		if (token->type == INTEGER)
-			str = ralloc_asprintf (token, "%" PRIiMAX,
+			str = glslopt_ralloc_asprintf (token, "%" PRIiMAX,
 					       token->value.ival);
 		else
-			str = ralloc_strdup (token, token->value.str);
+			str = glslopt_ralloc_strdup (token, token->value.str);
 					       
 
 		if (other->type == INTEGER)
-			ralloc_asprintf_append (&str, "%" PRIiMAX,
+			glslopt_ralloc_asprintf_append (&str, "%" PRIiMAX,
 						other->value.ival);
 		else
-			ralloc_strcat (&str, other->value.str);
+			glslopt_ralloc_strcat (&str, other->value.str);
 
 		/* New token is same type as original token, unless we
 		 * started with an integer, in which case we will be
@@ -3559,12 +3559,12 @@ _token_paste (glcpp_parser_t *parser, token_t *token, token_t *other)
 	}
 
     FAIL:
-	glcpp_error (&token->location, parser, "");
-	ralloc_asprintf_rewrite_tail (&parser->info_log, &parser->info_log_length, "Pasting \"");
+	glslopt_glcpp_error (&token->location, parser, "");
+	glslopt_ralloc_asprintf_rewrite_tail (&parser->info_log, &parser->info_log_length, "Pasting \"");
 	_token_print (&parser->info_log, &parser->info_log_length, token);
-	ralloc_asprintf_rewrite_tail (&parser->info_log, &parser->info_log_length, "\" and \"");
+	glslopt_ralloc_asprintf_rewrite_tail (&parser->info_log, &parser->info_log_length, "\" and \"");
 	_token_print (&parser->info_log, &parser->info_log_length, other);
-	ralloc_asprintf_rewrite_tail (&parser->info_log, &parser->info_log_length, "\" does not give a valid preprocessing token.\n");
+	glslopt_ralloc_asprintf_rewrite_tail (&parser->info_log, &parser->info_log_length, "\" does not give a valid preprocessing token.\n");
 
 	return token;
 }
@@ -3584,7 +3584,7 @@ _token_list_print (glcpp_parser_t *parser, token_list_t *list)
 void
 yyerror (YYLTYPE *locp, glcpp_parser_t *parser, const char *error)
 {
-	glcpp_error(locp, parser, "%s", error);
+	glslopt_glcpp_error(locp, parser, "%s", error);
 }
 
 static void add_builtin_define(glcpp_parser_t *parser,
@@ -3601,14 +3601,14 @@ static void add_builtin_define(glcpp_parser_t *parser,
 }
 
 glcpp_parser_t *
-glcpp_parser_create (const struct gl_extensions *extensions, gl_api api)
+glslopt_glcpp_parser_create (const struct gl_extensions *extensions, gl_api api)
 {
 	glcpp_parser_t *parser;
 
 	parser = ralloc (NULL, glcpp_parser_t);
 
-	glcpp_lex_init_extra (parser, &parser->scanner);
-	parser->defines = hash_table_ctor (32, hash_table_string_hash,
+	glslopt_glcpp_lex_init_extra (parser, &parser->scanner);
+	parser->defines = glslopt_hash_table_ctor (32, glslopt_hash_table_string_hash,
 					   hash_table_string_compare);
 	parser->active = NULL;
 	parser->lexing_directive = 0;
@@ -3627,9 +3627,9 @@ glcpp_parser_create (const struct gl_extensions *extensions, gl_api api)
 	parser->lex_from_list = NULL;
 	parser->lex_from_node = NULL;
 
-	parser->output = ralloc_strdup(parser, "");
+	parser->output = glslopt_ralloc_strdup(parser, "");
 	parser->output_length = 0;
-	parser->info_log = ralloc_strdup(parser, "");
+	parser->info_log = glslopt_ralloc_strdup(parser, "");
 	parser->info_log_length = 0;
 	parser->error = 0;
 
@@ -3646,11 +3646,11 @@ glcpp_parser_create (const struct gl_extensions *extensions, gl_api api)
 }
 
 void
-glcpp_parser_destroy (glcpp_parser_t *parser)
+glslopt_glcpp_parser_destroy (glcpp_parser_t *parser)
 {
-	glcpp_lex_destroy (parser->scanner);
-	hash_table_dtor (parser->defines);
-	ralloc_free (parser);
+	glslopt_glcpp_lex_destroy (parser->scanner);
+	glslopt_hash_table_dtor (parser->defines);
+	glslopt_ralloc_free (parser);
 }
 
 typedef enum function_status
@@ -3838,11 +3838,11 @@ _glcpp_parser_evaluate_defined (glcpp_parser_t *parser,
 
 	*last = node;
 
-	return hash_table_find (parser->defines,
+	return glslopt_hash_table_find (parser->defines,
 				argument->token->value.str) ? 1 : 0;
 
 FAIL:
-	glcpp_error (&defined->token->location, parser,
+	glslopt_glcpp_error (&defined->token->location, parser,
 		     "\"defined\" not followed by an identifier");
 	return -1;
 }
@@ -3994,7 +3994,7 @@ _glcpp_parser_expand_function (glcpp_parser_t *parser,
 
 	identifier = node->token->value.str;
 
-	macro = hash_table_find (parser->defines, identifier);
+	macro = glslopt_hash_table_find (parser->defines, identifier);
 
 	assert (macro->is_function);
 
@@ -4007,13 +4007,13 @@ _glcpp_parser_expand_function (glcpp_parser_t *parser,
 	case FUNCTION_NOT_A_FUNCTION:
 		return NULL;
 	case FUNCTION_UNBALANCED_PARENTHESES:
-		glcpp_error (&node->token->location, parser, "Macro %s call has unbalanced parentheses\n", identifier);
+		glslopt_glcpp_error (&node->token->location, parser, "Macro %s call has unbalanced parentheses\n", identifier);
 		return NULL;
 	}
 
 	/* Replace a macro defined as empty with a SPACE token. */
 	if (macro->replacements == NULL) {
-		ralloc_free (arguments);
+		glslopt_ralloc_free (arguments);
 		return _token_list_create_with_one_space (parser);
 	}
 
@@ -4023,7 +4023,7 @@ _glcpp_parser_expand_function (glcpp_parser_t *parser,
 		_argument_list_length (arguments) == 1 &&
 		arguments->head->argument->head == NULL)))
 	{
-		glcpp_error (&node->token->location, parser,
+		glslopt_glcpp_error (&node->token->location, parser,
 			      "Error: macro %s invoked with %d arguments (expected %d)\n",
 			      identifier,
 			      _argument_list_length (arguments),
@@ -4124,7 +4124,7 @@ _glcpp_parser_expand_node (glcpp_parser_t *parser,
 		return _token_list_create_with_one_integer (parser, node->token->location.source);
 
 	/* Look up this identifier in the hash table. */
-	macro = hash_table_find (parser->defines, identifier);
+	macro = glslopt_hash_table_find (parser->defines, identifier);
 
 	/* Not a macro, so no expansion needed. */
 	if (macro == NULL)
@@ -4140,7 +4140,7 @@ _glcpp_parser_expand_node (glcpp_parser_t *parser,
 		token_list_t *expansion;
 		token_t *final;
 
-		str = ralloc_strdup (parser, token->value.str);
+		str = glslopt_ralloc_strdup (parser, token->value.str);
 		final = _token_create_str (parser, OTHER, str);
 		expansion = _token_list_create (parser);
 		_token_list_append (expansion, final);
@@ -4178,7 +4178,7 @@ _parser_active_list_push (glcpp_parser_t *parser,
 	active_list_t *node;
 
 	node = ralloc (parser->active, active_list_t);
-	node->identifier = ralloc_strdup (node, identifier);
+	node->identifier = glslopt_ralloc_strdup (node, identifier);
 	node->marker = marker;
 	node->next = parser->active;
 
@@ -4196,7 +4196,7 @@ _parser_active_list_pop (glcpp_parser_t *parser)
 	}
 
 	node = parser->active->next;
-	ralloc_free (parser->active);
+	glslopt_ralloc_free (parser->active);
 
 	parser->active = node;
 }
@@ -4353,12 +4353,12 @@ _check_for_reserved_macro_name (glcpp_parser_t *parser, YYLTYPE *loc,
 	 * A future version of the GLSL specification will clarify this.
 	 */
 	if (strstr(identifier, "__")) {
-		glcpp_warning(loc, parser,
+		glslopt_glcpp_warning(loc, parser,
 			      "Macro names containing \"__\" are reserved "
 			      "for use by the implementation.\n");
 	}
 	if (strncmp(identifier, "GL_", 3) == 0) {
-		glcpp_error (loc, parser, "Macro names starting with \"GL_\" are reserved.\n");
+		glslopt_glcpp_error (loc, parser, "Macro names starting with \"GL_\" are reserved.\n");
 	}
 }
 
@@ -4396,21 +4396,21 @@ _define_object_macro (glcpp_parser_t *parser,
 
 	macro->is_function = 0;
 	macro->parameters = NULL;
-	macro->identifier = ralloc_strdup (macro, identifier);
+	macro->identifier = glslopt_ralloc_strdup (macro, identifier);
 	macro->replacements = replacements;
-	ralloc_steal (macro, replacements);
+	glslopt_ralloc_steal (macro, replacements);
 
-	previous = hash_table_find (parser->defines, identifier);
+	previous = glslopt_hash_table_find (parser->defines, identifier);
 	if (previous) {
 		if (_macro_equal (macro, previous)) {
-			ralloc_free (macro);
+			glslopt_ralloc_free (macro);
 			return;
 		}
-		glcpp_error (loc, parser, "Redefinition of macro %s\n",
+		glslopt_glcpp_error (loc, parser, "Redefinition of macro %s\n",
 			     identifier);
 	}
 
-	hash_table_insert (parser->defines, macro, identifier);
+	glslopt_hash_table_insert (parser->defines, macro, identifier);
 }
 
 void
@@ -4427,29 +4427,29 @@ _define_function_macro (glcpp_parser_t *parser,
 
         /* Check for any duplicate parameter names. */
 	if ((dup = _string_list_has_duplicate (parameters)) != NULL) {
-		glcpp_error (loc, parser, "Duplicate macro parameter \"%s\"",
+		glslopt_glcpp_error (loc, parser, "Duplicate macro parameter \"%s\"",
 			     dup);
 	}
 
 	macro = ralloc (parser, macro_t);
-	ralloc_steal (macro, parameters);
-	ralloc_steal (macro, replacements);
+	glslopt_ralloc_steal (macro, parameters);
+	glslopt_ralloc_steal (macro, replacements);
 
 	macro->is_function = 1;
 	macro->parameters = parameters;
-	macro->identifier = ralloc_strdup (macro, identifier);
+	macro->identifier = glslopt_ralloc_strdup (macro, identifier);
 	macro->replacements = replacements;
-	previous = hash_table_find (parser->defines, identifier);
+	previous = glslopt_hash_table_find (parser->defines, identifier);
 	if (previous) {
 		if (_macro_equal (macro, previous)) {
-			ralloc_free (macro);
+			glslopt_ralloc_free (macro);
 			return;
 		}
-		glcpp_error (loc, parser, "Redefinition of macro %s\n",
+		glslopt_glcpp_error (loc, parser, "Redefinition of macro %s\n",
 			     identifier);
 	}
 
-	hash_table_insert (parser->defines, macro, identifier);
+	glslopt_hash_table_insert (parser->defines, macro, identifier);
 }
 
 static int
@@ -4459,7 +4459,7 @@ glcpp_parser_lex (YYSTYPE *yylval, YYLTYPE *yylloc, glcpp_parser_t *parser)
 	int ret;
 
 	if (parser->lex_from_list == NULL) {
-		ret = glcpp_lex (yylval, yylloc, parser->scanner);
+		ret = glslopt_glcpp_lex (yylval, yylloc, parser->scanner);
 
 		/* XXX: This ugly block of code exists for the sole
 		 * purpose of converting a NEWLINE token into a SPACE
@@ -4504,7 +4504,7 @@ glcpp_parser_lex (YYSTYPE *yylval, YYLTYPE *yylloc, glcpp_parser_t *parser)
 		else if (ret == IDENTIFIER)
 		{
 			macro_t *macro;
-			macro = hash_table_find (parser->defines,
+			macro = glslopt_hash_table_find (parser->defines,
 						 yylval->str);
 			if (macro && macro->is_function) {
 				parser->newline_as_space = 1;
@@ -4518,7 +4518,7 @@ glcpp_parser_lex (YYSTYPE *yylval, YYLTYPE *yylloc, glcpp_parser_t *parser)
 	node = parser->lex_from_node;
 
 	if (node == NULL) {
-		ralloc_free (parser->lex_from_list);
+		glslopt_ralloc_free (parser->lex_from_list);
 		parser->lex_from_list = NULL;
 		return NEWLINE;
 	}
@@ -4547,13 +4547,13 @@ glcpp_parser_lex_from (glcpp_parser_t *parser, token_list_t *list)
 		_token_list_append (parser->lex_from_list, node->token);
 	}
 
-	ralloc_free (list);
+	glslopt_ralloc_free (list);
 
 	parser->lex_from_node = parser->lex_from_list->head;
 
 	/* It's possible the list consisted of nothing but whitespace. */
 	if (parser->lex_from_node == NULL) {
-		ralloc_free (parser->lex_from_list);
+		glslopt_ralloc_free (parser->lex_from_list);
 		parser->lex_from_list = NULL;
 	}
 }
@@ -4590,7 +4590,7 @@ _glcpp_parser_skip_stack_change_if (glcpp_parser_t *parser, YYLTYPE *loc,
 				    const char *type, int condition)
 {
 	if (parser->skip_stack == NULL) {
-		glcpp_error (loc, parser, "#%s without #if\n", type);
+		glslopt_glcpp_error (loc, parser, "#%s without #if\n", type);
 		return;
 	}
 
@@ -4608,13 +4608,13 @@ _glcpp_parser_skip_stack_pop (glcpp_parser_t *parser, YYLTYPE *loc)
 	skip_node_t *node;
 
 	if (parser->skip_stack == NULL) {
-		glcpp_error (loc, parser, "#endif without #if\n");
+		glslopt_glcpp_error (loc, parser, "#endif without #if\n");
 		return;
 	}
 
 	node = parser->skip_stack;
 	parser->skip_stack = node->next;
-	ralloc_free (node);
+	glslopt_ralloc_free (node);
 }
 
 static void
@@ -4760,7 +4760,7 @@ _glcpp_parser_handle_version_declaration(glcpp_parser_t *parser, intmax_t versio
 		add_builtin_define (parser, "GL_FRAGMENT_PRECISION_HIGH", 1);
 
 	if (explicitly_set) {
-	   ralloc_asprintf_rewrite_tail (&parser->output, &parser->output_length,
+	   glslopt_ralloc_asprintf_rewrite_tail (&parser->output, &parser->output_length,
 					 "#version %" PRIiMAX "%s%s", version,
 					 es_identifier ? " " : "",
 					 es_identifier ? es_identifier : "");
@@ -4775,7 +4775,7 @@ _glcpp_parser_handle_version_declaration(glcpp_parser_t *parser, intmax_t versio
 #define IMPLICIT_GLSL_ES_VERSION 100
 
 void
-glcpp_parser_resolve_implicit_version(glcpp_parser_t *parser)
+glslopt_glcpp_parser_resolve_implicit_version(glcpp_parser_t *parser)
 {
 	int language_version = parser->api == API_OPENGLES2 ?
 			       IMPLICIT_GLSL_ES_VERSION :

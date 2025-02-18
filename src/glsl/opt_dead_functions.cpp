@@ -51,12 +51,12 @@ class ir_dead_functions_visitor : public ir_hierarchical_visitor {
 public:
    ir_dead_functions_visitor()
    {
-      this->mem_ctx = ralloc_context(NULL);
+      this->mem_ctx = glslopt_ralloc_context(NULL);
    }
 
    ~ir_dead_functions_visitor()
    {
-      ralloc_free(this->mem_ctx);
+      glslopt_ralloc_free(this->mem_ctx);
    }
 
    virtual ir_visitor_status visit_enter(ir_function_signature *);

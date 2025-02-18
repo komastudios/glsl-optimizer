@@ -140,7 +140,7 @@ check_symbol_table(struct _mesa_symbol_table *table)
 }
 
 void
-_mesa_symbol_table_pop_scope(struct _mesa_symbol_table *table)
+glslopt__mesa_symbol_table_pop_scope(struct _mesa_symbol_table *table)
 {
     struct scope_level *const scope = table->current_scope;
     struct symbol *sym = scope->symbols;
@@ -168,12 +168,12 @@ _mesa_symbol_table_pop_scope(struct _mesa_symbol_table *table)
 
 
 void
-_mesa_symbol_table_push_scope(struct _mesa_symbol_table *table)
+glslopt__mesa_symbol_table_push_scope(struct _mesa_symbol_table *table)
 {
     struct scope_level *const scope = calloc(1, sizeof(*scope));
     
     if (scope == NULL) {
-       _mesa_error_no_memory(__func__);
+       glslopt__mesa_error_no_memory(__func__);
        return;
     }
 
@@ -186,7 +186,7 @@ _mesa_symbol_table_push_scope(struct _mesa_symbol_table *table)
 static struct symbol_header *
 find_symbol(struct _mesa_symbol_table *table, const char *name)
 {
-    return (struct symbol_header *) hash_table_find(table->ht, name);
+    return (struct symbol_header *) glslopt_hash_table_find(table->ht, name);
 }
 
 
@@ -199,7 +199,7 @@ find_symbol(struct _mesa_symbol_table *table, const char *name)
  * scope.  A negative number if the symbol does not exist.
  */
 int
-_mesa_symbol_table_symbol_scope(struct _mesa_symbol_table *table,
+glslopt__mesa_symbol_table_symbol_scope(struct _mesa_symbol_table *table,
 				int name_space, const char *name)
 {
     struct symbol_header *const hdr = find_symbol(table, name);
@@ -221,7 +221,7 @@ _mesa_symbol_table_symbol_scope(struct _mesa_symbol_table *table,
 
 
 void *
-_mesa_symbol_table_find_symbol(struct _mesa_symbol_table *table,
+glslopt__mesa_symbol_table_find_symbol(struct _mesa_symbol_table *table,
                                int name_space, const char *name)
 {
     struct symbol_header *const hdr = find_symbol(table, name);
@@ -244,7 +244,7 @@ _mesa_symbol_table_find_symbol(struct _mesa_symbol_table *table,
 
 
 int
-_mesa_symbol_table_add_symbol(struct _mesa_symbol_table *table,
+glslopt__mesa_symbol_table_add_symbol(struct _mesa_symbol_table *table,
                               int name_space, const char *name,
                               void *declaration)
 {
@@ -260,18 +260,18 @@ _mesa_symbol_table_add_symbol(struct _mesa_symbol_table *table,
     if (hdr == NULL) {
        hdr = calloc(1, sizeof(*hdr));
        if (hdr == NULL) {
-          _mesa_error_no_memory(__func__);
+          glslopt__mesa_error_no_memory(__func__);
           return -1;
        }
 
        hdr->name = strdup(name);
        if (hdr->name == NULL) {
           free(hdr);
-          _mesa_error_no_memory(__func__);
+          glslopt__mesa_error_no_memory(__func__);
           return -1;
        }
 
-       hash_table_insert(table->ht, hdr, hdr->name);
+       glslopt_hash_table_insert(table->ht, hdr, hdr->name);
        hdr->next = table->hdr;
        table->hdr = hdr;
     }
@@ -292,7 +292,7 @@ _mesa_symbol_table_add_symbol(struct _mesa_symbol_table *table,
 
     sym = calloc(1, sizeof(*sym));
     if (sym == NULL) {
-       _mesa_error_no_memory(__func__);
+       glslopt__mesa_error_no_memory(__func__);
        return -1;
     }
 
@@ -314,7 +314,7 @@ _mesa_symbol_table_add_symbol(struct _mesa_symbol_table *table,
 
 
 int
-_mesa_symbol_table_add_global_symbol(struct _mesa_symbol_table *table,
+glslopt__mesa_symbol_table_add_global_symbol(struct _mesa_symbol_table *table,
 				     int name_space, const char *name,
 				     void *declaration)
 {
@@ -332,13 +332,13 @@ _mesa_symbol_table_add_global_symbol(struct _mesa_symbol_table *table,
     if (hdr == NULL) {
         hdr = calloc(1, sizeof(*hdr));
         if (hdr == NULL) {
-           _mesa_error_no_memory(__func__);
+           glslopt__mesa_error_no_memory(__func__);
            return -1;
         }
 
         hdr->name = strdup(name);
 
-        hash_table_insert(table->ht, hdr, hdr->name);
+        glslopt_hash_table_insert(table->ht, hdr, hdr->name);
         hdr->next = table->hdr;
         table->hdr = hdr;
     }
@@ -366,7 +366,7 @@ _mesa_symbol_table_add_global_symbol(struct _mesa_symbol_table *table,
 
     sym = calloc(1, sizeof(*sym));
     if (sym == NULL) {
-       _mesa_error_no_memory(__func__);
+       glslopt__mesa_error_no_memory(__func__);
        return -1;
     }
 
@@ -399,15 +399,15 @@ _mesa_symbol_table_add_global_symbol(struct _mesa_symbol_table *table,
 
 
 struct _mesa_symbol_table *
-_mesa_symbol_table_ctor(void)
+glslopt__mesa_symbol_table_ctor(void)
 {
     struct _mesa_symbol_table *table = calloc(1, sizeof(*table));
 
     if (table != NULL) {
-       table->ht = hash_table_ctor(32, hash_table_string_hash,
+       table->ht = glslopt_hash_table_ctor(32, glslopt_hash_table_string_hash,
 				   hash_table_string_compare);
 
-       _mesa_symbol_table_push_scope(table);
+       glslopt__mesa_symbol_table_push_scope(table);
     }
 
     return table;
@@ -415,13 +415,13 @@ _mesa_symbol_table_ctor(void)
 
 
 void
-_mesa_symbol_table_dtor(struct _mesa_symbol_table *table)
+glslopt__mesa_symbol_table_dtor(struct _mesa_symbol_table *table)
 {
    struct symbol_header *hdr;
    struct symbol_header *next;
 
    while (table->current_scope != NULL) {
-      _mesa_symbol_table_pop_scope(table);
+      glslopt__mesa_symbol_table_pop_scope(table);
    }
 
    for (hdr = table->hdr; hdr != NULL; hdr = next) {
@@ -430,6 +430,6 @@ _mesa_symbol_table_dtor(struct _mesa_symbol_table *table)
        free(hdr);
    }
 
-   hash_table_dtor(table->ht);
+   glslopt_hash_table_dtor(table->ht);
    free(table);
 }

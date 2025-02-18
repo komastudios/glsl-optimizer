@@ -59,13 +59,13 @@ public:
       this->max_depth = max_depth;
       this->depth = 0;
 
-      this->condition_variables = hash_table_ctor(0, hash_table_pointer_hash,
-						  hash_table_pointer_compare);
+      this->condition_variables = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+						  glslopt_hash_table_pointer_compare);
    }
 
    ~ir_if_to_cond_assign_visitor()
    {
-      hash_table_dtor(this->condition_variables);
+      glslopt_hash_table_dtor(this->condition_variables);
    }
 
    ir_visitor_status visit_enter(ir_if *);
@@ -120,15 +120,15 @@ move_block_to_cond_assign(void *mem_ctx,
       if (ir->ir_type == ir_type_assignment) {
 	 ir_assignment *assign = (ir_assignment *)ir;
 
-	 if (hash_table_find(ht, assign) == NULL) {
-	    hash_table_insert(ht, assign, assign);
+	 if (glslopt_hash_table_find(ht, assign) == NULL) {
+	    glslopt_hash_table_insert(ht, assign, assign);
 
 	    /* If the LHS of the assignment is a condition variable that was
 	     * previously added, insert an additional assignment of false to
 	     * the variable.
 	     */
 	    const bool assign_to_cv =
-	       hash_table_find(ht, assign->lhs->variable_referenced()) != NULL;
+	       glslopt_hash_table_find(ht, assign->lhs->variable_referenced()) != NULL;
 
 	    if (!assign->condition) {
 	       if (assign_to_cv) {
@@ -185,7 +185,7 @@ ir_if_to_cond_assign_visitor::visit_leave(ir_if *ir)
    if (found_control_flow)
       return visit_continue;
 
-   void *mem_ctx = ralloc_parent(ir);
+   void *mem_ctx = glslopt_ralloc_parent(ir);
 
    /* Store the condition to a variable.  Move all of the instructions from
     * the then-clause of the if-statement.  Use the condition variable as a
@@ -210,7 +210,7 @@ ir_if_to_cond_assign_visitor::visit_leave(ir_if *ir)
    /* Add the new condition variable to the hash table.  This allows us to
     * find this variable when lowering other (enclosing) if-statements.
     */
-   hash_table_insert(this->condition_variables, then_var, then_var);
+   glslopt_hash_table_insert(this->condition_variables, then_var, then_var);
 
    /* If there are instructions in the else-clause, store the inverse of the
     * condition to a variable.  Move all of the instructions from the
@@ -241,7 +241,7 @@ ir_if_to_cond_assign_visitor::visit_leave(ir_if *ir)
       /* Add the new condition variable to the hash table.  This allows us to
        * find this variable when lowering other (enclosing) if-statements.
        */
-      hash_table_insert(this->condition_variables, else_var, else_var);
+      glslopt_hash_table_insert(this->condition_variables, else_var, else_var);
    }
 
    ir->remove();

@@ -152,7 +152,7 @@ ir_vec_index_to_cond_assign_visitor::convert_vector_extract_to_cond_assign(ir_rv
    if (expr == NULL || expr->operation != ir_binop_vector_extract)
       return ir;
 
-   return convert_vec_index_to_cond_assign(ralloc_parent(ir),
+   return convert_vec_index_to_cond_assign(glslopt_ralloc_parent(ir),
                                            expr->operands[0],
                                            expr->operands[1],
                                            ir->type);

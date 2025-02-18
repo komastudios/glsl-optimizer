@@ -524,7 +524,7 @@ public:
          for (unsigned i = 0; i < this->interface_type->length; i++)
             assert(this->u.max_ifc_array_access[i] == 0);
 #endif
-         ralloc_free(this->u.max_ifc_array_access);
+         glslopt_ralloc_free(this->u.max_ifc_array_access);
          this->u.max_ifc_array_access = NULL;
       }
       this->interface_type = NULL;
@@ -2517,11 +2517,11 @@ is_gl_identifier(const char *s)
 extern "C" {
 #endif /* __cplusplus */
 
-extern void _mesa_print_ir(FILE *f, struct exec_list *instructions,
+extern void glslopt__mesa_print_ir(FILE *f, struct exec_list *instructions,
                            struct _mesa_glsl_parse_state *state);
 
 extern void
-fprint_ir(FILE *f, const void *instruction);
+glslopt_fprint_ir(FILE *f, const void *instruction);
 
 #ifdef __cplusplus
 } /* extern "C" */

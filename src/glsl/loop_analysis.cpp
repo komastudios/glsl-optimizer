@@ -77,26 +77,26 @@ loop_variable::record_reference(bool in_assignee,
 
 loop_state::loop_state()
 {
-   this->ht = hash_table_ctor(0, hash_table_pointer_hash,
-			      hash_table_pointer_compare);
-   this->ht_inductors = hash_table_ctor(0, hash_table_pointer_hash,
-            hash_table_pointer_compare);
-   this->ht_non_inductors = hash_table_ctor(0, hash_table_pointer_hash,
-										 hash_table_pointer_compare);
-   this->ht_variables = hash_table_ctor(0, hash_table_pointer_hash,
-										 hash_table_pointer_compare);
-   this->mem_ctx = ralloc_context(NULL);
+   this->ht = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+			      glslopt_hash_table_pointer_compare);
+   this->ht_inductors = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+            glslopt_hash_table_pointer_compare);
+   this->ht_non_inductors = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+										 glslopt_hash_table_pointer_compare);
+   this->ht_variables = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+										 glslopt_hash_table_pointer_compare);
+   this->mem_ctx = glslopt_ralloc_context(NULL);
    this->loop_found = false;
 }
 
 
 loop_state::~loop_state()
 {
-   hash_table_dtor(this->ht);
-   hash_table_dtor(this->ht_inductors);
-   hash_table_dtor(this->ht_non_inductors);
-   hash_table_dtor(this->ht_variables);
-   ralloc_free(this->mem_ctx);
+   glslopt_hash_table_dtor(this->ht);
+   glslopt_hash_table_dtor(this->ht_inductors);
+   glslopt_hash_table_dtor(this->ht_non_inductors);
+   glslopt_hash_table_dtor(this->ht_variables);
+   glslopt_ralloc_free(this->mem_ctx);
 }
 
 
@@ -105,7 +105,7 @@ loop_state::insert(ir_loop *ir)
 {
    loop_variable_state *ls = new(this->mem_ctx) loop_variable_state;
 
-   hash_table_insert(this->ht, ls, ir);
+   glslopt_hash_table_insert(this->ht, ls, ir);
    this->loop_found = true;
 
    return ls;
@@ -115,13 +115,13 @@ loop_state::insert(ir_loop *ir)
 loop_variable_state *
 loop_state::get(const ir_loop *ir)
 {
-   return (loop_variable_state *) hash_table_find(this->ht, ir);
+   return (loop_variable_state *) glslopt_hash_table_find(this->ht, ir);
 }
 
 loop_variable_state *
 loop_state::get_for_inductor(const ir_variable *ir)
 {
-   return (loop_variable_state *) hash_table_find(this->ht_inductors, ir);
+   return (loop_variable_state *) glslopt_hash_table_find(this->ht_inductors, ir);
 }
 
 static void *unreferenced_variable = (void *)1;
@@ -133,13 +133,13 @@ loop_state::insert_variable(ir_variable *var)
 	// data starts as 1. If an assignment is seen, it's replaced with 2.
 	// this way we can mark a variable as a non-inductor if it's referenced
 	// other than the first assignment
-	hash_table_insert(this->ht_variables, unreferenced_variable, var);
+	glslopt_hash_table_insert(this->ht_variables, unreferenced_variable, var);
 }
 
 void
 loop_state::reference_variable(ir_variable *var, bool assignment)
 {
-	void *ref = hash_table_find(this->ht_variables, var);
+	void *ref = glslopt_hash_table_find(this->ht_variables, var);
 
 	// variable declaration was not seen or already discarded, just ignore
 	if (ref == NULL)
@@ -147,14 +147,14 @@ loop_state::reference_variable(ir_variable *var, bool assignment)
 
 	if (ref == unreferenced_variable && assignment)
 	{
-		hash_table_replace(this->ht_variables, assigned_variable, var);
+		glslopt_hash_table_replace(this->ht_variables, assigned_variable, var);
 		return;
 	}
 
 	// variable is referenced and not just in an initial assignment,
 	// so it cannot be an inductor
-	hash_table_remove(this->ht_variables, var);
-	hash_table_insert(this->ht_non_inductors, this, var);
+	glslopt_hash_table_remove(this->ht_variables, var);
+	glslopt_hash_table_insert(this->ht_non_inductors, this, var);
 }
 
 bool
@@ -163,7 +163,7 @@ loop_state::insert_inductor(loop_variable* loopvar, loop_variable_state* state, 
 	ir_variable* var = loopvar->var;
 
 	// Check if this variable is already marked as "sure can't be a private inductor variable"
-	if (hash_table_find(this->ht_non_inductors, var))
+	if (glslopt_hash_table_find(this->ht_non_inductors, var))
 		return false;
 
 	// Check if this variable is used after the loop anywhere. If it is, it can't be a
@@ -179,7 +179,7 @@ loop_state::insert_inductor(loop_variable* loopvar, loop_variable_state* state, 
 		{
 			// add to list of "non inductors", so that next loop does not try
 			// to add it as inductor again
-			hash_table_insert(this->ht_non_inductors, state, var);
+			glslopt_hash_table_insert(this->ht_non_inductors, state, var);
 			return false;
 		}
 	}
@@ -202,13 +202,13 @@ loop_state::insert_inductor(loop_variable* loopvar, loop_variable_state* state, 
 		{
 			// add to list of "non inductors", so that next loop does not try
 			// to add it as inductor again
-			hash_table_insert(this->ht_non_inductors, state, var);
+			glslopt_hash_table_insert(this->ht_non_inductors, state, var);
 			return false;
 		}
 	}
 	
 	state->private_induction_variable_count++;
-	hash_table_insert(this->ht_inductors, state, var);
+	glslopt_hash_table_insert(this->ht_inductors, state, var);
 	return true;
 }
 
@@ -216,19 +216,19 @@ loop_state::insert_inductor(loop_variable* loopvar, loop_variable_state* state, 
 loop_variable *
 loop_variable_state::get(const ir_variable *ir)
 {
-   return (loop_variable *) hash_table_find(this->var_hash, ir);
+   return (loop_variable *) glslopt_hash_table_find(this->var_hash, ir);
 }
 
 
 loop_variable *
 loop_variable_state::insert(ir_variable *var)
 {
-   void *mem_ctx = ralloc_parent(this);
+   void *mem_ctx = glslopt_ralloc_parent(this);
    loop_variable *lv = rzalloc(mem_ctx, loop_variable);
 
    lv->var = var;
 
-   hash_table_insert(this->var_hash, lv, lv->var);
+   glslopt_hash_table_insert(this->var_hash, lv, lv->var);
    this->variables.push_tail(lv);
 
    return lv;
@@ -238,7 +238,7 @@ loop_variable_state::insert(ir_variable *var)
 loop_terminator *
 loop_variable_state::insert(ir_if *if_stmt)
 {
-   void *mem_ctx = ralloc_parent(this);
+   void *mem_ctx = glslopt_ralloc_parent(this);
    loop_terminator *t = new(mem_ctx) loop_terminator();
 
    t->ir = if_stmt;
@@ -682,7 +682,7 @@ public:
    virtual ir_visitor_status visit(ir_dereference_variable *ir)
    {
       loop_variable *lv =
-	 (loop_variable *) hash_table_find(this->loop_variables, ir->var);
+	 (loop_variable *) glslopt_hash_table_find(this->loop_variables, ir->var);
 
       assert(lv != NULL);
 
@@ -740,7 +740,7 @@ get_basic_induction_increment(ir_assignment *ir, hash_table *var_hash)
       ir_variable *const inc_var = inc->variable_referenced();
       if (inc_var != NULL) {
 	 loop_variable *lv =
-	    (loop_variable *) hash_table_find(var_hash, inc_var);
+	    (loop_variable *) glslopt_hash_table_find(var_hash, inc_var);
 
          if (lv == NULL || !lv->is_loop_constant()) {
             assert(lv != NULL);
@@ -751,7 +751,7 @@ get_basic_induction_increment(ir_assignment *ir, hash_table *var_hash)
    }
 
    if ((inc != NULL) && (rhs->operation == ir_binop_sub)) {
-      void *mem_ctx = ralloc_parent(ir);
+      void *mem_ctx = glslopt_ralloc_parent(ir);
 
       inc = new(mem_ctx) ir_expression(ir_unop_neg,
 				       inc->type,

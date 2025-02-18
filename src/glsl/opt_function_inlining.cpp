@@ -91,7 +91,7 @@ do_function_inlining(exec_list *instructions)
 static void
 replace_return_with_assignment(ir_instruction *ir, void *data)
 {
-   void *ctx = ralloc_parent(ir);
+   void *ctx = glslopt_ralloc_parent(ir);
    ir_dereference *orig_deref = (ir_dereference *) data;
    ir_return *ret = ir->as_return();
 
@@ -112,13 +112,13 @@ replace_return_with_assignment(ir_instruction *ir, void *data)
 void
 ir_call::generate_inline(ir_instruction *next_ir)
 {
-   void *ctx = ralloc_parent(this);
+   void *ctx = glslopt_ralloc_parent(this);
    ir_variable **parameters;
    unsigned num_parameters;
    int i;
    struct hash_table *ht;
 
-   ht = hash_table_ctor(0, hash_table_pointer_hash, hash_table_pointer_compare);
+   ht = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash, glslopt_hash_table_pointer_compare);
 
    num_parameters = this->callee->parameters.length();
    parameters = new ir_variable *[num_parameters];
@@ -227,7 +227,7 @@ ir_call::generate_inline(ir_instruction *next_ir)
 
    delete [] parameters;
 
-   hash_table_dtor(ht);
+   glslopt_hash_table_dtor(ht);
 }
 
 
@@ -314,7 +314,7 @@ ir_variable_replacement_visitor::replace_deref(ir_dereference **deref)
 {
    ir_dereference_variable *deref_var = (*deref)->as_dereference_variable();
    if (deref_var && deref_var->var == this->orig) {
-      *deref = this->repl->clone(ralloc_parent(*deref), NULL);
+      *deref = this->repl->clone(glslopt_ralloc_parent(*deref), NULL);
    }
 }
 

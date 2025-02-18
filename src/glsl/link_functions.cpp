@@ -47,18 +47,18 @@ public:
       this->success = true;
       this->linked = linked;
 
-      this->locals = hash_table_ctor(0, hash_table_pointer_hash,
-				     hash_table_pointer_compare);
+      this->locals = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+				     glslopt_hash_table_pointer_compare);
    }
 
    ~call_link_visitor()
    {
-      hash_table_dtor(this->locals);
+      glslopt_hash_table_dtor(this->locals);
    }
 
    virtual ir_visitor_status visit(ir_variable *ir)
    {
-      hash_table_insert(locals, ir, ir);
+      glslopt_hash_table_insert(locals, ir, ir);
       return visit_continue;
    }
 
@@ -142,8 +142,8 @@ public:
        * replace signature stored in a function.  One could easily be added,
        * but this avoids the need.
        */
-      struct hash_table *ht = hash_table_ctor(0, hash_table_pointer_hash,
-					      hash_table_pointer_compare);
+      struct hash_table *ht = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+					      glslopt_hash_table_pointer_compare);
       exec_list formal_parameters;
       foreach_in_list(const ir_instruction, original, &sig->parameters) {
 	 assert(const_cast<ir_instruction *>(original)->as_variable());
@@ -165,7 +165,7 @@ public:
          linked_sig->is_defined = true;
       }
 
-      hash_table_dtor(ht);
+      glslopt_hash_table_dtor(ht);
 
       /* Patch references inside the function to things outside the function
        * (i.e., function calls and global variables).
@@ -212,7 +212,7 @@ public:
 
    virtual ir_visitor_status visit(ir_dereference_variable *ir)
    {
-      if (hash_table_find(locals, ir->var) == NULL) {
+      if (glslopt_hash_table_find(locals, ir->var) == NULL) {
 	 /* The non-function variable must be a global, so try to find the
 	  * variable in the shader's symbol table.  If the variable is not
 	  * found, then it's a global that *MUST* be defined in the original

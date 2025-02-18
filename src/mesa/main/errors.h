@@ -42,7 +42,7 @@ extern "C" {
 #endif
 
 extern void
-_mesa_error_no_memory(const char *caller);
+glslopt__mesa_error_no_memory(const char *caller);
 
 
 #ifdef __cplusplus

@@ -82,10 +82,10 @@ cross_validate_types_and_qualifiers(struct gl_shader_program *prog,
          linker_error(prog,
                       "%s shader output `%s' declared as type `%s', "
                       "but %s shader input declared as type `%s'\n",
-                      _mesa_shader_stage_to_string(producer_stage),
+                      glslopt__mesa_shader_stage_to_string(producer_stage),
                       output->name,
                       output->type->name,
-                      _mesa_shader_stage_to_string(consumer_stage),
+                      glslopt__mesa_shader_stage_to_string(consumer_stage),
                       input->type->name);
          return;
       }
@@ -97,10 +97,10 @@ cross_validate_types_and_qualifiers(struct gl_shader_program *prog,
       linker_error(prog,
                    "%s shader output `%s' %s centroid qualifier, "
                    "but %s shader input %s centroid qualifier\n",
-                   _mesa_shader_stage_to_string(producer_stage),
+                   glslopt__mesa_shader_stage_to_string(producer_stage),
                    output->name,
                    (output->data.centroid) ? "has" : "lacks",
-                   _mesa_shader_stage_to_string(consumer_stage),
+                   glslopt__mesa_shader_stage_to_string(consumer_stage),
                    (input->data.centroid) ? "has" : "lacks");
       return;
    }
@@ -109,10 +109,10 @@ cross_validate_types_and_qualifiers(struct gl_shader_program *prog,
       linker_error(prog,
                    "%s shader output `%s' %s sample qualifier, "
                    "but %s shader input %s sample qualifier\n",
-                   _mesa_shader_stage_to_string(producer_stage),
+                   glslopt__mesa_shader_stage_to_string(producer_stage),
                    output->name,
                    (output->data.sample) ? "has" : "lacks",
-                   _mesa_shader_stage_to_string(consumer_stage),
+                   glslopt__mesa_shader_stage_to_string(consumer_stage),
                    (input->data.sample) ? "has" : "lacks");
       return;
    }
@@ -121,10 +121,10 @@ cross_validate_types_and_qualifiers(struct gl_shader_program *prog,
       linker_error(prog,
                    "%s shader output `%s' %s invariant qualifier, "
                    "but %s shader input %s invariant qualifier\n",
-                   _mesa_shader_stage_to_string(producer_stage),
+                   glslopt__mesa_shader_stage_to_string(producer_stage),
                    output->name,
                    (output->data.invariant) ? "has" : "lacks",
-                   _mesa_shader_stage_to_string(consumer_stage),
+                   glslopt__mesa_shader_stage_to_string(consumer_stage),
                    (input->data.invariant) ? "has" : "lacks");
       return;
    }
@@ -135,10 +135,10 @@ cross_validate_types_and_qualifiers(struct gl_shader_program *prog,
                    "interpolation qualifier, "
                    "but %s shader input specifies %s "
                    "interpolation qualifier\n",
-                   _mesa_shader_stage_to_string(producer_stage),
+                   glslopt__mesa_shader_stage_to_string(producer_stage),
                    output->name,
                    interpolation_string(output->data.interpolation),
-                   _mesa_shader_stage_to_string(consumer_stage),
+                   glslopt__mesa_shader_stage_to_string(consumer_stage),
                    interpolation_string(input->data.interpolation));
       return;
    }
@@ -195,7 +195,7 @@ cross_validate_outputs_to_inputs(struct gl_shader_program *prog,
             linker_error(prog,
                          "%s shader has multiple outputs explicitly "
                          "assigned to location %d\n",
-                         _mesa_shader_stage_to_string(producer->Stage),
+                         glslopt__mesa_shader_stage_to_string(producer->Stage),
                          idx);
             return;
          }
@@ -254,7 +254,7 @@ cross_validate_outputs_to_inputs(struct gl_shader_program *prog,
                linker_error(prog,
                             "%s shader input `%s' with explicit location "
                             "has no matching output\n",
-                            _mesa_shader_stage_to_string(consumer->Stage),
+                            glslopt__mesa_shader_stage_to_string(consumer->Stage),
                             input->name);
             }
          } else {
@@ -318,9 +318,9 @@ tfeedback_decl::init(struct gl_context *ctx, const void *mem_ctx,
    /* Parse a declaration. */
    const char *base_name_end;
    long subscript = parse_program_resource_name(input, &base_name_end);
-   this->var_name = ralloc_strndup(mem_ctx, input, base_name_end - input);
+   this->var_name = glslopt_ralloc_strndup(mem_ctx, input, base_name_end - input);
    if (this->var_name == NULL) {
-      _mesa_error_no_memory(__func__);
+      glslopt__mesa_error_no_memory(__func__);
       return;
    }
 
@@ -517,7 +517,7 @@ tfeedback_decl::store(struct gl_context *ctx, struct gl_shader_program *prog,
       location_frac = 0;
    }
 
-   info->Varyings[info->NumVarying].Name = ralloc_strdup(prog, this->orig_name);
+   info->Varyings[info->NumVarying].Name = glslopt_ralloc_strdup(prog, this->orig_name);
    info->Varyings[info->NumVarying].Type = this->type;
    info->Varyings[info->NumVarying].Size = this->size;
    info->NumVarying++;
@@ -533,7 +533,7 @@ tfeedback_decl::find_candidate(gl_shader_program *prog,
    const char *name = this->is_clip_distance_mesa
       ? "gl_ClipDistanceMESA" : this->var_name;
    this->matched_candidate = (const tfeedback_candidate *)
-      hash_table_find(tfeedback_candidates, name);
+      glslopt_hash_table_find(tfeedback_candidates, name);
    if (!this->matched_candidate) {
       /* From GL_EXT_transform_feedback:
        *   A program will fail to link if:
@@ -607,8 +607,8 @@ store_tfeedback_info(struct gl_context *ctx, struct gl_shader_program *prog,
    bool separate_attribs_mode =
       prog->TransformFeedback.BufferMode == GL_SEPARATE_ATTRIBS;
 
-   ralloc_free(prog->LinkedTransformFeedback.Varyings);
-   ralloc_free(prog->LinkedTransformFeedback.Outputs);
+   glslopt_ralloc_free(prog->LinkedTransformFeedback.Varyings);
+   glslopt_ralloc_free(prog->LinkedTransformFeedback.Outputs);
 
    memset(&prog->LinkedTransformFeedback, 0,
           sizeof(prog->LinkedTransformFeedback));
@@ -1084,8 +1084,8 @@ private:
       candidate->toplevel_var = this->toplevel_var;
       candidate->type = type;
       candidate->offset = this->varying_floats;
-      hash_table_insert(this->tfeedback_candidates, candidate,
-                        ralloc_strdup(this->mem_ctx, name));
+      glslopt_hash_table_insert(this->tfeedback_candidates, candidate,
+                        glslopt_ralloc_strdup(this->mem_ctx, name));
       this->varying_floats += type->component_slots();
    }
 
@@ -1153,14 +1153,14 @@ populate_consumer_input_sets(void *mem_ctx, exec_list *ir,
                input_var;
          } else if (input_var->get_interface_type() != NULL) {
             char *const iface_field_name =
-               ralloc_asprintf(mem_ctx, "%s.%s",
+               glslopt_ralloc_asprintf(mem_ctx, "%s.%s",
                                input_var->get_interface_type()->name,
                                input_var->name);
-            hash_table_insert(consumer_interface_inputs, input_var,
+            glslopt_hash_table_insert(consumer_interface_inputs, input_var,
                               iface_field_name);
          } else {
-            hash_table_insert(consumer_inputs, input_var,
-                              ralloc_strdup(mem_ctx, input_var->name));
+            glslopt_hash_table_insert(consumer_inputs, input_var,
+                              glslopt_ralloc_strdup(mem_ctx, input_var->name));
          }
       }
    }
@@ -1187,15 +1187,15 @@ get_matching_input(void *mem_ctx,
       input_var = consumer_inputs_with_locations[output_var->data.location];
    } else if (output_var->get_interface_type() != NULL) {
       char *const iface_field_name =
-         ralloc_asprintf(mem_ctx, "%s.%s",
+         glslopt_ralloc_asprintf(mem_ctx, "%s.%s",
                          output_var->get_interface_type()->name,
                          output_var->name);
       input_var =
-         (ir_variable *) hash_table_find(consumer_interface_inputs,
+         (ir_variable *) glslopt_hash_table_find(consumer_interface_inputs,
                                          iface_field_name);
    } else {
       input_var =
-         (ir_variable *) hash_table_find(consumer_inputs, output_var->name);
+         (ir_variable *) glslopt_hash_table_find(consumer_inputs, output_var->name);
    }
 
    return (input_var == NULL || input_var->data.mode != ir_var_shader_in)
@@ -1299,11 +1299,11 @@ assign_varying_locations(struct gl_context *ctx,
    varying_matches matches(!!ctx->Const.DisableVaryingPacking,
                            consumer && consumer->Stage == MESA_SHADER_FRAGMENT);
    hash_table *tfeedback_candidates
-      = hash_table_ctor(0, hash_table_string_hash, hash_table_string_compare);
+      = glslopt_hash_table_ctor(0, glslopt_hash_table_string_hash, hash_table_string_compare);
    hash_table *consumer_inputs
-      = hash_table_ctor(0, hash_table_string_hash, hash_table_string_compare);
+      = glslopt_hash_table_ctor(0, glslopt_hash_table_string_hash, hash_table_string_compare);
    hash_table *consumer_interface_inputs
-      = hash_table_ctor(0, hash_table_string_hash, hash_table_string_compare);
+      = glslopt_hash_table_ctor(0, glslopt_hash_table_string_hash, hash_table_string_compare);
    ir_variable *consumer_inputs_with_locations[VARYING_SLOT_MAX] = {
       NULL,
    };
@@ -1336,9 +1336,9 @@ assign_varying_locations(struct gl_context *ctx,
                                                 consumer_interface_inputs,
                                                 consumer_inputs_with_locations)) {
       assert(!"populate_consumer_input_sets failed");
-      hash_table_dtor(tfeedback_candidates);
-      hash_table_dtor(consumer_inputs);
-      hash_table_dtor(consumer_interface_inputs);
+      glslopt_hash_table_dtor(tfeedback_candidates);
+      glslopt_hash_table_dtor(consumer_inputs);
+      glslopt_hash_table_dtor(consumer_interface_inputs);
       return false;
    }
 
@@ -1405,9 +1405,9 @@ assign_varying_locations(struct gl_context *ctx,
          = tfeedback_decls[i].find_candidate(prog, tfeedback_candidates);
 
       if (matched_candidate == NULL) {
-         hash_table_dtor(tfeedback_candidates);
-         hash_table_dtor(consumer_inputs);
-         hash_table_dtor(consumer_interface_inputs);
+         glslopt_hash_table_dtor(tfeedback_candidates);
+         glslopt_hash_table_dtor(consumer_inputs);
+         glslopt_hash_table_dtor(consumer_interface_inputs);
          return false;
       }
 
@@ -1423,16 +1423,16 @@ assign_varying_locations(struct gl_context *ctx,
          continue;
 
       if (!tfeedback_decls[i].assign_location(ctx, prog)) {
-         hash_table_dtor(tfeedback_candidates);
-         hash_table_dtor(consumer_inputs);
-         hash_table_dtor(consumer_interface_inputs);
+         glslopt_hash_table_dtor(tfeedback_candidates);
+         glslopt_hash_table_dtor(consumer_inputs);
+         glslopt_hash_table_dtor(consumer_interface_inputs);
          return false;
       }
    }
 
-   hash_table_dtor(tfeedback_candidates);
-   hash_table_dtor(consumer_inputs);
-   hash_table_dtor(consumer_interface_inputs);
+   glslopt_hash_table_dtor(tfeedback_candidates);
+   glslopt_hash_table_dtor(consumer_inputs);
+   glslopt_hash_table_dtor(consumer_interface_inputs);
 
    if (ctx->Const.DisableVaryingPacking) {
       /* Transform feedback code assumes varyings are packed, so if the driver
@@ -1469,9 +1469,9 @@ assign_varying_locations(struct gl_context *ctx,
                 */
                linker_warning(prog, "%s shader varying %s not written "
                               "by %s shader\n.",
-                              _mesa_shader_stage_to_string(consumer->Stage),
+                              glslopt__mesa_shader_stage_to_string(consumer->Stage),
                               var->name,
-                              _mesa_shader_stage_to_string(producer->Stage));
+                              glslopt__mesa_shader_stage_to_string(producer->Stage));
             } else if (prog->Version <= 120) {
                /* On page 25 (page 31 of the PDF) of the GLSL 1.20 spec:
                 *
@@ -1487,9 +1487,9 @@ assign_varying_locations(struct gl_context *ctx,
                 */
                linker_error(prog, "%s shader varying %s not written "
                             "by %s shader\n.",
-                            _mesa_shader_stage_to_string(consumer->Stage),
+                            glslopt__mesa_shader_stage_to_string(consumer->Stage),
 			    var->name,
-                            _mesa_shader_stage_to_string(producer->Stage));
+                            glslopt__mesa_shader_stage_to_string(producer->Stage));
             }
 
             /* An 'in' variable is only really a shader input if its

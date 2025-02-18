@@ -73,7 +73,7 @@ read_atom(void *ctx, const char *&src, char *&symbol_buffer)
    } else {
       // Check if the atom is a number.
       char *float_end = NULL;
-      float f = glsl_strtof(src, &float_end);
+      float f = glslopt_glsl_strtof(src, &float_end);
       if (float_end != src) {
          char *int_end = NULL;
          int i = strtol(src, &int_end, 10);
@@ -131,7 +131,7 @@ s_expression::read_expression(void *ctx, const char *&src)
    assert(src != NULL);
 
    /* When we encounter a Symbol, we need to save a nul-terminated copy of
-    * the string.  However, ralloc_strndup'ing every individual Symbol is
+    * the string.  However, glslopt_ralloc_strndup'ing every individual Symbol is
     * extremely expensive.  We could avoid this by simply overwriting the
     * next character (guaranteed to be whitespace, parens, or semicolon) with
     * a nul-byte.  But overwriting non-whitespace would mess up parsing.
@@ -140,7 +140,7 @@ s_expression::read_expression(void *ctx, const char *&src)
     * original source string unmodified, and altering the copy to contain the
     * necessary nul-bytes whenever we encounter a symbol.
     */
-   char *symbol_buffer = ralloc_strdup(ctx, src);
+   char *symbol_buffer = glslopt_ralloc_strdup(ctx, src);
    return __read_expression(ctx, src, symbol_buffer);
 }
 

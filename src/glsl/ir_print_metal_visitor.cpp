@@ -61,19 +61,19 @@ struct global_print_tracker_metal
 {
 	global_print_tracker_metal ()
 	{
-		mem_ctx = ralloc_context(0);
+		mem_ctx = glslopt_ralloc_context(0);
 		var_counter = 0;
-		var_hash = hash_table_ctor(0, hash_table_pointer_hash, hash_table_pointer_compare);
+		var_hash = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash, glslopt_hash_table_pointer_compare);
 		const_counter = 0;
-		const_hash = hash_table_ctor(0, hash_table_pointer_hash, hash_table_pointer_compare);
+		const_hash = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash, glslopt_hash_table_pointer_compare);
 		main_function_done = false;
 	}
 
 	~global_print_tracker_metal()
 	{
-		hash_table_dtor (var_hash);
-		hash_table_dtor (const_hash);
-		ralloc_free(mem_ctx);
+		glslopt_hash_table_dtor (var_hash);
+		glslopt_hash_table_dtor (const_hash);
+		glslopt_ralloc_free(mem_ctx);
 	}
 
 	unsigned	var_counter;
@@ -93,13 +93,13 @@ struct metal_print_context
 {
 	metal_print_context(char* buffer)
 	: str(buffer)
-	, prefixStr(ralloc_strdup(buffer, ""))
-	, inputStr(ralloc_strdup(buffer, ""))
-	, outputStr(ralloc_strdup(buffer, ""))
-	, inoutStr(ralloc_strdup(buffer, ""))
-	, uniformStr(ralloc_strdup(buffer, ""))
-	, paramsStr(ralloc_strdup(buffer, ""))
-	, typedeclStr(ralloc_strdup(buffer, ""))
+	, prefixStr(glslopt_ralloc_strdup(buffer, ""))
+	, inputStr(glslopt_ralloc_strdup(buffer, ""))
+	, outputStr(glslopt_ralloc_strdup(buffer, ""))
+	, inoutStr(glslopt_ralloc_strdup(buffer, ""))
+	, uniformStr(glslopt_ralloc_strdup(buffer, ""))
+	, paramsStr(glslopt_ralloc_strdup(buffer, ""))
+	, typedeclStr(glslopt_ralloc_strdup(buffer, ""))
 	, writingParams(false)
 	, matrixCastsDone(false)
 	, matrixConstructorsDone(false)
@@ -344,7 +344,7 @@ _mesa_print_ir_metal(exec_list *instructions,
 
 	*outUniformsSize = ctx.uniformLocationCounter;
 
-	return ralloc_strdup(buffer, ctx.prefixStr.c_str());
+	return glslopt_ralloc_strdup(buffer, ctx.prefixStr.c_str());
 }
 
 
@@ -387,11 +387,11 @@ void ir_print_metal_visitor::newline_deindent()
 
 void ir_print_metal_visitor::print_var_name (ir_variable* v)
 {
-    uintptr_t id = (uintptr_t)hash_table_find (globals->var_hash, v);
+    uintptr_t id = (uintptr_t)glslopt_hash_table_find (globals->var_hash, v);
 	if (!id && v->data.mode == ir_var_temporary)
 	{
         id = ++globals->var_counter;
-        hash_table_insert (globals->var_hash, (void*)id, v);
+        glslopt_hash_table_insert (globals->var_hash, (void*)id, v);
 	}
     if (id)
     {
@@ -558,11 +558,11 @@ void ir_print_metal_visitor::visit(ir_variable *ir)
 	// give an id to any variable defined in a function that is not an uniform
 	if ((this->mode == kPrintGlslNone && ir->data.mode != ir_var_uniform))
 	{
-		uintptr_t id = (uintptr_t)hash_table_find (globals->var_hash, ir);
+		uintptr_t id = (uintptr_t)glslopt_hash_table_find (globals->var_hash, ir);
 		if (id == 0)
 		{
 			id = ++globals->var_counter;
-			hash_table_insert (globals->var_hash, (void*)id, ir);
+			glslopt_hash_table_insert (globals->var_hash, (void*)id, ir);
 		}
 	}
 
@@ -1664,11 +1664,11 @@ void ir_print_metal_visitor::visit(ir_constant *ir)
 	// hoist array & struct constants into global scope
 	if (type->is_array() || type->is_record())
 	{
-		size_t id = (size_t)hash_table_find(globals->const_hash, ir);
+		size_t id = (size_t)glslopt_hash_table_find(globals->const_hash, ir);
 		if (id == 0)
 		{
 			id = ++globals->const_counter;
-			hash_table_insert (globals->const_hash, (void*)id, ir);
+			glslopt_hash_table_insert (globals->const_hash, (void*)id, ir);
 			globals->global_constants.push_tail(new(globals->mem_ctx) gconst_entry_metal(ir,id));
 		}
 		buffer.asprintf_append("_xlat_mtl_const%i", (int)id);
@@ -1857,8 +1857,8 @@ bool ir_print_metal_visitor::emit_canonical_for (ir_loop* ir)
 	if (!can_emit_canonical_for(ls))
 		return false;
 
-	hash_table* terminator_hash = hash_table_ctor(0, hash_table_pointer_hash, hash_table_pointer_compare);
-	hash_table* induction_hash = hash_table_ctor(0, hash_table_pointer_hash, hash_table_pointer_compare);
+	hash_table* terminator_hash = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash, glslopt_hash_table_pointer_compare);
+	hash_table* induction_hash = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash, glslopt_hash_table_pointer_compare);
 
 	buffer.asprintf_append("for (");
 	inside_loop_body = true;
@@ -1890,7 +1890,7 @@ bool ir_print_metal_visitor::emit_canonical_for (ir_loop* ir)
 	// emit loop terminating conditions
 	foreach_in_list(loop_terminator, term, &ls->terminators)
 	{
-		hash_table_insert(terminator_hash, term, term->ir);
+		glslopt_hash_table_insert(terminator_hash, term, term->ir);
 
 		// IR has conditions in the form of "if (x) break",
 		// whereas for loop needs them negated, in the form
@@ -1942,7 +1942,7 @@ bool ir_print_metal_visitor::emit_canonical_for (ir_loop* ir)
 	bool first = true;
 	foreach_in_list(loop_variable, indvar, &ls->induction_variables)
 	{
-		hash_table_insert(induction_hash, indvar, indvar->first_assignment);
+		glslopt_hash_table_insert(induction_hash, indvar, indvar->first_assignment);
 		if (!first)
 			buffer.asprintf_append(", ");
 		visit(indvar->first_assignment);
@@ -1957,9 +1957,9 @@ bool ir_print_metal_visitor::emit_canonical_for (ir_loop* ir)
 	foreach_in_list(ir_instruction, inst, &ir->body_instructions) {
 		// skip termination & induction statements,
 		// they are part of "for" clause
-		if (hash_table_find(terminator_hash, inst))
+		if (glslopt_hash_table_find(terminator_hash, inst))
 			continue;
-		if (hash_table_find(induction_hash, inst))
+		if (glslopt_hash_table_find(induction_hash, inst))
 			continue;
 
 		indent();
@@ -1971,8 +1971,8 @@ bool ir_print_metal_visitor::emit_canonical_for (ir_loop* ir)
 	indent();
 	buffer.asprintf_append("}");
 
-	hash_table_dtor (terminator_hash);
-	hash_table_dtor (induction_hash);
+	glslopt_hash_table_dtor (terminator_hash);
+	glslopt_hash_table_dtor (induction_hash);
 
 	return true;
 }

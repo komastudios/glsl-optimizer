@@ -353,9 +353,9 @@ linker_error(gl_shader_program *prog, const char *fmt, ...)
 {
    va_list ap;
 
-   ralloc_strcat(&prog->InfoLog, "error: ");
+   glslopt_ralloc_strcat(&prog->InfoLog, "error: ");
    va_start(ap, fmt);
-   ralloc_vasprintf_append(&prog->InfoLog, fmt, ap);
+   glslopt_ralloc_vasprintf_append(&prog->InfoLog, fmt, ap);
    va_end(ap);
 
    prog->LinkStatus = false;
@@ -367,9 +367,9 @@ linker_warning(gl_shader_program *prog, const char *fmt, ...)
 {
    va_list ap;
 
-   ralloc_strcat(&prog->InfoLog, "warning: ");
+   glslopt_ralloc_strcat(&prog->InfoLog, "warning: ");
    va_start(ap, fmt);
-   ralloc_vasprintf_append(&prog->InfoLog, fmt, ap);
+   glslopt_ralloc_vasprintf_append(&prog->InfoLog, fmt, ap);
    va_end(ap);
 
 }
@@ -507,7 +507,7 @@ analyze_clip_usage(struct gl_shader_program *prog,
       if (clip_vertex.variable_found() && clip_distance.variable_found()) {
          linker_error(prog, "%s shader writes to both `gl_ClipVertex' "
                       "and `gl_ClipDistance'\n",
-                      _mesa_shader_stage_to_string(shader->Stage));
+                      glslopt__mesa_shader_stage_to_string(shader->Stage));
          return;
       }
       *UsesClipDistance = clip_distance.variable_found();
@@ -858,7 +858,7 @@ cross_validate_globals(struct gl_shader_program *prog,
 		   * FINISHME: will fail.
 		   */
 		  existing->constant_initializer =
-		     var->constant_initializer->clone(ralloc_parent(existing),
+		     var->constant_initializer->clone(glslopt_ralloc_parent(existing),
 						      NULL);
 	       }
 	    }
@@ -1020,7 +1020,7 @@ remap_variables(ir_instruction *inst, struct gl_shader *target,
       virtual ir_visitor_status visit(ir_dereference_variable *ir)
       {
 	 if (ir->var->data.mode == ir_var_temporary) {
-	    ir_variable *var = (ir_variable *) hash_table_find(temps, ir->var);
+	    ir_variable *var = (ir_variable *) glslopt_hash_table_find(temps, ir->var);
 
 	    assert(var != NULL);
 	    ir->var = var;
@@ -1083,8 +1083,8 @@ move_non_declarations(exec_list *instructions, exec_node *last,
    hash_table *temps = NULL;
 
    if (make_copies)
-      temps = hash_table_ctor(0, hash_table_pointer_hash,
-			      hash_table_pointer_compare);
+      temps = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+			      glslopt_hash_table_pointer_compare);
 
    foreach_in_list_safe(ir_instruction, inst, instructions) {
       if (inst->as_function())
@@ -1108,7 +1108,7 @@ move_non_declarations(exec_list *instructions, exec_node *last,
 	 inst = inst->clone(target, NULL);
 
 	 if (var != NULL)
-	    hash_table_insert(temps, inst, var);
+	    glslopt_hash_table_insert(temps, inst, var);
 	 else
 	    remap_variables(inst, target, temps);
       } else {
@@ -1120,7 +1120,7 @@ move_non_declarations(exec_list *instructions, exec_node *last,
    }
 
    if (make_copies)
-      hash_table_dtor(temps);
+      glslopt_hash_table_dtor(temps);
 
    return last;
 }
@@ -1161,16 +1161,16 @@ link_get_main_function_signature(gl_shader *sh)
 class array_sizing_visitor : public ir_hierarchical_visitor {
 public:
    array_sizing_visitor()
-      : mem_ctx(ralloc_context(NULL)),
-        unnamed_interfaces(hash_table_ctor(0, hash_table_pointer_hash,
-                                           hash_table_pointer_compare))
+      : mem_ctx(glslopt_ralloc_context(NULL)),
+        unnamed_interfaces(glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+                                           glslopt_hash_table_pointer_compare))
    {
    }
 
    ~array_sizing_visitor()
    {
-      hash_table_dtor(this->unnamed_interfaces);
-      ralloc_free(this->mem_ctx);
+      glslopt_hash_table_dtor(this->unnamed_interfaces);
+      glslopt_ralloc_free(this->mem_ctx);
    }
 
    virtual ir_visitor_status visit(ir_variable *var)
@@ -1199,11 +1199,11 @@ public:
           * hashtable.
           */
          ir_variable **interface_vars = (ir_variable **)
-            hash_table_find(this->unnamed_interfaces, ifc_type);
+            glslopt_hash_table_find(this->unnamed_interfaces, ifc_type);
          if (interface_vars == NULL) {
             interface_vars = rzalloc_array(mem_ctx, ir_variable *,
                                            ifc_type->length);
-            hash_table_insert(this->unnamed_interfaces, interface_vars,
+            glslopt_hash_table_insert(this->unnamed_interfaces, interface_vars,
                               ifc_type);
          }
          unsigned index = ifc_type->field_index(var->name);
@@ -1222,7 +1222,7 @@ public:
     */
    void fixup_unnamed_interface_types()
    {
-      hash_table_call_foreach(this->unnamed_interfaces,
+      glslopt_hash_table_call_foreach(this->unnamed_interfaces,
                               fixup_unnamed_interface_type, NULL);
    }
 
@@ -1666,7 +1666,7 @@ link_intrastage_shaders(void *mem_ctx,
 
    if (main == NULL) {
       linker_error(prog, "%s shader lacks `main'\n",
-		   _mesa_shader_stage_to_string(shader_list[0]->Stage));
+		   glslopt__mesa_shader_stage_to_string(shader_list[0]->Stage));
       return NULL;
    }
 
@@ -1676,7 +1676,7 @@ link_intrastage_shaders(void *mem_ctx,
 
    linked->UniformBlocks = uniform_blocks;
    linked->NumUniformBlocks = num_uniform_blocks;
-   ralloc_steal(linked, linked->UniformBlocks);
+   glslopt_ralloc_steal(linked, linked->UniformBlocks);
 
    link_fs_input_layout_qualifiers(prog, linked, shader_list, num_shaders);
    link_gs_inout_layout_qualifiers(prog, linked, shader_list, num_shaders);
@@ -1732,7 +1732,7 @@ link_intrastage_shaders(void *mem_ctx,
 
          free(linking_shaders);
       } else {
-         _mesa_error_no_memory(__func__);
+         glslopt__mesa_error_no_memory(__func__);
       }
    } else {
       ok = link_function_calls(prog, linked, shader_list, num_shaders);
@@ -2263,7 +2263,7 @@ check_resources(struct gl_context *ctx, struct gl_shader_program *prog)
 
       if (sh->num_samplers > ctx->Const.Program[i].MaxTextureImageUnits) {
 	 linker_error(prog, "Too many %s shader texture samplers",
-		      _mesa_shader_stage_to_string(i));
+		      glslopt__mesa_shader_stage_to_string(i));
       }
 
       if (sh->num_uniform_components >
@@ -2273,11 +2273,11 @@ check_resources(struct gl_context *ctx, struct gl_shader_program *prog)
                            "components, but the driver will try to optimize "
                            "them out; this is non-portable out-of-spec "
 			   "behavior\n",
-                           _mesa_shader_stage_to_string(i));
+                           glslopt__mesa_shader_stage_to_string(i));
          } else {
             linker_error(prog, "Too many %s shader default uniform block "
 			 "components",
-                         _mesa_shader_stage_to_string(i));
+                         glslopt__mesa_shader_stage_to_string(i));
          }
       }
 
@@ -2287,10 +2287,10 @@ check_resources(struct gl_context *ctx, struct gl_shader_program *prog)
             linker_warning(prog, "Too many %s shader uniform components, "
                            "but the driver will try to optimize them out; "
                            "this is non-portable out-of-spec behavior\n",
-                           _mesa_shader_stage_to_string(i));
+                           glslopt__mesa_shader_stage_to_string(i));
          } else {
             linker_error(prog, "Too many %s shader uniform components",
-                         _mesa_shader_stage_to_string(i));
+                         glslopt__mesa_shader_stage_to_string(i));
          }
       }
    }
@@ -2316,7 +2316,7 @@ check_resources(struct gl_context *ctx, struct gl_shader_program *prog)
                ctx->Const.Program[i].MaxUniformBlocks;
 	    if (blocks[i] > max_uniform_blocks) {
 	       linker_error(prog, "Too many %s uniform blocks (%d/%d)",
-			    _mesa_shader_stage_to_string(i),
+			    glslopt__mesa_shader_stage_to_string(i),
 			    blocks[i],
 			    max_uniform_blocks);
 	       break;
@@ -2344,7 +2344,7 @@ check_image_resources(struct gl_context *ctx, struct gl_shader_program *prog)
       if (sh) {
          if (sh->NumImages > ctx->Const.Program[i].MaxImageUniforms)
             linker_error(prog, "Too many %s shader image uniforms",
-                         _mesa_shader_stage_to_string(i));
+                         glslopt__mesa_shader_stage_to_string(i));
 
          total_image_units += sh->NumImages;
 
@@ -2483,24 +2483,24 @@ link_shaders(struct gl_context *ctx, struct gl_shader_program *prog)
    tfeedback_decl *tfeedback_decls = NULL;
    unsigned num_tfeedback_decls = prog->TransformFeedback.NumVarying;
 
-   void *mem_ctx = ralloc_context(NULL); // temporary linker context
+   void *mem_ctx = glslopt_ralloc_context(NULL); // temporary linker context
 
    prog->LinkStatus = true; /* All error paths will set this to false */
    prog->Validated = false;
    prog->_Used = false;
 
-   ralloc_free(prog->InfoLog);
-   prog->InfoLog = ralloc_strdup(NULL, "");
+   glslopt_ralloc_free(prog->InfoLog);
+   prog->InfoLog = glslopt_ralloc_strdup(NULL, "");
 
-   ralloc_free(prog->UniformBlocks);
+   glslopt_ralloc_free(prog->UniformBlocks);
    prog->UniformBlocks = NULL;
    prog->NumUniformBlocks = 0;
    for (int i = 0; i < MESA_SHADER_STAGES; i++) {
-      ralloc_free(prog->UniformBlockStageIndex[i]);
+      glslopt_ralloc_free(prog->UniformBlockStageIndex[i]);
       prog->UniformBlockStageIndex[i] = NULL;
    }
 
-   ralloc_free(prog->AtomicBuffers);
+   glslopt_ralloc_free(prog->AtomicBuffers);
    prog->AtomicBuffers = NULL;
    prog->NumAtomicBuffers = 0;
    prog->ARB_fragment_coord_conventions_enable = false;
@@ -2599,7 +2599,7 @@ link_shaders(struct gl_context *ctx, struct gl_shader_program *prog)
          if (!prog->LinkStatus)
             goto done;
 
-         _mesa_reference_shader(ctx, &prog->_LinkedShaders[stage], sh);
+         glslopt__mesa_reference_shader(ctx, &prog->_LinkedShaders[stage], sh);
       }
    }
 
@@ -2900,5 +2900,5 @@ done:
       prog->_LinkedShaders[i]->symbols = NULL;
    }
 
-   ralloc_free(mem_ctx);
+   glslopt_ralloc_free(mem_ctx);
 }

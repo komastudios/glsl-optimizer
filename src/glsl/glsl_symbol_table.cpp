@@ -97,29 +97,29 @@ public:
 glsl_symbol_table::glsl_symbol_table()
 {
    this->separate_function_namespace = false;
-   this->table = _mesa_symbol_table_ctor();
-   this->mem_ctx = ralloc_context(NULL);
+   this->table = glslopt__mesa_symbol_table_ctor();
+   this->mem_ctx = glslopt_ralloc_context(NULL);
 }
 
 glsl_symbol_table::~glsl_symbol_table()
 {
-   _mesa_symbol_table_dtor(table);
-   ralloc_free(mem_ctx);
+   glslopt__mesa_symbol_table_dtor(table);
+   glslopt_ralloc_free(mem_ctx);
 }
 
 void glsl_symbol_table::push_scope()
 {
-   _mesa_symbol_table_push_scope(table);
+   glslopt__mesa_symbol_table_push_scope(table);
 }
 
 void glsl_symbol_table::pop_scope()
 {
-   _mesa_symbol_table_pop_scope(table);
+   glslopt__mesa_symbol_table_pop_scope(table);
 }
 
 bool glsl_symbol_table::name_declared_this_scope(const char *name)
 {
-   return _mesa_symbol_table_symbol_scope(table, -1, name) == 0;
+   return glslopt__mesa_symbol_table_symbol_scope(table, -1, name) == 0;
 }
 
 bool glsl_symbol_table::add_variable(ir_variable *v)
@@ -145,7 +145,7 @@ bool glsl_symbol_table::add_variable(ir_variable *v)
 	 symbol_table_entry *entry = new(mem_ctx) symbol_table_entry(v);
 	 if (existing != NULL)
 	    entry->f = existing->f;
-	 int added = _mesa_symbol_table_add_symbol(table, -1, v->name, entry);
+	 int added = glslopt__mesa_symbol_table_add_symbol(table, -1, v->name, entry);
 	 assert(added == 0);
 	 (void)added;
 	 return true;
@@ -155,13 +155,13 @@ bool glsl_symbol_table::add_variable(ir_variable *v)
 
    /* 1.20+ rules: */
    symbol_table_entry *entry = new(mem_ctx) symbol_table_entry(v);
-   return _mesa_symbol_table_add_symbol(table, -1, v->name, entry) == 0;
+   return glslopt__mesa_symbol_table_add_symbol(table, -1, v->name, entry) == 0;
 }
 
 bool glsl_symbol_table::add_type(const char *name, const glsl_type *t)
 {
    symbol_table_entry *entry = new(mem_ctx) symbol_table_entry(t);
-   return _mesa_symbol_table_add_symbol(table, -1, name, entry) == 0;
+   return glslopt__mesa_symbol_table_add_symbol(table, -1, name, entry) == 0;
 }
 
 bool glsl_symbol_table::add_interface(const char *name, const glsl_type *i,
@@ -173,7 +173,7 @@ bool glsl_symbol_table::add_interface(const char *name, const glsl_type *i,
       symbol_table_entry *entry =
          new(mem_ctx) symbol_table_entry(i, mode);
       bool add_interface_symbol_result =
-         _mesa_symbol_table_add_symbol(table, -1, name, entry) == 0;
+         glslopt__mesa_symbol_table_add_symbol(table, -1, name, entry) == 0;
       assert(add_interface_symbol_result);
       return add_interface_symbol_result;
    } else {
@@ -192,13 +192,13 @@ bool glsl_symbol_table::add_function(ir_function *f)
       }
    }
    symbol_table_entry *entry = new(mem_ctx) symbol_table_entry(f);
-   return _mesa_symbol_table_add_symbol(table, -1, f->name, entry) == 0;
+   return glslopt__mesa_symbol_table_add_symbol(table, -1, f->name, entry) == 0;
 }
 
 void glsl_symbol_table::add_global_function(ir_function *f)
 {
    symbol_table_entry *entry = new(mem_ctx) symbol_table_entry(f);
-   int added = _mesa_symbol_table_add_global_symbol(table, -1, f->name, entry);
+   int added = glslopt__mesa_symbol_table_add_global_symbol(table, -1, f->name, entry);
    assert(added == 0);
    (void)added;
 }
@@ -231,7 +231,7 @@ ir_function *glsl_symbol_table::get_function(const char *name)
 symbol_table_entry *glsl_symbol_table::get_entry(const char *name)
 {
    return (symbol_table_entry *)
-      _mesa_symbol_table_find_symbol(table, -1, name);
+      glslopt__mesa_symbol_table_find_symbol(table, -1, name);
 }
 
 void

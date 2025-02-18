@@ -38,12 +38,12 @@ extern "C" {
 struct _mesa_glsl_parse_state;
 struct glsl_symbol_table;
 
-extern void glsl_type_singleton_init_or_ref(void);
+extern void glslopt_glsl_type_singleton_init_or_ref(void);
 
-extern void glsl_type_singleton_decref(void);
+extern void glslopt_glsl_type_singleton_decref(void);
 
 extern void
-_mesa_glsl_initialize_types(struct _mesa_glsl_parse_state *state);
+glslopt__mesa_glsl_initialize_types(struct _mesa_glsl_parse_state *state);
 
 // extern void _mesa_glsl_release_types(void);
 
@@ -130,27 +130,27 @@ struct glsl_type {
    unsigned interface_packing:2;
 
    /* Callers of this ralloc-based new need not call delete. It's
-    * easier to just ralloc_free 'mem_ctx' (or any of its ancestors). */
+    * easier to just glslopt_ralloc_free 'mem_ctx' (or any of its ancestors). */
    static void* operator new(size_t size)
    {
       if (glsl_type::mem_ctx == NULL) {
-	 glsl_type::mem_ctx = ralloc_context(NULL);
+	 glsl_type::mem_ctx = glslopt_ralloc_context(NULL);
 	 assert(glsl_type::mem_ctx != NULL);
       }
 
       void *type;
 
-      type = ralloc_size(glsl_type::mem_ctx, size);
+      type = glslopt_ralloc_size(glsl_type::mem_ctx, size);
       assert(type != NULL);
 
       return type;
    }
 
    /* If the user *does* call delete, that's OK, we will just
-    * ralloc_free in that case. */
+    * glslopt_ralloc_free in that case. */
    static void operator delete(void *type)
    {
-      ralloc_free(type);
+      glslopt_ralloc_free(type);
    }
 
    /**
@@ -693,7 +693,7 @@ private:
     * data.
     */
    /*@{*/
-   friend void _mesa_glsl_initialize_types(struct _mesa_glsl_parse_state *);
+   friend void glslopt__mesa_glsl_initialize_types(struct _mesa_glsl_parse_state *);
    friend void _mesa_glsl_release_types(void);
    /*@}*/
 };

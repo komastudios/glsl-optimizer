@@ -73,10 +73,10 @@ extern int vsnprintf(char *str, size_t count, const char *fmt, va_list arg);
  * Allocates extra memory to accommodate rounding up the address for
  * alignment and to record the real malloc address.
  *
- * \sa _mesa_align_free().
+ * \sa glslopt__mesa_align_free().
  */
 void *
-_mesa_align_malloc(size_t bytes, unsigned long alignment)
+glslopt__mesa_align_malloc(size_t bytes, unsigned long alignment)
 {
 #if defined(HAVE_POSIX_MEMALIGN)
    void *mem;
@@ -111,16 +111,16 @@ _mesa_align_malloc(size_t bytes, unsigned long alignment)
 }
 
 /**
- * Same as _mesa_align_malloc(), but using calloc(1, ) instead of
+ * Same as glslopt__mesa_align_malloc(), but using calloc(1, ) instead of
  * malloc()
  */
 void *
-_mesa_align_calloc(size_t bytes, unsigned long alignment)
+glslopt__mesa_align_calloc(size_t bytes, unsigned long alignment)
 {
 #if defined(HAVE_POSIX_MEMALIGN)
    void *mem;
    
-   mem = _mesa_align_malloc(bytes, alignment);
+   mem = glslopt__mesa_align_malloc(bytes, alignment);
    if (mem != NULL) {
       (void) memset(mem, 0, bytes);
    }
@@ -160,8 +160,8 @@ _mesa_align_calloc(size_t bytes, unsigned long alignment)
 }
 
 /**
- * Free memory which was allocated with either _mesa_align_malloc()
- * or _mesa_align_calloc().
+ * Free memory which was allocated with either glslopt__mesa_align_malloc()
+ * or glslopt__mesa_align_calloc().
  * \param ptr pointer to the memory to be freed.
  * The actual address to free is stored in the word immediately before the
  * address the client sees.
@@ -169,7 +169,7 @@ _mesa_align_calloc(size_t bytes, unsigned long alignment)
  * handled accordingly.
  */
 void
-_mesa_align_free(void *ptr)
+glslopt__mesa_align_free(void *ptr)
 {
 #if defined(HAVE_POSIX_MEMALIGN)
    free(ptr);
@@ -188,7 +188,7 @@ _mesa_align_free(void *ptr)
  * Reallocate memory, with alignment.
  */
 void *
-_mesa_align_realloc(void *oldBuffer, size_t oldSize, size_t newSize,
+glslopt__mesa_align_realloc(void *oldBuffer, size_t oldSize, size_t newSize,
                     unsigned long alignment)
 {
 #if defined(_WIN32) && defined(_MSC_VER)
@@ -196,12 +196,12 @@ _mesa_align_realloc(void *oldBuffer, size_t oldSize, size_t newSize,
    return _aligned_realloc(oldBuffer, newSize, alignment);
 #else
    const size_t copySize = (oldSize < newSize) ? oldSize : newSize;
-   void *newBuf = _mesa_align_malloc(newSize, alignment);
+   void *newBuf = glslopt__mesa_align_malloc(newSize, alignment);
    if (newBuf && oldBuffer && copySize > 0) {
       memcpy(newBuf, oldBuffer, copySize);
    }
 
-   _mesa_align_free(oldBuffer);
+   glslopt__mesa_align_free(oldBuffer);
    return newBuf;
 #endif
 }
@@ -219,7 +219,7 @@ _mesa_align_realloc(void *oldBuffer, size_t oldSize, size_t newSize,
  * Find the first bit set in a word.
  */
 int
-ffs(int i)
+glslopt_ffs(int i)
 {
    register int bit = 0;
    if (i != 0) {
@@ -253,17 +253,17 @@ ffs(int i)
  *          if no bits set.
  */
 int
-ffsll(long long int val)
+glslopt_ffsll(long long int val)
 {
    int bit;
 
    assert(sizeof(val) == 8);
 
-   bit = ffs((int) val);
+   bit = glslopt_ffs((int) val);
    if (bit != 0)
       return bit;
 
-   bit = ffs((int) (val >> 32));
+   bit = glslopt_ffs((int) (val >> 32));
    if (bit != 0)
       return 32 + bit;
 
@@ -277,7 +277,7 @@ ffsll(long long int val)
  * Return number of bits set in given GLuint.
  */
 unsigned int
-_mesa_bitcount(unsigned int n)
+glslopt__mesa_bitcount(unsigned int n)
 {
    unsigned int bits;
    for (bits = 0; n > 0; n = n >> 1) {
@@ -292,7 +292,7 @@ _mesa_bitcount(unsigned int n)
  * Return number of bits set in given 64-bit uint.
  */
 unsigned int
-_mesa_bitcount_64(uint64_t n)
+glslopt__mesa_bitcount_64(uint64_t n)
 {
    unsigned int bits;
    for (bits = 0; n > 0; n = n >> 1) {
@@ -310,7 +310,7 @@ _mesa_bitcount_64(uint64_t n)
  * rounds away from 0 on n + 0.5.
  */
 int
-_mesa_round_to_even(float val)
+glslopt__mesa_round_to_even(float val)
 {
    int rounded = IROUND(val);
 
@@ -342,7 +342,7 @@ _mesa_round_to_even(float val)
  *     result in the same value as if the expression were executed on the GPU.
  */
 GLhalfARB
-_mesa_float_to_half(float val)
+glslopt__mesa_float_to_half(float val)
 {
    const fi_type fi = {val};
    const int flt_m = fi.i & 0x7fffff;
@@ -384,7 +384,7 @@ _mesa_float_to_half(float val)
           * or normal.
           */
          e = 0;
-         m = _mesa_round_to_even((1 << 24) * fabsf(fi.f));
+         m = glslopt__mesa_round_to_even((1 << 24) * fabsf(fi.f));
       }
       else if (new_exp > 15) {
          /* map this value to infinity */
@@ -398,7 +398,7 @@ _mesa_float_to_half(float val)
           * either normal or infinite.
           */
          e = new_exp + 15;
-         m = _mesa_round_to_even(flt_m / (float) (1 << 13));
+         m = glslopt__mesa_round_to_even(flt_m / (float) (1 << 13));
       }
    }
 
@@ -423,7 +423,7 @@ _mesa_float_to_half(float val)
  * http://www.opengl.org/discussion_boards/ubb/Forum3/HTML/008786.html
  */
 float
-_mesa_half_to_float(GLhalfARB val)
+glslopt__mesa_half_to_float(GLhalfARB val)
 {
    /* XXX could also use a 64K-entry lookup table */
    const int m = val & 0x3ff;
@@ -482,7 +482,7 @@ _mesa_half_to_float(GLhalfARB val)
  * Note that NULL is handled accordingly.
  */
 char *
-_mesa_strdup( const char *s )
+glslopt__mesa_strdup( const char *s )
 {
    if (s) {
       size_t l = strlen(s);
@@ -498,7 +498,7 @@ _mesa_strdup( const char *s )
 
 /** Wrapper around strtof() */
 float
-_mesa_strtof( const char *s, char **end )
+glslopt__mesa_strtof( const char *s, char **end )
 {
 #if defined(_GNU_SOURCE) && !defined(__CYGWIN__) && !defined(__FreeBSD__) && \
    !defined(ANDROID) && !defined(__HAIKU__) && !defined(__UCLIBC__) && \
@@ -517,7 +517,7 @@ _mesa_strtof( const char *s, char **end )
 
 /** Compute simple checksum/hash for a string */
 unsigned int
-_mesa_str_checksum(const char *str)
+glslopt__mesa_str_checksum(const char *str)
 {
    /* This could probably be much better */
    unsigned int sum, i;
@@ -534,14 +534,14 @@ _mesa_str_checksum(const char *str)
 
 /** Needed due to #ifdef's, above. */
 int
-_mesa_vsnprintf(char *str, size_t size, const char *fmt, va_list args)
+glslopt__mesa_vsnprintf(char *str, size_t size, const char *fmt, va_list args)
 {
    return vsnprintf( str, size, fmt, args);
 }
 
 /** Wrapper around vsnprintf() */
 int
-_mesa_snprintf( char *str, size_t size, const char *fmt, ... )
+glslopt__mesa_snprintf( char *str, size_t size, const char *fmt, ... )
 {
    int r;
    va_list args;

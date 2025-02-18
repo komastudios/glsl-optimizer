@@ -234,7 +234,7 @@ pack_snorm_1x8(float x)
      * float to a uint is undefined.
      */
    return (uint8_t) (int8_t)
-          _mesa_round_to_even(CLAMP(x, -1.0f, +1.0f) * 127.0f);
+          glslopt__mesa_round_to_even(CLAMP(x, -1.0f, +1.0f) * 127.0f);
 }
 
 /**
@@ -256,7 +256,7 @@ pack_snorm_1x16(float x)
      * float to a uint is undefined.
      */
    return (uint16_t) (int16_t)
-          _mesa_round_to_even(CLAMP(x, -1.0f, +1.0f) * 32767.0f);
+          glslopt__mesa_round_to_even(CLAMP(x, -1.0f, +1.0f) * 32767.0f);
 }
 
 /**
@@ -310,7 +310,7 @@ pack_unorm_1x8(float x)
      *
      *       packUnorm4x8: round(clamp(c, 0, +1) * 255.0)
      */
-   return (uint8_t) _mesa_round_to_even(CLAMP(x, 0.0f, 1.0f) * 255.0f);
+   return (uint8_t) glslopt__mesa_round_to_even(CLAMP(x, 0.0f, 1.0f) * 255.0f);
 }
 
 /**
@@ -328,7 +328,7 @@ pack_unorm_1x16(float x)
      *
      *       packUnorm2x16: round(clamp(c, 0, +1) * 65535.0)
      */
-   return (uint16_t) _mesa_round_to_even(CLAMP(x, 0.0f, 1.0f) * 65535.0f);
+   return (uint16_t) glslopt__mesa_round_to_even(CLAMP(x, 0.0f, 1.0f) * 65535.0f);
 }
 
 /**
@@ -373,7 +373,7 @@ unpack_unorm_1x16(uint16_t u)
 static uint16_t
 pack_half_1x16(float x)
 {
-   return _mesa_float_to_half(x);
+   return glslopt__mesa_float_to_half(x);
 }
 
 /**
@@ -382,7 +382,7 @@ pack_half_1x16(float x)
 static float
 unpack_half_1x16(uint16_t u)
 {
-   return _mesa_half_to_float(u);
+   return glslopt__mesa_half_to_float(u);
 }
 
 /**
@@ -468,7 +468,7 @@ constant_referenced(const ir_dereference *deref,
       const ir_dereference_variable *const dv =
          (const ir_dereference_variable *) deref;
 
-      store = (ir_constant *) hash_table_find(variable_context, dv->var);
+      store = (ir_constant *) glslopt_hash_table_find(variable_context, dv->var);
       break;
    }
 
@@ -537,7 +537,7 @@ ir_expression::constant_expression_value(struct hash_table *variable_context)
       components = op[1]->type->components();
    }
 
-   void *ctx = ralloc_parent(this);
+   void *ctx = glslopt_ralloc_parent(this);
 
    /* Handle array operations here, rather than below. */
    if (op[0]->type->is_array()) {
@@ -678,7 +678,7 @@ ir_expression::constant_expression_value(struct hash_table *variable_context)
    case ir_unop_round_even:
       assert(op[0]->type->base_type == GLSL_TYPE_FLOAT);
       for (unsigned c = 0; c < op[0]->type->components(); c++) {
-	 data.f[c] = (float)_mesa_round_to_even(op[0]->value.f[c]);
+	 data.f[c] = (float)glslopt__mesa_round_to_even(op[0]->value.f[c]);
       }
       break;
 
@@ -1687,7 +1687,7 @@ ir_swizzle::constant_expression_value(struct hash_table *variable_context)
 	 }
       }
 
-      void *ctx = ralloc_parent(this);
+      void *ctx = glslopt_ralloc_parent(this);
       return new(ctx) ir_constant(this->type, &data);
    }
    return NULL;
@@ -1703,7 +1703,7 @@ ir_dereference_variable::constant_expression_value(struct hash_table *variable_c
 
    /* Give priority to the context hashtable, if it exists */
    if (variable_context) {
-      ir_constant *value = (ir_constant *)hash_table_find(variable_context, var);
+      ir_constant *value = (ir_constant *)glslopt_hash_table_find(variable_context, var);
       if(value)
 	 return value;
    }
@@ -1717,7 +1717,7 @@ ir_dereference_variable::constant_expression_value(struct hash_table *variable_c
    if (!var->constant_value)
       return NULL;
 
-   return var->constant_value->clone(ralloc_parent(var), NULL);
+   return var->constant_value->clone(glslopt_ralloc_parent(var), NULL);
 }
 
 
@@ -1728,7 +1728,7 @@ ir_dereference_array::constant_expression_value(struct hash_table *variable_cont
    ir_constant *idx = this->array_index->constant_expression_value(variable_context);
 
    if ((array != NULL) && (idx != NULL)) {
-      void *ctx = ralloc_parent(this);
+      void *ctx = glslopt_ralloc_parent(this);
       if (array->type->is_matrix()) {
 	 /* Array access of a matrix results in a vector.
 	  */
@@ -1817,7 +1817,7 @@ bool ir_function_signature::constant_expression_evaluate_expression_list(const s
 	 /* (declare () type symbol) */
       case ir_type_variable: {
 	 ir_variable *var = inst->as_variable();
-	 hash_table_insert(variable_context, ir_constant::zero(this, var->type), var);
+	 glslopt_hash_table_insert(variable_context, ir_constant::zero(this, var->type), var);
 	 break;
       }
 
@@ -1941,8 +1941,8 @@ ir_function_signature::constant_expression_value(exec_list *actual_parameters, s
     * We expect the correctness of the number of parameters to have
     * been checked earlier.
     */
-   hash_table *deref_hash = hash_table_ctor(8, hash_table_pointer_hash,
-					    hash_table_pointer_compare);
+   hash_table *deref_hash = glslopt_hash_table_ctor(8, glslopt_hash_table_pointer_hash,
+					    glslopt_hash_table_pointer_compare);
 
    /* If "origin" is non-NULL, then the function body is there.  So we
     * have to use the variable objects from the object with the body,
@@ -1953,13 +1953,13 @@ ir_function_signature::constant_expression_value(exec_list *actual_parameters, s
    foreach_in_list(ir_rvalue, n, actual_parameters) {
       ir_constant *constant = n->constant_expression_value(variable_context);
       if (constant == NULL) {
-         hash_table_dtor(deref_hash);
+         glslopt_hash_table_dtor(deref_hash);
          return NULL;
       }
 
 
       ir_variable *var = (ir_variable *)parameter_info;
-      hash_table_insert(deref_hash, constant, var);
+      glslopt_hash_table_insert(deref_hash, constant, var);
 
       parameter_info = parameter_info->next;
    }
@@ -1970,9 +1970,9 @@ ir_function_signature::constant_expression_value(exec_list *actual_parameters, s
     * happens or we get the result.
     */
    if (constant_expression_evaluate_expression_list(origin ? origin->body : body, deref_hash, &result) && result)
-      result = result->clone(ralloc_parent(this), NULL);
+      result = result->clone(glslopt_ralloc_parent(this), NULL);
 
-   hash_table_dtor(deref_hash);
+   glslopt_hash_table_dtor(deref_hash);
 
    return result;
 }

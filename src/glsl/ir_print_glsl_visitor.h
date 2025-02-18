@@ -46,14 +46,14 @@ public:
 	string_buffer(void* mem_ctx)
 	{
 		m_Capacity = 512;
-		m_Ptr = (char*)ralloc_size(mem_ctx, m_Capacity);
+		m_Ptr = (char*)glslopt_ralloc_size(mem_ctx, m_Capacity);
 		m_Size = 0;
 		m_Ptr[0] = 0;
 	}
 	
 	~string_buffer()
 	{
-		ralloc_free(m_Ptr);
+		glslopt_ralloc_free(m_Ptr);
 	}
 	
 	bool empty() const { return m_Size == 0; }
@@ -78,13 +78,13 @@ public:
 	{
 		assert (m_Ptr != NULL);
 		
-		size_t new_length = printf_length(fmt, args);
+		size_t new_length = glslopt_printf_length(fmt, args);
 		size_t needed_length = m_Size + new_length + 1;
 		
 		if (m_Capacity < needed_length)
 		{
 			m_Capacity = MAX2 (m_Capacity + m_Capacity/2, needed_length);
-			m_Ptr = (char*)reralloc_size(ralloc_parent(m_Ptr), m_Ptr, m_Capacity);
+			m_Ptr = (char*)glslopt_reralloc_size(glslopt_ralloc_parent(m_Ptr), m_Ptr, m_Capacity);
 		}
 		
 		vsnprintf(m_Ptr + m_Size, new_length+1, fmt, args);

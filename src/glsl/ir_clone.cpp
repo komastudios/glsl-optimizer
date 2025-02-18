@@ -69,7 +69,7 @@ ir_variable::clone(void *mem_ctx, struct hash_table *ht) const
    var->interface_type = this->interface_type;
 
    if (ht) {
-      hash_table_insert(ht, var, (void *)const_cast<ir_variable *>(this));
+      glslopt_hash_table_insert(ht, var, (void *)const_cast<ir_variable *>(this));
    }
 
    return var;
@@ -180,7 +180,7 @@ ir_dereference_variable::clone(void *mem_ctx, struct hash_table *ht) const
    ir_variable *new_var;
 
    if (ht) {
-      new_var = (ir_variable *)hash_table_find(ht, this->var);
+      new_var = (ir_variable *)glslopt_hash_table_find(ht, this->var);
       if (!new_var)
 	 new_var = this->var;
    } else {
@@ -274,7 +274,7 @@ ir_function::clone(void *mem_ctx, struct hash_table *ht) const
       copy->add_signature(sig_copy);
 
       if (ht != NULL)
-	 hash_table_insert(ht, sig_copy,
+	 glslopt_hash_table_insert(ht, sig_copy,
 			   (void *)const_cast<ir_function_signature *>(sig));
    }
 
@@ -400,7 +400,7 @@ public:
        * table.  If it is found, replace it with the value from the table.
        */
       ir_function_signature *sig =
-	 (ir_function_signature *) hash_table_find(this->ht, ir->callee);
+	 (ir_function_signature *) glslopt_hash_table_find(this->ht, ir->callee);
       if (sig != NULL)
 	 ir->callee = sig;
 
@@ -427,7 +427,7 @@ void
 clone_ir_list(void *mem_ctx, exec_list *out, const exec_list *in)
 {
    struct hash_table *ht =
-      hash_table_ctor(0, hash_table_pointer_hash, hash_table_pointer_compare);
+      glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash, glslopt_hash_table_pointer_compare);
 
    foreach_in_list(const ir_instruction, original, in) {
       ir_instruction *copy = original->clone(mem_ctx, ht);
@@ -442,5 +442,5 @@ clone_ir_list(void *mem_ctx, exec_list *out, const exec_list *in)
     */
    fixup_function_calls(ht, out);
 
-   hash_table_dtor(ht);
+   glslopt_hash_table_dtor(ht);
 }

@@ -62,7 +62,7 @@ namespace {
                     (num_counters + 1));
 
          if (new_counters == NULL) {
-            _mesa_error_no_memory(__func__);
+            glslopt__mesa_error_no_memory(__func__);
             return;
          }
 
@@ -260,11 +260,11 @@ link_check_atomic_counter_resources(struct gl_context *ctx,
    for (unsigned i = 0; i < MESA_SHADER_STAGES; i++) {
       if (atomic_counters[i] > ctx->Const.Program[i].MaxAtomicCounters)
          linker_error(prog, "Too many %s shader atomic counters",
-                      _mesa_shader_stage_to_string(i));
+                      glslopt__mesa_shader_stage_to_string(i));
 
       if (atomic_buffers[i] > ctx->Const.Program[i].MaxAtomicBuffers)
          linker_error(prog, "Too many %s shader atomic counter buffers",
-                      _mesa_shader_stage_to_string(i));
+                      glslopt__mesa_shader_stage_to_string(i));
    }
 
    if (total_atomic_counters > ctx->Const.MaxCombinedAtomicCounters)

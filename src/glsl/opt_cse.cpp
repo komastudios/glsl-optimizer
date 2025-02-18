@@ -94,12 +94,12 @@ public:
       : validate_instructions(validate_instructions)
    {
       progress = false;
-      mem_ctx = ralloc_context(NULL);
+      mem_ctx = glslopt_ralloc_context(NULL);
       this->ae = new(mem_ctx) exec_list;
    }
    ~cse_visitor()
    {
-      ralloc_free(mem_ctx);
+      glslopt_ralloc_free(mem_ctx);
    }
 
    virtual ir_visitor_status visit_enter(ir_function_signature *ir);

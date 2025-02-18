@@ -76,12 +76,12 @@ private:
 
       gl_uniform_buffer_variable *v = &this->variables[this->index++];
 
-      v->Name = ralloc_strdup(mem_ctx, name);
+      v->Name = glslopt_ralloc_strdup(mem_ctx, name);
       v->Type = type;
       v->RowMajor = type->without_array()->is_matrix() && row_major;
 
       if (this->is_array_instance) {
-         v->IndexName = ralloc_strdup(mem_ctx, name);
+         v->IndexName = glslopt_ralloc_strdup(mem_ctx, name);
 
          char *open_bracket = strchr(v->IndexName, '[');
          assert(open_bracket != NULL);
@@ -183,10 +183,10 @@ link_uniform_blocks(void *mem_ctx,
     * the hash is organized by block-name.
     */
    struct hash_table *block_hash =
-      _mesa_hash_table_create(mem_ctx, _mesa_key_string_equal);
+      glslopt__mesa_hash_table_create(mem_ctx, glslopt__mesa_key_string_equal);
 
    if (block_hash == NULL) {
-      _mesa_error_no_memory(__func__);
+      glslopt__mesa_error_no_memory(__func__);
       linker_error(prog, "out of memory\n");
       return 0;
    }
@@ -231,7 +231,7 @@ link_uniform_blocks(void *mem_ctx,
 
    if (num_blocks == 0) {
       assert(num_variables == 0);
-      _mesa_hash_table_destroy(block_hash, NULL);
+      glslopt__mesa_hash_table_destroy(block_hash, NULL);
       return 0;
    }
 
@@ -269,7 +269,7 @@ link_uniform_blocks(void *mem_ctx,
 
          assert(b->has_instance_name);
          for (unsigned j = 0; j < b->num_array_elements; j++) {
-            blocks[i].Name = ralloc_asprintf(blocks, "%s[%u]", name,
+            blocks[i].Name = glslopt_ralloc_asprintf(blocks, "%s[%u]", name,
                                              b->array_elements[j]);
             blocks[i].Uniforms = &variables[parcel.index];
 
@@ -298,7 +298,7 @@ link_uniform_blocks(void *mem_ctx,
             i++;
          }
       } else {
-         blocks[i].Name = ralloc_strdup(blocks, block_type->name);
+         blocks[i].Name = glslopt_ralloc_strdup(blocks, block_type->name);
          blocks[i].Uniforms = &variables[parcel.index];
          blocks[i].Binding = (b->has_binding) ? b->binding : 0;
          blocks[i].UniformBufferSize = 0;
@@ -319,7 +319,7 @@ link_uniform_blocks(void *mem_ctx,
 
    assert(parcel.index == num_variables);
 
-   _mesa_hash_table_destroy(block_hash, NULL);
+   glslopt__mesa_hash_table_destroy(block_hash, NULL);
 
    *blocks_ret = blocks;
    return num_blocks;

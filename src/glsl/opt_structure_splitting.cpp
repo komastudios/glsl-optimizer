@@ -66,7 +66,7 @@ public:
 
    ir_variable **components;
 
-   /** ralloc_parent(this->var) -- the shader's ralloc context. */
+   /** glslopt_ralloc_parent(this->var) -- the shader's ralloc context. */
    void *mem_ctx;
 };
 
@@ -75,13 +75,13 @@ class ir_structure_reference_visitor : public ir_hierarchical_visitor {
 public:
    ir_structure_reference_visitor(void)
    {
-      this->mem_ctx = ralloc_context(NULL);
+      this->mem_ctx = glslopt_ralloc_context(NULL);
       this->variable_list.make_empty();
    }
 
    ~ir_structure_reference_visitor(void)
    {
-      ralloc_free(mem_ctx);
+      glslopt_ralloc_free(mem_ctx);
    }
 
    virtual ir_visitor_status visit(ir_variable *);
@@ -328,7 +328,7 @@ do_structure_splitting(exec_list *instructions)
    if (refs.variable_list.is_empty())
       return false;
 
-   void *mem_ctx = ralloc_context(NULL);
+   void *mem_ctx = glslopt_ralloc_context(NULL);
 
    /* Replace the decls of the structures to be split with their split
     * components.
@@ -336,14 +336,14 @@ do_structure_splitting(exec_list *instructions)
    foreach_in_list_safe(variable_entry, entry, &refs.variable_list) {
       const struct glsl_type *type = entry->var->type;
 
-      entry->mem_ctx = ralloc_parent(entry->var);
+      entry->mem_ctx = glslopt_ralloc_parent(entry->var);
 
       entry->components = ralloc_array(mem_ctx,
 				       ir_variable *,
 				       type->length);
 
       for (unsigned int i = 0; i < entry->var->type->length; i++) {
-	 const char *name = ralloc_asprintf(mem_ctx, "%s_%s",
+	 const char *name = glslopt_ralloc_asprintf(mem_ctx, "%s_%s",
 					    entry->var->name,
 					    type->fields.structure[i].name);
 
@@ -360,7 +360,7 @@ do_structure_splitting(exec_list *instructions)
    ir_structure_splitting_visitor split(&refs.variable_list);
    visit_list_elements(&split, instructions);
 
-   ralloc_free(mem_ctx);
+   glslopt_ralloc_free(mem_ctx);
 
    return true;
 }

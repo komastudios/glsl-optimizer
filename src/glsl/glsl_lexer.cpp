@@ -1183,7 +1183,7 @@ static int classify_identifier(struct _mesa_glsl_parse_state *, const char *);
 	 return ERROR_TOK;						\
       } else {								\
 	 void *mem_ctx = yyextra;					\
-	 yylval->identifier = ralloc_strdup(mem_ctx, yytext);		\
+	 yylval->identifier = glslopt_ralloc_strdup(mem_ctx, yytext);		\
 	 return classify_identifier(yyextra, yytext);			\
       }									\
    } while (0)
@@ -1720,7 +1720,7 @@ YY_RULE_SETUP
 #line 241 "src/glsl/glsl_lexer.ll"
 {
 				   void *mem_ctx = yyextra;
-				   yylval->identifier = ralloc_strdup(mem_ctx, yytext);
+				   yylval->identifier = glslopt_ralloc_strdup(mem_ctx, yytext);
 				   return IDENTIFIER;
 				}
 	YY_BREAK
@@ -2421,7 +2421,7 @@ YY_RULE_SETUP
 		      return LAYOUT_TOK;
 		   } else {
 		      void *mem_ctx = yyextra;
-		      yylval->identifier = ralloc_strdup(mem_ctx, yytext);
+		      yylval->identifier = glslopt_ralloc_strdup(mem_ctx, yytext);
 		      return classify_identifier(yyextra, yytext);
 		   }
 		}
@@ -2556,7 +2556,7 @@ case 177:
 YY_RULE_SETUP
 #line 459 "src/glsl/glsl_lexer.ll"
 {
-			    yylval->real = glsl_strtof(yytext, NULL);
+			    yylval->real = glslopt_glsl_strtof(yytext, NULL);
 			    return FLOATCONSTANT;
 			}
 	YY_BREAK
@@ -2564,7 +2564,7 @@ case 178:
 YY_RULE_SETUP
 #line 463 "src/glsl/glsl_lexer.ll"
 {
-			    yylval->real = glsl_strtof(yytext, NULL);
+			    yylval->real = glslopt_glsl_strtof(yytext, NULL);
 			    return FLOATCONSTANT;
 			}
 	YY_BREAK
@@ -2572,7 +2572,7 @@ case 179:
 YY_RULE_SETUP
 #line 467 "src/glsl/glsl_lexer.ll"
 {
-			    yylval->real = glsl_strtof(yytext, NULL);
+			    yylval->real = glslopt_glsl_strtof(yytext, NULL);
 			    return FLOATCONSTANT;
 			}
 	YY_BREAK
@@ -2580,7 +2580,7 @@ case 180:
 YY_RULE_SETUP
 #line 471 "src/glsl/glsl_lexer.ll"
 {
-			    yylval->real = glsl_strtof(yytext, NULL);
+			    yylval->real = glslopt_glsl_strtof(yytext, NULL);
 			    return FLOATCONSTANT;
 			}
 	YY_BREAK
@@ -2588,7 +2588,7 @@ case 181:
 YY_RULE_SETUP
 #line 475 "src/glsl/glsl_lexer.ll"
 {
-			    yylval->real = glsl_strtof(yytext, NULL);
+			    yylval->real = glslopt_glsl_strtof(yytext, NULL);
 			    return FLOATCONSTANT;
 			}
 	YY_BREAK
@@ -2929,7 +2929,7 @@ YY_RULE_SETUP
 {
 			    struct _mesa_glsl_parse_state *state = yyextra;
 			    void *ctx = state;	
-			    yylval->identifier = ralloc_strdup(ctx, yytext);
+			    yylval->identifier = glslopt_ralloc_strdup(ctx, yytext);
 			    return classify_identifier(state, yytext);
 			}
 	YY_BREAK

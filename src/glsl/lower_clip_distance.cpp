@@ -127,11 +127,11 @@ lower_clip_distance_visitor::visit(ir_variable *ir)
       unsigned new_size = (ir->type->array_size() + 3) / 4;
 
       /* Clone the old var so that we inherit all of its properties */
-      this->new_clip_distance_1d_var = ir->clone(ralloc_parent(ir), NULL);
+      this->new_clip_distance_1d_var = ir->clone(glslopt_ralloc_parent(ir), NULL);
 
       /* And change the properties that we need to change */
       this->new_clip_distance_1d_var->name
-         = ralloc_strdup(this->new_clip_distance_1d_var,
+         = glslopt_ralloc_strdup(this->new_clip_distance_1d_var,
                          "gl_ClipDistanceMESA");
       this->new_clip_distance_1d_var->type
          = glsl_type::get_array_instance(glsl_type::vec4_type, new_size);
@@ -152,11 +152,11 @@ lower_clip_distance_visitor::visit(ir_variable *ir)
       unsigned new_size = (ir->type->element_type()->array_size() + 3) / 4;
 
       /* Clone the old var so that we inherit all of its properties */
-      this->new_clip_distance_2d_var = ir->clone(ralloc_parent(ir), NULL);
+      this->new_clip_distance_2d_var = ir->clone(glslopt_ralloc_parent(ir), NULL);
 
       /* And change the properties that we need to change */
       this->new_clip_distance_2d_var->name
-         = ralloc_strdup(this->new_clip_distance_2d_var, "gl_ClipDistanceMESA");
+         = glslopt_ralloc_strdup(this->new_clip_distance_2d_var, "gl_ClipDistanceMESA");
       this->new_clip_distance_2d_var->type = glsl_type::get_array_instance(
          glsl_type::get_array_instance(glsl_type::vec4_type,
             new_size),
@@ -183,7 +183,7 @@ lower_clip_distance_visitor::create_indices(ir_rvalue *old_index,
                                             ir_rvalue *&array_index,
                                             ir_rvalue *&swizzle_index)
 {
-   void *ctx = ralloc_parent(old_index);
+   void *ctx = glslopt_ralloc_parent(old_index);
 
    /* Make sure old_index is a signed int so that the bitwise "shift" and
     * "and" operations below type check properly.
@@ -282,7 +282,7 @@ lower_clip_distance_visitor::lower_clip_distance_vec8(ir_rvalue *ir)
    if (this->old_clip_distance_1d_var) {
       ir_dereference_variable *var_ref = ir->as_dereference_variable();
       if (var_ref && var_ref->var == this->old_clip_distance_1d_var) {
-         return new(ralloc_parent(ir))
+         return new(glslopt_ralloc_parent(ir))
             ir_dereference_variable(this->new_clip_distance_1d_var);
       }
    }
@@ -295,7 +295,7 @@ lower_clip_distance_visitor::lower_clip_distance_vec8(ir_rvalue *ir)
          ir_dereference_variable *var_ref =
             array_ref->array->as_dereference_variable();
          if (var_ref && var_ref->var == this->old_clip_distance_2d_var) {
-            return new(ralloc_parent(ir))
+            return new(glslopt_ralloc_parent(ir))
                ir_dereference_array(this->new_clip_distance_2d_var,
                                     array_ref->array_index);
          }
@@ -326,7 +326,7 @@ lower_clip_distance_visitor::handle_rvalue(ir_rvalue **rv)
       ir_rvalue *array_index;
       ir_rvalue *swizzle_index;
       this->create_indices(array_deref->array_index, array_index, swizzle_index);
-      void *mem_ctx = ralloc_parent(array_deref);
+      void *mem_ctx = glslopt_ralloc_parent(array_deref);
 
       ir_dereference_array *const new_array_deref =
          new(mem_ctx) ir_dereference_array(lowered_vec8, array_index);
@@ -344,7 +344,7 @@ void
 lower_clip_distance_visitor::fix_lhs(ir_assignment *ir)
 {
    if (ir->lhs->ir_type == ir_type_expression) {
-      void *mem_ctx = ralloc_parent(ir);
+      void *mem_ctx = glslopt_ralloc_parent(ir);
       ir_expression *const expr = (ir_expression *) ir->lhs;
 
       /* The expression must be of the form:
@@ -398,7 +398,7 @@ lower_clip_distance_visitor::visit_leave(ir_assignment *ir)
        * clones of the LHS and RHS.  This is safe because expressions and
        * l-values are side-effect free.
        */
-      void *ctx = ralloc_parent(ir);
+      void *ctx = glslopt_ralloc_parent(ir);
       int array_size = ir->lhs->type->array_size();
       for (int i = 0; i < array_size; ++i) {
          ir_dereference_array *new_lhs = new(ctx) ir_dereference_array(
@@ -474,7 +474,7 @@ lower_clip_distance_visitor::visit_new_assignment(ir_assignment *ir)
 ir_visitor_status
 lower_clip_distance_visitor::visit_leave(ir_call *ir)
 {
-   void *ctx = ralloc_parent(ir);
+   void *ctx = glslopt_ralloc_parent(ir);
 
    const exec_node *formal_param_node = ir->callee->parameters.head;
    const exec_node *actual_param_node = ir->actual_parameters.head;

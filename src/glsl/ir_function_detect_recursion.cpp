@@ -158,23 +158,23 @@ public:
       : current(NULL)
    {
       progress = false;
-      this->mem_ctx = ralloc_context(NULL);
-      this->function_hash = hash_table_ctor(0, hash_table_pointer_hash,
-					    hash_table_pointer_compare);
+      this->mem_ctx = glslopt_ralloc_context(NULL);
+      this->function_hash = glslopt_hash_table_ctor(0, glslopt_hash_table_pointer_hash,
+					    glslopt_hash_table_pointer_compare);
    }
 
    ~has_recursion_visitor()
    {
-      hash_table_dtor(this->function_hash);
-      ralloc_free(this->mem_ctx);
+      glslopt_hash_table_dtor(this->function_hash);
+      glslopt_ralloc_free(this->mem_ctx);
    }
 
    function *get_function(ir_function_signature *sig)
    {
-      function *f = (function *) hash_table_find(this->function_hash, sig);
+      function *f = (function *) glslopt_hash_table_find(this->function_hash, sig);
       if (f == NULL) {
 	 f = new(mem_ctx) function(sig);
-	 hash_table_insert(this->function_hash, f, sig);
+	 glslopt_hash_table_insert(this->function_hash, f, sig);
       }
 
       return f;
@@ -260,7 +260,7 @@ remove_unlinked_functions(const void *key, void *data, void *closure)
 	 destroy_links(& n->func->callers, f);
       }
 
-      hash_table_remove(visitor->function_hash, key);
+      glslopt_hash_table_remove(visitor->function_hash, key);
       visitor->progress = true;
    }
 }
@@ -284,7 +284,7 @@ emit_errors_unlinked(const void *key, void *data, void *closure)
    _mesa_glsl_error(&loc, state,
 		    "function `%s' has static recursion",
 		    proto);
-   ralloc_free(proto);
+   glslopt_ralloc_free(proto);
 }
 
 
@@ -302,7 +302,7 @@ emit_errors_linked(const void *key, void *data, void *closure)
 				  &f->sig->parameters);
 
    linker_error(prog, "function `%s' has static recursion.\n", proto);
-   ralloc_free(proto);
+   glslopt_ralloc_free(proto);
 }
 
 
@@ -322,13 +322,13 @@ detect_recursion_unlinked(struct _mesa_glsl_parse_state *state,
     */
    do {
       v.progress = false;
-      hash_table_call_foreach(v.function_hash, remove_unlinked_functions, & v);
+      glslopt_hash_table_call_foreach(v.function_hash, remove_unlinked_functions, & v);
    } while (v.progress);
 
 
    /* At this point any functions still in the hash must be part of a cycle.
     */
-   hash_table_call_foreach(v.function_hash, emit_errors_unlinked, state);
+   glslopt_hash_table_call_foreach(v.function_hash, emit_errors_unlinked, state);
 }
 
 
@@ -348,11 +348,11 @@ detect_recursion_linked(struct gl_shader_program *prog,
     */
    do {
       v.progress = false;
-      hash_table_call_foreach(v.function_hash, remove_unlinked_functions, & v);
+      glslopt_hash_table_call_foreach(v.function_hash, remove_unlinked_functions, & v);
    } while (v.progress);
 
 
    /* At this point any functions still in the hash must be part of a cycle.
     */
-   hash_table_call_foreach(v.function_hash, emit_errors_linked, prog);
+   glslopt_hash_table_call_foreach(v.function_hash, emit_errors_linked, prog);
 }

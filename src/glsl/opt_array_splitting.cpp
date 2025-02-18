@@ -74,7 +74,7 @@ public:
 
    ir_variable **components;
 
-   /** ralloc_parent(this->var) -- the shader's talloc context. */
+   /** glslopt_ralloc_parent(this->var) -- the shader's talloc context. */
    void *mem_ctx;
 };
 
@@ -92,13 +92,13 @@ public:
    ir_array_reference_visitor(bool split_shader_outputs)
    {
       this->split_shader_outputs = split_shader_outputs;
-      this->mem_ctx = ralloc_context(NULL);
+      this->mem_ctx = glslopt_ralloc_context(NULL);
       this->variable_list.make_empty();
    }
 
    ~ir_array_reference_visitor(void)
    {
-      ralloc_free(mem_ctx);
+      glslopt_ralloc_free(mem_ctx);
    }
 
    bool get_split_list(exec_list *instructions, bool linked);
@@ -363,7 +363,7 @@ optimize_split_arrays(exec_list *instructions, bool linked, bool split_shader_ou
    if (!refs.get_split_list(instructions, linked))
       return false;
 
-   void *mem_ctx = ralloc_context(NULL);
+   void *mem_ctx = glslopt_ralloc_context(NULL);
 
    /* Replace the decls of the arrays to be split with their split
     * components.
@@ -379,14 +379,14 @@ optimize_split_arrays(exec_list *instructions, bool linked, bool split_shader_ou
 	 subtype = type->fields.array;
       }
 
-      entry->mem_ctx = ralloc_parent(entry->var);
+      entry->mem_ctx = glslopt_ralloc_parent(entry->var);
 
       entry->components = ralloc_array(mem_ctx,
 				       ir_variable *,
 				       entry->size);
 
       for (unsigned int i = 0; i < entry->size; i++) {
-	 const char *name = ralloc_asprintf(mem_ctx, "%s_%d",
+	 const char *name = glslopt_ralloc_asprintf(mem_ctx, "%s_%d",
 					    entry->var->name, i);
 
 	 entry->components[i] =
@@ -406,9 +406,9 @@ optimize_split_arrays(exec_list *instructions, bool linked, bool split_shader_ou
    visit_list_elements(&split, instructions);
 
    if (debug)
-      _mesa_print_ir(stdout, instructions, NULL);
+      glslopt__mesa_print_ir(stdout, instructions, NULL);
 
-   ralloc_free(mem_ctx);
+   glslopt_ralloc_free(mem_ctx);
 
    return true;
 

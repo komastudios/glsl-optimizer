@@ -96,14 +96,14 @@ public:
    {
       this->progress = false;
       this->killed_all = false;
-      this->mem_ctx = ralloc_context(NULL);
+      this->mem_ctx = glslopt_ralloc_context(NULL);
       this->shader_mem_ctx = NULL;
       this->acp = new(mem_ctx) exec_list;
       this->kills = new(mem_ctx) exec_list;
    }
    ~ir_copy_propagation_elements_visitor()
    {
-      ralloc_free(mem_ctx);
+      glslopt_ralloc_free(mem_ctx);
    }
 
    virtual ir_visitor_status visit_enter(class ir_loop *);
@@ -268,7 +268,7 @@ ir_copy_propagation_elements_visitor::handle_rvalue(ir_rvalue **ir)
    }
 
    if (!shader_mem_ctx)
-      shader_mem_ctx = ralloc_parent(deref_var);
+      shader_mem_ctx = glslopt_ralloc_parent(deref_var);
 
    /* Don't pointlessly replace the rvalue with itself (or a noop swizzle
     * of itself, which would just be deleted by opt_noop_swizzle).
