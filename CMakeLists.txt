@@ -5,6 +5,8 @@ project(glsl_optimizer
     DESCRIPTION "GLSL Optimizer"
     LANGUAGES C CXX)
 
+include(ExtractSymbols.cmake)
+
 if(PROJECT_IS_TOP_LEVEL)
     include(Sanitizers.cmake)
 endif()
@@ -15,6 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 option(BUILD_TESTING "Build unit tests" ON)
 option(GLSL_OPTIMIZER_TOOLS "Build tools" ON)
 option(GLSL_OPTIMIZER_REGRESSION_TESTS "Build runtime tests" OFF)
+option(GLSL_OPTIMIZER_EXTRACT_SYMBOLS "Extract symbols from the library" OFF)
 
 if (BUILD_TESTING)
     enable_testing()
