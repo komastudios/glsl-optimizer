@@ -5,6 +5,9 @@
 #include <utility>
 #include <stdexcept>
 #include <string_view>
+#include <future>
+#include <optional>
+#include <mutex>
 
 #include "glsl_optimizer.h"
 
@@ -39,7 +42,7 @@ constexpr std::string_view TrimStr(std::string_view source)
     return TrimRight(TrimLeft(source));
 }
 
-class OptimizerTest : public ::testing::Test
+class OptimizerTest : public ::testing::TestWithParam<std::tuple<size_t, bool>>
 {
 public:
     glslopt_target shaderTargetLang { kGlslTargetOpenGLES20 };
@@ -48,7 +51,7 @@ public:
 };
 
 // NOLINTNEXTLINE
-TEST_F(OptimizerTest, VertexShader)
+TEST_P(OptimizerTest, VertexShader)
 {
     TEST_COMPILE_SHADER(VERTEX_SHADER, R"GLSL(
 attribute vec4 vPosition;
@@ -77,7 +80,7 @@ void main ()
 }
 
 // NOLINTNEXTLINE
-TEST_F(OptimizerTest, FragmentShader)
+TEST_P(OptimizerTest, FragmentShader)
 {
     TEST_COMPILE_SHADER(FRAGMENT_SHADER, R"GLSL(
 precision mediump float;
@@ -104,7 +107,7 @@ void main ()
 }
 
 // NOLINTNEXTLINE
-TEST_F(OptimizerTest, FragmentShaderHighPrecision)
+TEST_P(OptimizerTest, FragmentShaderHighPrecision)
 {
     TEST_COMPILE_SHADER(FRAGMENT_SHADER, R"GLSL(
 precision mediump float;
@@ -131,7 +134,7 @@ void main ()
 }
 
 // NOLINTNEXTLINE
-TEST_F(OptimizerTest, FragmentShaderShadowSampler)
+TEST_P(OptimizerTest, FragmentShaderShadowSampler)
 {
     TEST_COMPILE_SHADER(FRAGMENT_SHADER, R"GLSL(
 #extension GL_EXT_shadow_samplers : require
@@ -166,13 +169,15 @@ void main ()
 })GLSL");
 }
 
-std::pair<bool, std::string> OptimizerTest::compileShader(glslopt_shader_type type, const std::string& shaderSrc) const
+using CompilerResult = std::pair<bool, std::string>;
+
+CompilerResult CompileShader(glslopt_target targetLang, glslopt_shader_type type, const char* shaderSrc)
 {
-    auto* ctx = glslopt_initialize(shaderTargetLang);
+    auto* ctx = glslopt_initialize(targetLang);
     if (!ctx) {
         throw std::runtime_error { "failed to initialize glslopt context" };
     }
-    auto* shader = glslopt_optimize (ctx, type, shaderSrc.c_str(), 0);
+    auto* shader = glslopt_optimize (ctx, type, shaderSrc, 0);
     bool success = shader ? glslopt_get_status (shader) : false;
 
     const char* outp = shader ? (success ? glslopt_get_output(shader) : glslopt_get_log(shader)) : nullptr;
@@ -187,5 +192,71 @@ std::pair<bool, std::string> OptimizerTest::compileShader(glslopt_shader_type ty
 
     return std::make_pair(success, output);
 }
+
+CompilerResult OptimizerTest::compileShader(glslopt_shader_type type, const std::string& shaderSrc) const
+{
+    size_t asyncTasks = std::get<0>(GetParam());
+    bool synchronized = std::get<1>(GetParam());
+    if (asyncTasks == 0) {
+        return CompileShader(shaderTargetLang, type, shaderSrc.c_str());
+    }
+
+    std::vector<std::future<CompilerResult>> futures;
+    futures.reserve(asyncTasks);
+
+    std::mutex mutex;
+    for (size_t i=0;i<asyncTasks;++i) {
+        if (synchronized) {
+            futures.push_back(std::async(std::launch::async, [&mutex](glslopt_target targetLang, glslopt_shader_type type, const char* shaderSrc)
+            {
+                std::unique_lock lk(mutex);
+                return CompileShader(targetLang, type, shaderSrc);
+            }, shaderTargetLang, type, shaderSrc.c_str()));
+        }
+        else
+        {
+            futures.push_back(std::async(std::launch::async, &CompileShader, shaderTargetLang, type, shaderSrc.c_str()));
+        }
+    }
+
+    std::optional<CompilerResult> result;
+    std::vector<std::exception_ptr> errors;
+    for (size_t i=0;i<asyncTasks;++i) {
+        try
+        {
+            auto taskResult = futures[i].get();
+            if (!result.has_value()) {
+                result = std::make_optional(taskResult);
+            }
+            else {
+                if (result->first != taskResult.first || result->second != taskResult.second) {
+                    throw std::runtime_error { "async error: inconsistent results" };
+                }
+            }
+        }
+        catch (...)
+        {
+            errors.push_back(std::current_exception());
+        }
+    }
+
+    return result.has_value() ? *result : std::make_pair(false, "async error: no valid result");
+}
+
+// NOLINTNEXTLINE
+INSTANTIATE_TEST_SUITE_P(AsyncJobsSynchronized,
+                         OptimizerTest,
+                         testing::Combine(
+                             testing::Values(1, 2, 4),
+                             testing::Values(true)
+                         ));
+
+// NOLINTNEXTLINE
+INSTANTIATE_TEST_SUITE_P(AsyncJobs,
+                         OptimizerTest,
+                         testing::Combine(
+                             testing::Values(0, 1, 4, 8, 16, 32, 64),
+                             testing::Values(false)
+                         ));
 
 } // namespace
