@@ -168,13 +168,16 @@ void main ()
 
 std::pair<bool, std::string> OptimizerTest::compileShader(glslopt_shader_type type, const std::string& shaderSrc) const
 {
-    auto ctx = glslopt_initialize(shaderTargetLang);
-    auto shader = glslopt_optimize (ctx, type, shaderSrc.c_str(), 0);
+    auto* ctx = glslopt_initialize(shaderTargetLang);
+    ASSERT_TRUE(ctx) << "failed to initialize optimizer context";
+    auto* shader = glslopt_optimize (ctx, type, shaderSrc.c_str(), 0);
+    ASSERT_TRUE(shader);
     bool success = glslopt_get_status (shader);
 
     const char* outp = success ? glslopt_get_output(shader) : glslopt_get_log(shader);
     std::string output = outp ? std::string(outp) : std::string{};
 
+    glslopt_shader_delete(shader);
     glslopt_cleanup(ctx);
 
     if (!outp) {
