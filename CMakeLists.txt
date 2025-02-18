@@ -1,16 +1,16 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.23)
 
 project(glsl_optimizer 
     VERSION 0.1
     DESCRIPTION "GLSL Optimizer"
     LANGUAGES C CXX)
 
+if(PROJECT_IS_TOP_LEVEL)
+    include(Sanitizers.cmake)
+endif()
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-fwrapv -fno-strict-aliasing)
-endif()
 
 option(GLSL_OPTIMIZER_TOOLS "Build tools" OFF)
 option(GLSL_OPTIMIZER_UNIT_TESTS "Build unit tests" OFF)

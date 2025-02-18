@@ -1,3 +1,11 @@
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    add_compile_options(-fwrapv -fno-strict-aliasing -fno-rtti -fno-exceptions)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    string(REGEX REPLACE "/GR" "/GR-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    string(REGEX REPLACE "/EHsc" "/EHs-c-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    add_definitions(-D_HAS_EXCEPTIONS=0) # for STL
+endif()
+
 set(glcpp-library_sources
     glsl/glcpp/glcpp-parse.c
     glsl/glcpp/pp.c
