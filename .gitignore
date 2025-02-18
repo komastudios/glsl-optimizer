@@ -80,3 +80,4 @@ metalTemp.metal
 /.idea/
 /cmake-build-*/
 /build*/
+/orig/
