@@ -4,6 +4,12 @@ Symbol Renamer for C/C++ Source Files
 
 Renames symbols in source files by adding prefixes, handling symbols that
 appear with a leading underscore in the symbols file but without it in the source.
+
+Usage:
+    rename_symbols.py <symbols_file> <prefix> <source_dir> <dest_dir> [--verbose]
+
+Example:
+    python3 rename_symbols.py glsl_optimizer.symbols glslopt_ orig src
 """
 
 import os
