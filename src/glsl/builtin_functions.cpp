@@ -61,6 +61,18 @@
 #include "glsl_parser_extras.h"
 #include "program/prog_instruction.h"
 #include <limits>
+#include <mutex>
+
+struct mtx_t
+{
+    std::recursive_mutex mut;
+};
+
+#define MTX_DECLARE(name) mtx_t name
+#define mtx_lock(name) (name)->mut.lock()
+#define mtx_unlock(name) (name)->mut.unlock()
+
+MTX_DECLARE(builtins_lock);
 
 #define M_PIf   ((float) M_PI)
 #define M_PI_2f ((float) M_PI_2)
@@ -731,7 +743,9 @@ builtin_builder::builtin_builder()
 
 builtin_builder::~builtin_builder()
 {
+   mtx_lock(&builtins_lock);
    ralloc_free(mem_ctx);
+   mtx_unlock(&builtins_lock);
 }
 
 ir_function_signature *
@@ -766,6 +780,8 @@ builtin_builder::initialize()
    if (mem_ctx != NULL)
       return;
 
+   glsl_type_singleton_init_or_ref();
+
    mem_ctx = ralloc_context(NULL);
    create_shader();
    create_intrinsics();
@@ -780,6 +796,8 @@ builtin_builder::release()
 
    ralloc_free(shader);
    shader = NULL;
+
+   glsl_type_singleton_decref();
 }
 
 void
@@ -4629,34 +4647,30 @@ builtin_builder::_memory_barrier(builtin_available_predicate avail)
 
 /******************************************************************************/
 
-//@TODO: implement
-typedef int mtx_t;
-#define _MTX_INITIALIZER_NP 0
-#define mtx_lock(name)
-#define mtx_unlock(name)
-
-
 /* The singleton instance of builtin_builder. */
 static builtin_builder builtins;
-static mtx_t builtins_lock = _MTX_INITIALIZER_NP;
+static uint32_t builtin_users = 0;
 
 /**
  * External API (exposing the built-in module to the rest of the compiler):
  *  @{
  */
 void
-_mesa_glsl_initialize_builtin_functions()
+_mesa_glsl_builtin_functions_init_or_ref()
 {
    mtx_lock(&builtins_lock);
-   builtins.initialize();
+   if (builtin_users++ == 0)
+      builtins.initialize();
    mtx_unlock(&builtins_lock);
 }
 
 void
-_mesa_glsl_release_builtin_functions()
+_mesa_glsl_builtin_functions_decref()
 {
    mtx_lock(&builtins_lock);
-   builtins.release();
+   assert(builtin_users != 0);
+   if (--builtin_users == 0)
+      builtins.release();
    mtx_unlock(&builtins_lock);
 }
 

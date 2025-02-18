@@ -30,18 +30,26 @@ extern "C" {
 #include "program/hash_table.h"
 }
 
+#include <mutex>
+
+std::recursive_mutex glsl_type_mutex;
+uint32_t glsl_type_users = 0;
+
+#define glsl_type_lock_scope std::lock_guard<std::recursive_mutex> lk(glsl_type_mutex);
+
 hash_table *glsl_type::array_types = NULL;
 hash_table *glsl_type::record_types = NULL;
 hash_table *glsl_type::interface_types = NULL;
+std::once_flag glsl_type_ctx_init_flag;
 void *glsl_type::mem_ctx = NULL;
 
 void
 glsl_type::init_ralloc_type_ctx(void)
 {
-   if (glsl_type::mem_ctx == NULL) {
+   std::call_once(glsl_type_ctx_init_flag, []() {
       glsl_type::mem_ctx = ralloc_autofree_context();
       assert(glsl_type::mem_ctx != NULL);
-   }
+   });
 }
 
 glsl_type::glsl_type(GLenum gl_type,
@@ -288,6 +296,8 @@ const glsl_type *glsl_type::get_scalar_type() const
 void
 _mesa_glsl_release_types(void)
 {
+   glsl_type_lock_scope
+
    if (glsl_type::array_types != NULL) {
       hash_table_dtor(glsl_type::array_types);
       glsl_type::array_types = NULL;
@@ -299,6 +309,24 @@ _mesa_glsl_release_types(void)
    }
 }
 
+void glsl_type_singleton_init_or_ref(void)
+{
+   glsl_type_lock_scope
+
+   glsl_type_users++;
+}
+
+void glsl_type_singleton_decref(void)
+{
+   glsl_type_lock_scope
+
+   assert(glsl_type_users > 0);
+   glsl_type_users--;
+
+   if (glsl_type_users == 0) {
+      _mesa_glsl_release_types();
+   }
+}
 
 glsl_type::glsl_type(const glsl_type *array, unsigned length) :
    base_type(GLSL_TYPE_ARRAY),
@@ -455,6 +483,7 @@ glsl_type::get_instance(unsigned base_type, unsigned rows, unsigned columns)
 const glsl_type *
 glsl_type::get_array_instance(const glsl_type *base, unsigned array_size)
 {
+   glsl_type_lock_scope
 
    if (array_types == NULL) {
       array_types = hash_table_ctor(64, hash_table_string_hash,
@@ -579,6 +608,8 @@ glsl_type::get_record_instance(const glsl_struct_field *fields,
 			       unsigned num_fields,
 			       const char *name)
 {
+   glsl_type_lock_scope
+
    const glsl_type key(fields, num_fields, name);
 
    if (record_types == NULL) {
@@ -606,6 +637,8 @@ glsl_type::get_interface_instance(const glsl_struct_field *fields,
 				  enum glsl_interface_packing packing,
 				  const char *block_name)
 {
+   glsl_type_lock_scope
+
    const glsl_type key(fields, num_fields, packing, block_name);
 
    if (interface_types == NULL) {

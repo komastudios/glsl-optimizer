@@ -2463,7 +2463,7 @@ _mesa_glsl_initialize_variables(exec_list *instructions,
 				struct _mesa_glsl_parse_state *state);
 
 extern void
-_mesa_glsl_initialize_builtin_functions();
+_mesa_glsl_builtin_functions_init_or_ref();
 
 extern ir_function_signature *
 _mesa_glsl_find_builtin_function(_mesa_glsl_parse_state *state,
@@ -2473,7 +2473,7 @@ extern gl_shader *
 _mesa_glsl_get_builtin_function_shader(void);
 
 extern void
-_mesa_glsl_release_builtin_functions(void);
+_mesa_glsl_builtin_functions_decref(void);
 
 extern void
 reparent_ir(exec_list *list, void *mem_ctx);

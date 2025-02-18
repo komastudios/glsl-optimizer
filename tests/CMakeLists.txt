@@ -1,4 +1,4 @@
-if (GLSL_OPTIMIZER_RUNTIME_TESTS)
+if (GLSL_OPTIMIZER_REGRESSION_TESTS)
     add_executable(glsl_test glsl_optimizer_tests.cpp)
     target_link_libraries(glsl_test glsl_optimizer)
     if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -8,7 +8,7 @@ if (GLSL_OPTIMIZER_RUNTIME_TESTS)
     endif()
 endif()
 
-if (GLSL_OPTIMIZER_UNIT_TESTS)
+if (BUILD_TESTING)
     if (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang")
         add_compile_options(-Wall -Wextra -Wshadow -Wpedantic
                 -Wconversion -Wno-gcc-compat

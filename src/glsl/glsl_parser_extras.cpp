@@ -1663,7 +1663,7 @@ _mesa_destroy_shader_compiler(void)
 {
    _mesa_destroy_shader_compiler_caches();
 
-   _mesa_glsl_release_types();
+   // _mesa_glsl_release_types();
 }
 
 /**
@@ -1674,7 +1674,7 @@ _mesa_destroy_shader_compiler(void)
 void
 _mesa_destroy_shader_compiler_caches(void)
 {
-   _mesa_glsl_release_builtin_functions();
+   _mesa_glsl_builtin_functions_decref();
 }
 
 }

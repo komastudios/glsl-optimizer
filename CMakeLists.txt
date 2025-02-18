@@ -12,11 +12,11 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-option(GLSL_OPTIMIZER_TOOLS "Build tools" OFF)
-option(GLSL_OPTIMIZER_UNIT_TESTS "Build unit tests" OFF)
-option(GLSL_OPTIMIZER_RUNTIME_TESTS "Build runtime tests" OFF)
+option(BUILD_TESTING "Build unit tests" ON)
+option(GLSL_OPTIMIZER_TOOLS "Build tools" ON)
+option(GLSL_OPTIMIZER_REGRESSION_TESTS "Build runtime tests" OFF)
 
-if (GLSL_OPTIMIZER_UNIT_TESTS)
+if (BUILD_TESTING)
     enable_testing()
     include(FetchContent)
 

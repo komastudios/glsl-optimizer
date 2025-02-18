@@ -88,8 +88,12 @@ struct glslopt_ctx {
 		this->target = target;
 		mem_ctx = ralloc_context (NULL);
 		initialize_mesa_context (&mesa_ctx, target);
+
+		_mesa_glsl_builtin_functions_init_or_ref();
 	}
 	~glslopt_ctx() {
+		_mesa_glsl_builtin_functions_decref();
+
 		ralloc_free (mem_ctx);
 	}
 	struct gl_context mesa_ctx;
@@ -105,7 +109,6 @@ glslopt_ctx* glslopt_initialize (glslopt_target target)
 void glslopt_cleanup (glslopt_ctx* ctx)
 {
 	delete ctx;
-	_mesa_destroy_shader_compiler();
 }
 
 void glslopt_set_max_unroll_iterations (glslopt_ctx* ctx, unsigned iterations)

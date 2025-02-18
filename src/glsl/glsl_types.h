@@ -38,11 +38,14 @@ extern "C" {
 struct _mesa_glsl_parse_state;
 struct glsl_symbol_table;
 
+extern void glsl_type_singleton_init_or_ref(void);
+
+extern void glsl_type_singleton_decref(void);
+
 extern void
 _mesa_glsl_initialize_types(struct _mesa_glsl_parse_state *state);
 
-extern void
-_mesa_glsl_release_types(void);
+// extern void _mesa_glsl_release_types(void);
 
 #ifdef __cplusplus
 }

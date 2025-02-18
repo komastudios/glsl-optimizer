@@ -525,7 +525,7 @@ match_function_by_name(const char *name,
    }
 
    /* Local shader has no exact candidates; check the built-ins. */
-   _mesa_glsl_initialize_builtin_functions();
+   // _mesa_glsl_builtin_functions_init_or_ref();
    sig = _mesa_glsl_find_builtin_function(state, name, actual_parameters);
 
 done:

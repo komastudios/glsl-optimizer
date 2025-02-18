@@ -408,7 +408,7 @@ main(int argc, char **argv)
       ralloc_free(whole_program->_LinkedShaders[i]);
 
    ralloc_free(whole_program);
-   _mesa_glsl_release_types();
+//   _mesa_glsl_release_types();
    _mesa_glsl_release_builtin_functions();
 
    return status;
