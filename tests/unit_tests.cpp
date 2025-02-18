@@ -255,7 +255,7 @@ INSTANTIATE_TEST_SUITE_P(AsyncJobsSynchronized,
 INSTANTIATE_TEST_SUITE_P(AsyncJobs,
                          OptimizerTest,
                          testing::Combine(
-                             testing::Values(0, 1, 4, 8, 16, 32, 64),
+                             testing::Values(0, 1, 4, 8, 16, 32, 64, 256, 512, 1024),
                              testing::Values(false)
                          ));
 

@@ -181,11 +181,11 @@ add_library(glsl_optimizer
 target_include_directories(glsl_optimizer PRIVATE . ../include mesa)
 target_include_directories(glsl_optimizer PUBLIC glsl)
 
+if (GLSL_OPTIMIZER_EXTRACT_SYMBOLS)
+    target_extract_symbols(glsl_optimizer "${CMAKE_CURRENT_BINARY_DIR}/glsl_optimizer.symbols" "${CMAKE_SOURCE_DIR}")
+endif ()
+
 if (GLSL_OPTIMIZER_TOOLS)
     add_executable(glsl_compiler glsl/main.cpp)
     target_link_libraries(glsl_compiler PRIVATE glsl_optimizer)
-endif ()
-
-if (GLSL_OPTIMIZER_EXTRACT_SYMBOLS)
-    target_extract_symbols(glsl_optimizer "${CMAKE_CURRENT_BINARY_DIR}/glsl_optimizer.symbols" "${CMAKE_SOURCE_DIR}")
 endif ()

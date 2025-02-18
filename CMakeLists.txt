@@ -14,6 +14,8 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+
 option(BUILD_TESTING "Build unit tests" ON)
 option(GLSL_OPTIMIZER_TOOLS "Build tools" ON)
 option(GLSL_OPTIMIZER_REGRESSION_TESTS "Build runtime tests" OFF)
