@@ -175,11 +175,11 @@ std::pair<bool, std::string> OptimizerTest::compileShader(glslopt_shader_type ty
     auto* shader = glslopt_optimize (ctx, type, shaderSrc.c_str(), 0);
     bool success = shader ? glslopt_get_status (shader) : false;
 
-    const char* outp = success ? glslopt_get_output(shader) : glslopt_get_log(shader);
+    const char* outp = shader ? (success ? glslopt_get_output(shader) : glslopt_get_log(shader)) : nullptr;
     std::string output = outp ? std::string(outp) : std::string{};
 
     glslopt_shader_delete(shader);
-    glslopt_cleanup(ctx);
+    glslopt_cleanup(ctx); // TODO: implement global context cleanup (thread-safe)
 
     if (!outp) {
         throw std::runtime_error { "unexpected null pointer" };
