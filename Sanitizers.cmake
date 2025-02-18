@@ -9,25 +9,19 @@ if(MSVC)
 elseif(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     option(ENABLE_LSAN "Enable LeakSanitizer" NO)
     option(ENABLE_TSAN "Enable ThreadSanitizer" NO)
-    option(ENABLE_UBSAN "Enable UndefinedBehaviorSanitizer" YES)
+    option(ENABLE_UBSAN "Enable UndefinedBehaviorSanitizer" NO)
     if(NOT APPLE)
         option(ENABLE_MSAN "Enable MemorySanitizer" NO)
     endif()
 
-    add_compile_options(
-        -fno-omit-frame-pointer
-        $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address>
-        $<$<BOOL:${ENABLE_LSAN}>:-fsanitize=leak>
-        $<$<BOOL:${ENABLE_MSAN}>:-fsanitize=memory>
-        $<$<BOOL:${ENABLE_TSAN}>:-fsanitize=thread>
-        $<$<BOOL:${ENABLE_UBSAN}>:-fsanitize=undefined>
-    )
-
-    add_link_options(
-        $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address>
-        $<$<BOOL:${ENABLE_LSAN}>:-fsanitize=leak>
-        $<$<BOOL:${ENABLE_MSAN}>:-fsanitize=memory>
-        $<$<BOOL:${ENABLE_TSAN}>:-fsanitize=thread>
-        $<$<BOOL:${ENABLE_UBSAN}>:-fsanitize=undefined>
-    )
+    if (ENABLE_ASAN OR ENABLE_LSAN OR ENABLE_MSAN OR ENABLE_TSAN OR ENABLE_UBSAN)
+        add_compile_options(
+            -fno-omit-frame-pointer
+            $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address>
+            $<$<BOOL:${ENABLE_LSAN}>:-fsanitize=leak>
+            $<$<BOOL:${ENABLE_MSAN}>:-fsanitize=memory>
+            $<$<BOOL:${ENABLE_TSAN}>:-fsanitize=thread>
+            $<$<BOOL:${ENABLE_UBSAN}>:-fsanitize=undefined>
+        )
+    endif()
 endif()
