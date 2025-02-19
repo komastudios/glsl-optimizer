@@ -1,5 +1,7 @@
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    add_compile_options(-fwrapv -fno-strict-aliasing -fno-rtti -fno-exceptions)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fwrapv -fno-strict-aliasing")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fwrapv -fno-strict-aliasing -fno-exceptions -fno-rtti")
+    add_compile_options(-Wno-register)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     string(REGEX REPLACE "/GR" "/GR-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     string(REGEX REPLACE "/EHsc" "/EHs-c-" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
