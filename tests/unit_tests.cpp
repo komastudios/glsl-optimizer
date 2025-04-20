@@ -207,10 +207,10 @@ CompilerResult OptimizerTest::compileShader(glslopt_shader_type type, const std:
     std::mutex mutex;
     for (size_t i=0;i<asyncTasks;++i) {
         if (synchronized) {
-            futures.push_back(std::async(std::launch::async, [&mutex](glslopt_target targetLang, glslopt_shader_type type, const char* shaderSrc)
+            futures.push_back(std::async(std::launch::async, [&mutex](glslopt_target pLang, glslopt_shader_type pType, const char* pShaderSrc)
             {
                 std::unique_lock lk(mutex);
-                return CompileShader(targetLang, type, shaderSrc);
+                return CompileShader(pLang, pType, pShaderSrc);
             }, shaderTargetLang, type, shaderSrc.c_str()));
         }
         else

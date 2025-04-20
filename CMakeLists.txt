@@ -18,7 +18,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 option(BUILD_TESTING "Build unit tests" ON)
-option(GLSL_OPTIMIZER_TOOLS "Build tools" ON)
+option(GLSL_OPTIMIZER_TOOLS "Build tools" OFF)
 option(GLSL_OPTIMIZER_REGRESSION_TESTS "Build runtime tests" OFF)
 option(GLSL_OPTIMIZER_EXTRACT_SYMBOLS "Extract symbols from the library" OFF)
 
